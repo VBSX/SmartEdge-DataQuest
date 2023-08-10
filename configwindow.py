@@ -21,6 +21,12 @@ class ConfigWindow(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         self.layout_vertical = QVBoxLayout()
+
+        #save button
+        self.button_save = QPushButton('Salvar')
+        self.button_save.clicked.connect(self.save_data)
+        self.button_style_config(self.button_save)
+             
         
         # Field username config
         self.label_username = QLabel('Usuário: ')
@@ -30,6 +36,7 @@ class ConfigWindow(QMainWindow):
         else:
             self.line_edit_username.setText(self.user)
         self.line_edit_username.setPlaceholderText('root')
+        self.line_edit_username.returnPressed.connect(self.button_save.click)
         
         ## Set the layout of the label and the line edit in the same line
         self.horizontal_layout_set(self.label_username, self.line_edit_username, None, None)
@@ -37,6 +44,7 @@ class ConfigWindow(QMainWindow):
         # field password config
         self.label_password = QLabel('Senha: ')
         self.line_edit_password = QLineEdit()
+        self.line_edit_password.returnPressed.connect(self.button_save.click)
         self.line_edit_password.setPlaceholderText('****')
         self.line_edit_password.setText(self.password)
         self.line_edit_password.setEchoMode(QLineEdit.Password)
@@ -50,6 +58,7 @@ class ConfigWindow(QMainWindow):
         else:
             self.line_edit_host.setText(self.host)
         self.line_edit_host.setPlaceholderText('10.1.1.220')
+        self.line_edit_host.returnPressed.connect(self.button_save.click)
         
         
         #field port config
@@ -61,6 +70,8 @@ class ConfigWindow(QMainWindow):
             self.line_edit_port.setText(self.port)
             
         self.line_edit_port.setPlaceholderText('3306')
+        self.line_edit_port.returnPressed.connect(self.button_save.click)
+        
         # config of host and port itens on same line
         self.horizontal_layout_set(self.label_host, self.line_edit_host,self.label_port, self.line_edit_port)
         
@@ -72,13 +83,12 @@ class ConfigWindow(QMainWindow):
         else:
             self.line_edit_database.setText(self.database)
         self.line_edit_database.setPlaceholderText('db_name')
+        self.line_edit_database.returnPressed.connect(self.button_save.click)
+        
         self.horizontal_layout_set(self.label_database, self.line_edit_database, None, None)
         
-        #save button
-        self.button_save = QPushButton('Salvar')
-        self.button_save.clicked.connect(self.save_data)
-        self.button_style_config(self.button_save)
-        self.layout_vertical.addWidget(self.button_save)
+        
+        self.layout_vertical.addWidget(self.button_save)   
         
         central_widget.setLayout(self.layout_vertical)
         print(self.line_edit_username.text())
@@ -152,9 +162,11 @@ class ConfigWindow(QMainWindow):
             return_file = self.file_handler.write_json()
             
             if return_file == 'sucess':
-                self.close()
+                self.parent().reset_layout()
                 self.parent().show_dialog("Configuração realizada com sucesso")
-    
+                self.close()
+                print('sssss')
+                
 
             
 if __name__ == "__main__":

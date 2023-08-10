@@ -4,9 +4,10 @@ from filehandle import File
 class Database():
     def __init__(self):
         self.connection_error = False
-        self.config = File()
+        self.file = File()
         self.first_connection = True
-        self.config = self.config.json_file
+        self.connected =False
+        self.get_file_config()
         # config = {
         #     'user': 'root',
         #     'password': 'vssql',
@@ -15,12 +16,15 @@ class Database():
         #     'database': '10861-1'
         # }
         
-
-            
     def start_connection(self):
+        self.connection_error = False
+        self.get_file_config()
+        print(self.config)
         try:
+            self.conexao = None
             self.conexao = connect(**self.config)
-            
+            print(self.conexao)
+            self.connected = True
             self.cursor = self.conexao.cursor()
             
         except Error as er:
@@ -55,6 +59,7 @@ class Database():
                     return query_return
                 
             else:
+                self.connected = False
                 return self.message_connection_error
         else:
             return 'banco de dados desconectado'
@@ -73,26 +78,46 @@ class Database():
             else:
                 return self.message_connection_error
         else:
+            self.connected = False
             return 'banco de dados desconectado'
+        
     def execute_query(self, query):
         if self.verify_connection():
-            self.cursor.execute(query)
-            self.cursor.close()
-            self.conexao.close()
-            return 'sucess'
+            try:
+                self.cursor.execute(query)
+                self.cursor.close()
+                self.conexao.close()
+                self.connected = False
+                return 'sucess'
+            except Error as er:
+                return er
         else:
+            self.connected = False
             Exception ("banco de dados desconectado")
     
     def verify_connection(self):
         if self.first_connection:
             self.start_connection()
+            self.first_connection = False
             return True
-        else:
-            if self.conexao.connected():
+        else: 
+            if self.connected:
+                print('0,1')
                 return True
             else:
-                return False
-        
+                try:
+                    self.start_connection()
+                    print('1')
+                    return True
+                except:
+                    print('2')
+                    return False
+            
+            
+    def get_file_config(self):
+        self.config = self.file.read_json()
+
 if __name__ == "__main__":
     db = Database()
+    print(db.db_default_config())
     print(db.db_default_config())
