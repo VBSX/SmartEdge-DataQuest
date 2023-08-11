@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     )
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLineEdit
-from base_window import BaseWindow
+from interfaces.base_window import BaseWindow
 
 class ConfigWindow(BaseWindow):
     def __init__(self, parent=None):

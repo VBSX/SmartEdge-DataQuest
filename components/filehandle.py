@@ -3,6 +3,7 @@ import json
 
 class File():
     def __init__(self):
+        self.path_json = r'components/params.json'
         self.json_file = self.read_json()
         self.username = self.get_username()
         self.password = self.get_password()
@@ -14,20 +15,20 @@ class File():
         if self.verify_if_json_exists():
             return False
         else:
-            with open('params.json', 'w') as f:
+            with open(self.path_json, 'w') as f:
                 f.write('{}')
                 return True
         
     def verify_if_json_exists(self):
-        file_name = 'params.json'
-        if os.path.exists(file_name):
+
+        if os.path.exists(self.path_json):
             return True
         else:
             return False
     
     def read_json(self):
         if self.verify_if_json_exists():
-            with open('params.json', 'r') as f:
+            with open(self.path_json, 'r') as f:
                 content = json.load(f)
                 return content
         else:
@@ -123,12 +124,10 @@ class File():
         self.write_json()
         return 'sucess'
 
-    
     def write_json(self):
         with open('params.json', 'w') as f:
             json.dump(self.json_file, f)
         return 'sucess'
-    
         
 if __name__ == '__main__':
     

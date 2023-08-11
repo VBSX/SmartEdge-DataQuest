@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QMainWindow, QMessageBox
-from filehandle import File
-from dbhandle import Database
+from components.filehandle import File
+from components.dbhandle import Database
  
 class BaseWindow(QMainWindow):
     def __init__(self, parent=None):

@@ -1,5 +1,5 @@
 from mysql.connector import  connect, Error
-from filehandle import File
+from components.filehandle import File
 
 class Database():
     def __init__(self):

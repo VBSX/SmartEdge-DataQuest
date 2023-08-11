@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QLabel,QWidget, QVBoxLayout, QPushButton,QMessageBox, QLineEdit, QTableWidget, QTableWidgetItem
-from dbhandle import Database
+from components.dbhandle import Database
 import re
-from base_window import BaseWindow
+from interfaces.base_window import BaseWindow
 from PyQt5.QtWidgets import QTableWidgetItem
 class QueryWindow(BaseWindow):
     def __init__(self, parent=None):

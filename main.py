@@ -7,22 +7,27 @@ from PySide6.QtWidgets import (
     QWidget,
     QSpacerItem,
     QSizePolicy,
-    QHBoxLayout
+    QHBoxLayout,
+    
+   
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QImage, QPixmap, QIcon
 import sys
-from query_run import QueryWindow
-from configwindow import ConfigWindow
-from os_handle import OsHandler
-from base_window import BaseWindow
+from interfaces.query_run_window import QueryWindow
+from interfaces.configwindow import ConfigWindow
+from components.os_handle import OsHandler
+from interfaces.base_window import BaseWindow
 
 class MainWindow(BaseWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.config_window = None
-
-    def setup_ui(self):
-        self.setWindowTitle("Inicio")
+        
+    def setup_ui(self):         
+        icon_close_mycommerce = r'images/mycommerce.png'
+        self.setWindowIcon(QIcon(r'images/smartedge.png'))
+        self.setWindowTitle("SmartEdge - DataQuest")
         self.resize(500, 500)
         self.setStyleSheet("padding :15px;background-color: #000000;color: #FFFFFF;font-size: 17px; ")
         
@@ -36,8 +41,19 @@ class MainWindow(BaseWindow):
         self.button_reset_users_password = QPushButton("Resetar senha de usuários")
         self.button_reset_users_password.clicked.connect(self.reset_users_password)
         
-        self.button_close_mycommerce = QPushButton("Fechar o mycommerce")
+        self.layout_horizontal_close_programs = QHBoxLayout()
+        self.label_close_programs = QLabel()
+        self.label_close_programs.setText("Fechar programas")
+        
+        self.button_close_mycommerce = QPushButton()
         self.button_close_mycommerce.clicked.connect(self.mycommerce_close)
+        self.button_close_mycommerce.setIcon(QIcon(icon_close_mycommerce))    
+        self.button_close_mycommerce.setIconSize(QSize(64,64))
+        self.button_close_mycommerce.setFixedSize(64,64)
+        # self.button_close_mycommerce.style = "background-color: #00000;border-radius: 10px;"
+        
+        self.layout_horizontal_close_programs.addWidget(self.label_close_programs)
+        self.layout_horizontal_close_programs.addWidget(self.button_close_mycommerce)
         
         self.spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         
@@ -57,7 +73,6 @@ class MainWindow(BaseWindow):
         self.button_style_config(self.button_reset_users_password)
         self.button_style_config(self.config_button)
         self.button_style_config(self.button_db_default_config)
-        self.button_style_config(self.button_close_mycommerce)
         self.button_style_config(self.query_button)
                   
         self.central_widget = QWidget()
@@ -70,7 +85,7 @@ class MainWindow(BaseWindow):
         self.layout_principal.addWidget(self.button_db_default_config)
         self.layout_principal.addWidget(self.button_reset_users_password)
         self.layout_principal.addItem(self.spacer)
-        self.layout_principal.addWidget(self.button_close_mycommerce)
+        self.layout_principal.addLayout(self.layout_horizontal_close_programs)
         self.layout_principal.addWidget(self.query_button)
         self.layout_principal.addItem(self.spacer)
         self.layout_principal.addWidget(self.config_button)
@@ -92,9 +107,12 @@ class MainWindow(BaseWindow):
         button.setCursor(Qt.PointingHandCursor)
     
     def update_db(self):
+        # TODO
+        # quando inicia com a porta do banco errada ele so diz
+        # que o banco esta desconectado
         if self.file_handler.verify_if_json_exists():
             query_return = self.db.db_default_config()
-            if query_return =='sucess':
+            if query_return == 'sucess':
                 self.show_dialog("Configuração realizada com sucesso")
             else:
                 self.show_dialog(str(query_return))
@@ -103,7 +121,7 @@ class MainWindow(BaseWindow):
     
     def reset_users_password(self):
         query_return = self.db.reset_users_password()
-        if query_return =='sucess':
+        if query_return == 'sucess':
             self.show_dialog("Senhas resetadas com sucesso")
         else:
             self.show_dialog(str(query_return))
