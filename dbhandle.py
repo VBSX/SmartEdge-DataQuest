@@ -7,30 +7,25 @@ class Database():
         self.file = File()
         self.first_connection = True
         self.connected =False
+        self.message_connection_error = None
         self.get_file_config()
-        # config = {
-        #     'user': 'root',
-        #     'password': 'vssql',
-        #     'host': '10.1.1.220',  
-        #     'port': 3307,
-        #     'database': '10861-1'
-        # }
         
     def start_connection(self):
         self.connection_error = False
         self.get_file_config()
         print(self.config)
         try:
-            self.conexao = None
             self.conexao = connect(**self.config)
             print(self.conexao)
             self.connected = True
             self.cursor = self.conexao.cursor()
-            
+            return True            
         except Error as er:
             self.connection_error = True
+            self.connected = False
             self.message_connection_error = er
             print(er)
+            return False
   
     def db_default_config(self):
         if self.verify_connection():
@@ -82,7 +77,8 @@ class Database():
             return 'banco de dados desconectado'
         
     def execute_query(self, query):
-        if self.verify_connection():
+        has_connection = self.verify_connection()
+        if has_connection:
             try:
                 self.cursor.execute(query)
                 self.cursor.close()
@@ -94,30 +90,50 @@ class Database():
         else:
             self.connected = False
             Exception ("banco de dados desconectado")
-    
+            return self.message_connection_error
+
+    def execute_query_return(self, query):
+        has_connection = self.verify_connection()
+        if has_connection:
+            try:
+                self.cursor.execute(query)
+                self.connected = False
+                return 'sucess',self.cursor.fetchall()
+            except Error as er:
+                return 'error', er
+        else:
+            self.connected = False
+            Exception ("banco de dados desconectado")
+            return self.message_connection_error
+            
     def verify_connection(self):
         if self.first_connection:
-            self.start_connection()
-            self.first_connection = False
-            return True
+            connection = self.start_connection()
+            if connection:
+                self.first_connection = False
+                return True
+            else: 
+                return False
         else: 
             if self.connected:
-                print('0,1')
                 return True
             else:
-                try:
-                    self.start_connection()
-                    print('1')
+                connection = self.start_connection()
+                if connection:
                     return True
-                except:
-                    print('2')
+                else:
                     return False
-            
             
     def get_file_config(self):
         self.config = self.file.read_json()
 
 if __name__ == "__main__":
+    import re
     db = Database()
-    print(db.db_default_config())
-    print(db.db_default_config())
+    # print(db.db_default_config())
+    
+    query = 'SELECT * FROM USUARIOS'
+    pattern = re.compile(r'select', re.IGNORECASE)
+    match = pattern.search(query)
+    if match:
+        print(db.execute_query_return(query))

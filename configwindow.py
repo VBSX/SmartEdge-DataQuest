@@ -1,22 +1,27 @@
-from PySide6.QtWidgets import QMainWindow, QLabel, QWidget, QVBoxLayout, QHBoxLayout,QPushButton
+from PySide6.QtWidgets import (
+    QLabel,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton
+    )
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLineEdit
-from filehandle import File
+from base_window import BaseWindow
 
-class ConfigWindow(QMainWindow):
+class ConfigWindow(BaseWindow):
     def __init__(self, parent=None):
         super(ConfigWindow,self).__init__(parent)
-        self.file_handler = File()
+        
+    def setup_ui(self):
+        self.setWindowTitle("Config")
+        self.setFixedSize(430, 410)
+        
         self.user = self.file_handler.username
         self.password = self.file_handler.password
         self.host = self.file_handler.host
         self.port = self.file_handler.port
         self.database = self.file_handler.database
-        self.setup_ui()
-    
-    def setup_ui(self):
-        self.setWindowTitle("Config")
-        self.setFixedSize(400, 400)
         
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -27,7 +32,6 @@ class ConfigWindow(QMainWindow):
         self.button_save.clicked.connect(self.save_data)
         self.button_style_config(self.button_save)
              
-        
         # Field username config
         self.label_username = QLabel('Usuário: ')
         self.line_edit_username = QLineEdit()
@@ -87,12 +91,9 @@ class ConfigWindow(QMainWindow):
         
         self.horizontal_layout_set(self.label_database, self.line_edit_database, None, None)
         
-        
         self.layout_vertical.addWidget(self.button_save)   
         
         central_widget.setLayout(self.layout_vertical)
-        print(self.line_edit_username.text())
-
         
         #absolute window, cant acess the main window ultil the window is closed
         self.setWindowModality(Qt.WindowModal)
@@ -162,13 +163,10 @@ class ConfigWindow(QMainWindow):
             return_file = self.file_handler.write_json()
             
             if return_file == 'sucess':
+                self.close()
                 self.parent().reset_layout()
                 self.parent().show_dialog("Configuração realizada com sucesso")
-                self.close()
-                print('sssss')
-                
-
-            
+                      
 if __name__ == "__main__":
     import sys
     from PySide6.QtWidgets import QApplication

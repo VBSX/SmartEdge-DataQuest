@@ -1,11 +1,8 @@
 
 from PySide6.QtWidgets import (
     QApplication,
-    QMainWindow,
     QPushButton,
-    QMessageBox,
     QLabel,
-    QLineEdit,
     QVBoxLayout,
     QWidget,
     QSpacerItem,
@@ -13,28 +10,23 @@ from PySide6.QtWidgets import (
     QHBoxLayout
 )
 from PySide6.QtCore import Qt
-from dbhandle import Database
 import sys
-from filehandle import File
 from query_run import QueryWindow
 from configwindow import ConfigWindow
 from os_handle import OsHandler
+from base_window import BaseWindow
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
-        self.db = Database()
-        self.file_handler = File()
+class MainWindow(BaseWindow):
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent)
         self.config_window = None
-        self.host = self.file_handler.host
-        self.port = self.file_handler.port
-        self.database = self.file_handler.database
-        self.setup_ui()
 
     def setup_ui(self):
         self.setWindowTitle("Inicio")
         self.resize(500, 500)
         self.setStyleSheet("padding :15px;background-color: #000000;color: #FFFFFF;font-size: 17px; ")
+        
+        self.get_configs()
         self.button_db_default_config = QPushButton("Configuração padrão DB")
         self.button_db_default_config.clicked.connect(self.update_db)
         
@@ -93,11 +85,6 @@ class MainWindow(QMainWindow):
         self.centralWidget().setParent(None)
         self.clearLayout(self.layout_principal)
         self.clearLayout(self.layout_horizontal)
-        json_file = self.file_handler.read_json()
-        self.host = json_file['host']
-        self.port = self.file_handler.port
-        self.database = self.file_handler.database
-        print(self.database)
         self.setup_ui()
     
     def button_style_config(self, button):
@@ -126,16 +113,18 @@ class MainWindow(QMainWindow):
         self.show_dialog(str(process))
         
     def start_query(self):
-        self.query_window = QueryWindow(self)
-        self.query_window.show()
-    
+        has_connection = self.db.start_connection()
+        if has_connection:
+            self.query_window = QueryWindow(self)
+            self.query_window.show()
+        else:
+            self.show_dialog(str(self.db.message_connection_error))
+            
     def start_config(self):
         self.config_window = ConfigWindow(self)
         self.config_window.show()
 
-    def show_dialog(self, text):
-        QMessageBox.about(self, 'DIALOG', text)
-        
+
     def clearLayout(self, layout):
         while layout.count():
             child = layout.takeAt(0)
@@ -143,6 +132,13 @@ class MainWindow(QMainWindow):
                 child.widget().deleteLater()
             elif child.layout():
                 self.clearLayout(child.layout())  
+    
+    def get_configs(self):
+        json_file = self.file_handler.read_json()
+        self.host = json_file['host']
+        self.port = json_file['port']
+        self.database = json_file['database']
+
 if __name__ == "__main__": 
     app = QApplication(sys.argv)
     window = MainWindow()
