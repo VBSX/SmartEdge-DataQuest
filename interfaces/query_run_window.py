@@ -1,12 +1,13 @@
-from PySide6.QtWidgets import QLabel,QWidget, QVBoxLayout, QPushButton,QMessageBox, QLineEdit, QTableWidget, QTableWidgetItem
+from PySide6.QtWidgets import QLabel,QWidget, QVBoxLayout, QPushButton, QLineEdit, QTableWidget, QTableWidgetItem
 from components.dbhandle import Database
 import re
 from interfaces.base_window import BaseWindow
-from PyQt5.QtWidgets import QTableWidgetItem
+
 class QueryWindow(BaseWindow):
     def __init__(self, parent=None):
         super(QueryWindow, self).__init__(parent)
-
+        self.setup_ui()
+        
     def setup_ui(self):
         self.setWindowTitle("Query")
         self.resize(400, 400)

@@ -1,3 +1,7 @@
+import os
+import sys
+path = os.path.abspath('./')
+sys.path.append(path)
 from PySide6.QtWidgets import (
     QLabel,
     QWidget,
@@ -12,7 +16,7 @@ from interfaces.base_window import BaseWindow
 class ConfigWindow(BaseWindow):
     def __init__(self, parent=None):
         super(ConfigWindow,self).__init__(parent)
-        
+        self.setup_ui()
     def setup_ui(self):
         self.setWindowTitle("Config")
         self.setFixedSize(430, 410)

@@ -125,12 +125,13 @@ class File():
         return 'sucess'
 
     def write_json(self):
-        with open('params.json', 'w') as f:
+        with open(self.path_json, 'w') as f:
             json.dump(self.json_file, f)
         return 'sucess'
         
 if __name__ == '__main__':
     
     f = File()
+    f.set_host('10.1.1.220')
     print(f.username, f.password, f.host, f.port, f.database, f.json_file)
     # f.set_username('root')

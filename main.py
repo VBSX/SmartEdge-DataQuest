@@ -1,4 +1,7 @@
-
+import os
+import sys
+path = os.path.abspath('./')
+sys.path.append(path)
 from PySide6.QtWidgets import (
     QApplication,
     QPushButton,
@@ -8,21 +11,22 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QSizePolicy,
     QHBoxLayout,
-    
-   
 )
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QImage, QPixmap, QIcon
 import sys
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QIcon
 from interfaces.query_run_window import QueryWindow
 from interfaces.configwindow import ConfigWindow
 from components.os_handle import OsHandler
 from interfaces.base_window import BaseWindow
+from interfaces.aboutwindow import  AboutProgramWindow
 
 class MainWindow(BaseWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.config_window = None
+        self.about_window_is_open = False
+        self.setup_ui()
         
     def setup_ui(self):         
         icon_close_mycommerce = r'images/mycommerce.png'
@@ -35,8 +39,21 @@ class MainWindow(BaseWindow):
         self.button_db_default_config = QPushButton("Configuração padrão DB")
         self.button_db_default_config.clicked.connect(self.update_db)
         
+        self.layout_horizontal_config_program = QHBoxLayout()
         self.config_button = QPushButton("Config")
         self.config_button.clicked.connect(self.start_config)
+        self.config_button.setIcon(QIcon(r'images/config.png'))
+        self.config_button.setIconSize(QSize(64,64))
+        # self.config_button.setFixedSize(64,64)
+        self.layout_horizontal_config_program.addWidget(self.config_button)
+        
+        self.about_program = QPushButton()
+        self.about_program.clicked.connect(self.about_program_window)
+        self.about_program.setIcon(QIcon(r'images/about.png'))
+        self.about_program.setIconSize(QSize(64,64))
+        self.about_program.setFixedSize(64,64)
+        self.layout_horizontal_config_program.addWidget(self.about_program) 
+        
         
         self.button_reset_users_password = QPushButton("Resetar senha de usuários")
         self.button_reset_users_password.clicked.connect(self.reset_users_password)
@@ -71,7 +88,7 @@ class MainWindow(BaseWindow):
         
         self.button_style_config(self.query_button)
         self.button_style_config(self.button_reset_users_password)
-        self.button_style_config(self.config_button)
+        # self.button_style_config(self.config_button)
         self.button_style_config(self.button_db_default_config)
         self.button_style_config(self.query_button)
                   
@@ -88,7 +105,8 @@ class MainWindow(BaseWindow):
         self.layout_principal.addLayout(self.layout_horizontal_close_programs)
         self.layout_principal.addWidget(self.query_button)
         self.layout_principal.addItem(self.spacer)
-        self.layout_principal.addWidget(self.config_button)
+        # self.layout_principal.addWidget(self.config_button)
+        self.layout_principal.addLayout(self.layout_horizontal_config_program)
         
         self.layout_horizontal.addWidget(self.host_label)
         self.layout_horizontal.addWidget(self.port_label)
@@ -156,7 +174,16 @@ class MainWindow(BaseWindow):
         self.host = json_file['host']
         self.port = json_file['port']
         self.database = json_file['database']
-
+    
+    def about_program_window(self):
+        if not self.about_window_is_open:
+            self.about_window = AboutProgramWindow(self)
+            self.about_window.show()
+            self.about_window_is_open = True
+        else:
+            self.about_window.close()
+            self.about_window.show()
+        
 if __name__ == "__main__": 
     app = QApplication(sys.argv)
     window = MainWindow()
