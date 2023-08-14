@@ -14,6 +14,7 @@ class AboutProgramWindow(BaseWindow):
         super(AboutProgramWindow, self).__init__(parent)
         self.github_icon = self.resource_path(r'images/github.png')
         self.oakbox_icon = self.resource_path(r'images/oakbox.png')
+        self.escape_pressed = self.close_at_esc
         self.setup_ui()
         
     def setup_ui(self):
