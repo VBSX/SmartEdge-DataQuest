@@ -26,14 +26,25 @@ class MainWindow(BaseWindow):
         super(MainWindow, self).__init__(parent)
         self.config_window = None
         self.about_window_is_open = False
+        
         self.setup_ui()
         
-    def setup_ui(self):         
-        print(self.resource_path(r'images/mycommerce.png'))
-        icon_close_mycommerce = QIcon(self.resource_path(r'images/mycommerce.png'))
-        icon_config = QIcon(self.resource_path(r'images/config.png'))
-        icon_about = QIcon(self.resource_path(r'images/about.png'))
-        self.setWindowIcon(QIcon(self.resource_path(r'images/smartedge.png')))
+    def setup_ui(self):
+        has_image_folder = self.file_handler.verify_if_images_path_exists()
+        img_mycommerce_path = r'images/mycommerce.png'
+        img_config_path = r'images/config.png'
+        img_about_path = r'images/about.png'
+        img_smartedge_path = r'images/smartedge.png'
+        if not has_image_folder:
+            icon_close_mycommerce = QIcon(self.resource_path(img_mycommerce_path))
+            icon_config = QIcon(self.resource_path(img_config_path))
+            icon_about = QIcon(self.resource_path(img_about_path))
+            self.setWindowIcon(QIcon(self.resource_path(img_smartedge_path)))
+        else:
+            icon_close_mycommerce = QIcon(img_mycommerce_path)
+            icon_config = QIcon(img_config_path)
+            icon_about = QIcon(img_about_path)
+            self.setWindowIcon(QIcon(img_smartedge_path))
         self.setWindowTitle("SmartEdge - DataQuest")
         self.resize(500, 500)
         self.setStyleSheet("padding :15px;background-color: #000000;color: #FFFFFF;font-size: 17px; ")
@@ -46,7 +57,7 @@ class MainWindow(BaseWindow):
         self.config_button.clicked.connect(self.start_config)
         self.config_button.setIcon(QIcon(icon_config))
         self.config_button.setIconSize(QSize(64,64))
-        # self.config_button.setFixedSize(64,64)
+
         self.layout_horizontal_config_program.addWidget(self.config_button)
         
         self.about_program = QPushButton()
@@ -69,7 +80,6 @@ class MainWindow(BaseWindow):
         self.button_close_mycommerce.setIcon(QIcon(icon_close_mycommerce))    
         self.button_close_mycommerce.setIconSize(QSize(64,64))
         self.button_close_mycommerce.setFixedSize(64,64)
-        # self.button_close_mycommerce.style = "background-color: #00000;border-radius: 10px;"
         
         self.layout_horizontal_close_programs.addWidget(self.label_close_programs)
         self.layout_horizontal_close_programs.addWidget(self.button_close_mycommerce)
@@ -107,7 +117,6 @@ class MainWindow(BaseWindow):
         self.layout_principal.addLayout(self.layout_horizontal_close_programs)
         self.layout_principal.addWidget(self.query_button)
         self.layout_principal.addItem(self.spacer)
-        # self.layout_principal.addWidget(self.config_button)
         self.layout_principal.addLayout(self.layout_horizontal_config_program)
         
         self.layout_horizontal.addWidget(self.host_label)
