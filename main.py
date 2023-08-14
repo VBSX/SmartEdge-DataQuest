@@ -29,12 +29,14 @@ class MainWindow(BaseWindow):
         self.setup_ui()
         
     def setup_ui(self):         
-        icon_close_mycommerce = r'images/mycommerce.png'
-        self.setWindowIcon(QIcon(r'images/smartedge.png'))
+        print(self.resource_path(r'images/mycommerce.png'))
+        icon_close_mycommerce = QIcon(self.resource_path(r'images/mycommerce.png'))
+        icon_config = QIcon(self.resource_path(r'images/config.png'))
+        icon_about = QIcon(self.resource_path(r'images/about.png'))
+        self.setWindowIcon(QIcon(self.resource_path(r'images/smartedge.png')))
         self.setWindowTitle("SmartEdge - DataQuest")
         self.resize(500, 500)
         self.setStyleSheet("padding :15px;background-color: #000000;color: #FFFFFF;font-size: 17px; ")
-        
         self.get_configs()
         self.button_db_default_config = QPushButton("Configuração padrão DB")
         self.button_db_default_config.clicked.connect(self.update_db)
@@ -42,14 +44,14 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_config_program = QHBoxLayout()
         self.config_button = QPushButton("Config")
         self.config_button.clicked.connect(self.start_config)
-        self.config_button.setIcon(QIcon(r'images/config.png'))
+        self.config_button.setIcon(QIcon(icon_config))
         self.config_button.setIconSize(QSize(64,64))
         # self.config_button.setFixedSize(64,64)
         self.layout_horizontal_config_program.addWidget(self.config_button)
         
         self.about_program = QPushButton()
         self.about_program.clicked.connect(self.about_program_window)
-        self.about_program.setIcon(QIcon(r'images/about.png'))
+        self.about_program.setIcon(QIcon(icon_about))
         self.about_program.setIconSize(QSize(64,64))
         self.about_program.setFixedSize(64,64)
         self.layout_horizontal_config_program.addWidget(self.about_program) 
@@ -183,7 +185,9 @@ class MainWindow(BaseWindow):
         else:
             self.about_window.close()
             self.about_window.show()
-        
+                
+
+
 if __name__ == "__main__": 
     app = QApplication(sys.argv)
     window = MainWindow()

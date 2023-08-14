@@ -12,8 +12,8 @@ from webbrowser import open_new_tab
 class AboutProgramWindow(BaseWindow):
     def __init__(self, parent = None):
         super(AboutProgramWindow, self).__init__(parent)
-        self.github_icon = r'images/github.png'
-        self.oakbox_icon = r'images/oakbox.png'
+        self.github_icon = self.resource_path(r'images/github.png')
+        self.oakbox_icon = self.resource_path(r'images/oakbox.png')
         self.setup_ui()
         
     def setup_ui(self):

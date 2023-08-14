@@ -1,3 +1,7 @@
+import os
+import sys
+path = os.path.abspath('./')
+sys.path.append(path)
 from mysql.connector import  connect, Error
 from components.filehandle import File
 

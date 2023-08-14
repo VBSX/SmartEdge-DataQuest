@@ -16,8 +16,10 @@ from interfaces.base_window import BaseWindow
 class ConfigWindow(BaseWindow):
     def __init__(self, parent=None):
         super(ConfigWindow,self).__init__(parent)
+        self.keyPressEvent = self.close_at_esc
         self.setup_ui()
     def setup_ui(self):
+        
         self.setWindowTitle("Config")
         self.setFixedSize(430, 410)
         
@@ -52,6 +54,7 @@ class ConfigWindow(BaseWindow):
         # field password config
         self.label_password = QLabel('Senha: ')
         self.line_edit_password = QLineEdit()
+ 
         self.line_edit_password.returnPressed.connect(self.button_save.click)
         self.line_edit_password.setPlaceholderText('****')
         self.line_edit_password.setText(self.password)
@@ -170,7 +173,9 @@ class ConfigWindow(BaseWindow):
                 self.close()
                 self.parent().reset_layout()
                 self.parent().show_dialog("Configuração realizada com sucesso")
-                      
+    
+
+                         
 if __name__ == "__main__":
     import sys
     from PySide6.QtWidgets import QApplication

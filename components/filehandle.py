@@ -1,4 +1,7 @@
 import os
+import sys
+path = os.path.abspath('./')
+sys.path.append(path)
 import json
 
 class File():
@@ -14,10 +17,13 @@ class File():
     def create_json(self):
         if self.verify_if_json_exists():
             return False
+        elif not self.verify_if_path_components_exist():
+            self.create_components_path()
+            self.create_defaut_json()
+            return True
         else:
-            with open(self.path_json, 'w') as f:
-                f.write('{}')
-                return True
+            self.create_defaut_json()
+            return True
         
     def verify_if_json_exists(self):
 
@@ -33,6 +39,9 @@ class File():
                 return content
         else:
             self.create_json()
+            with open(self.path_json, 'r') as f:
+                content = json.load(f)
+                return content
                 
     def get_username(self):
         if self.verify_if_json_exists():
@@ -128,9 +137,26 @@ class File():
         with open(self.path_json, 'w') as f:
             json.dump(self.json_file, f)
         return 'sucess'
-        
-if __name__ == '__main__':
     
+    def verify_if_path_components_exist(self):
+        if os.path.exists(r'components'):
+            return True
+        else:
+            return False
+
+    def create_components_path(self):
+        if not self.verify_if_path_components_exist():
+            os.mkdir(r'components')
+        return 'sucess'
+
+    def create_defaut_json(self):
+        if not self.verify_if_json_exists():
+            with open(self.path_json, 'w') as f:
+                f.write("""{"user": "default", "password": "default", "host": "localhost", "port": "3306", "database": "default"}""")
+        return 'sucess'
+    
+if __name__ == '__main__':
+    ''
     f = File()
     f.set_host('10.1.1.220')
     print(f.username, f.password, f.host, f.port, f.database, f.json_file)
