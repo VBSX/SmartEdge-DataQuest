@@ -26,25 +26,25 @@ class MainWindow(BaseWindow):
         super(MainWindow, self).__init__(parent)
         self.config_window = None
         self.about_window_is_open = False
-        
+        self.img_mycommerce_path = r'images/mycommerce.png'
+        self.img_config_path = r'images/config.png'
+        self.img_about_path = r'images/about.png'
+        self.img_smartedge_path = r'images/smartedge.png'
         self.setup_ui()
         
     def setup_ui(self):
         has_image_folder = self.file_handler.verify_if_images_path_exists()
-        img_mycommerce_path = r'images/mycommerce.png'
-        img_config_path = r'images/config.png'
-        img_about_path = r'images/about.png'
-        img_smartedge_path = r'images/smartedge.png'
         if not has_image_folder:
-            icon_close_mycommerce = QIcon(self.resource_path(img_mycommerce_path))
-            icon_config = QIcon(self.resource_path(img_config_path))
-            icon_about = QIcon(self.resource_path(img_about_path))
-            self.setWindowIcon(QIcon(self.resource_path(img_smartedge_path)))
+            icon_close_mycommerce = QIcon(self.resource_path(self.img_mycommerce_path))
+            icon_config = QIcon(self.resource_path(self.img_config_path))
+            icon_about = QIcon(self.resource_path(self.img_about_path))
+            self.setWindowIcon(QIcon(self.resource_path(self.img_smartedge_path)))
         else:
-            icon_close_mycommerce = QIcon(img_mycommerce_path)
-            icon_config = QIcon(img_config_path)
-            icon_about = QIcon(img_about_path)
-            self.setWindowIcon(QIcon(img_smartedge_path))
+            icon_close_mycommerce = QIcon(self.img_mycommerce_path)
+            icon_config = QIcon(self.img_config_path)
+            icon_about = QIcon(self.img_about_path)
+            self.setWindowIcon(QIcon(self.img_smartedge_path))
+            
         self.setWindowTitle("SmartEdge - DataQuest")
         self.resize(500, 500)
         self.setStyleSheet("padding :15px;background-color: #000000;color: #FFFFFF;font-size: 17px; ")
@@ -66,7 +66,6 @@ class MainWindow(BaseWindow):
         self.about_program.setIconSize(QSize(64,64))
         self.about_program.setFixedSize(64,64)
         self.layout_horizontal_config_program.addWidget(self.about_program) 
-        
         
         self.button_reset_users_password = QPushButton("Resetar senha de usuários")
         self.button_reset_users_password.clicked.connect(self.reset_users_password)
@@ -100,7 +99,6 @@ class MainWindow(BaseWindow):
         
         self.button_style_config(self.query_button)
         self.button_style_config(self.button_reset_users_password)
-        # self.button_style_config(self.config_button)
         self.button_style_config(self.button_db_default_config)
         self.button_style_config(self.query_button)
                   
@@ -170,15 +168,6 @@ class MainWindow(BaseWindow):
     def start_config(self):
         self.config_window = ConfigWindow(self)
         self.config_window.show()
-
-
-    def clearLayout(self, layout):
-        while layout.count():
-            child = layout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-            elif child.layout():
-                self.clearLayout(child.layout())  
     
     def get_configs(self):
         json_file = self.file_handler.read_json()
@@ -195,8 +184,6 @@ class MainWindow(BaseWindow):
             self.about_window.close()
             self.about_window.show()
                 
-
-
 if __name__ == "__main__": 
     app = QApplication(sys.argv)
     window = MainWindow()
