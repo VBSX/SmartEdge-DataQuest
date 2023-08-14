@@ -155,9 +155,15 @@ class File():
                 f.write("""{"user": "default", "password": "default", "host": "localhost", "port": "3306", "database": "default"}""")
         return 'sucess'
     
+    def verify_if_images_path_exists(self):
+        if os.path.exists(r'images'):
+            return True
+        else:
+            return False
 if __name__ == '__main__':
     ''
     f = File()
-    f.set_host('10.1.1.220')
-    print(f.username, f.password, f.host, f.port, f.database, f.json_file)
+    print(f.verify_if_images_path_exists())
+    # f.set_host('10.1.1.220')
+    # print(f.username, f.password, f.host, f.port, f.database, f.json_file)
     # f.set_username('root')
