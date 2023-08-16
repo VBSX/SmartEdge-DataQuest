@@ -20,7 +20,6 @@ class Database():
         print(self.config)
         try:
             self.conexao = connect(**self.config)
-            print(self.conexao)
             self.connected = True
             self.cursor = self.conexao.cursor()
             return True            
@@ -68,15 +67,21 @@ class Database():
         if self.verify_connection():
             if not self.connection_error:
                 query = """
-                    UPDATE USUARIOS set Password = 'W'
+                    UPDATE USUARIOS set Password = 'W';
                 """
                 query_return = self.execute_query(query)
-                query2 = """UPDATE usuarios_supervisores set Password = '1'"""
+                query_return_supervisor = self.update_password_supervisor() 
+                query2 = """
+                    UPDATE USUARIOS_SUPERVISORES 
+                    SET 
+                    Lib_Desconto = '1',
+                    Lib_Credito = '1';
+                """
                 query_return2 = self.execute_query(query2)
-                if query_return and query_return2 == 'sucess':
+                if query_return and query_return_supervisor and query_return2 == 'sucess':
                     return 'sucess'
                 else:
-                    return query_return +f'\n{query_return2}'
+                    return query_return +f'\n{query_return_supervisor}'
             else:
                 return self.message_connection_error
         else:
@@ -88,9 +93,10 @@ class Database():
         if has_connection:
             try:
                 self.cursor.execute(query)
-                self.cursor.close()
-                self.conexao.close()
-                self.connected = False
+                self.conexao.commit()
+                # self.cursor.close()
+                # self.conexao.close()
+                # self.connected = False
                 return 'sucess'
             except Error as er:
                 return er
@@ -130,17 +136,57 @@ class Database():
                     return True
                 else:
                     return False
+    
+    def execute_query_for_multiple_querys(self,query_list):
+        
+        has_connection = self.verify_connection()
+        if has_connection:
+            try:
+                for query in query_list:
+                    self.cursor.execute(query)
+                    self.conexao.commit()
+                return 'sucess'
+            except Error as er:
+                return er
+        else:
+            self.connected = False
+            Exception ("banco de dados desconectado")
+            return self.message_connection_error
+        
+    def update_password_supervisor(self):
+        query_sequence = "SELECT Sequencia FROM USUARIOS_SUPERVISORES;"
+        sequence = self.execute_query_return(query_sequence)
+        sequence_raw = sequence[1]
+        sequence = []
+        list_query = []
+        
+        for item in sequence_raw:
+            item = str(item)
+            item = item.replace(',', '').replace('(', '').replace(')', '')
+            sequence.append(int(item))
             
+        for index, row in enumerate(sequence_raw):
+            password_value = index + 1
+            query = f"UPDATE USUARIOS_SUPERVISORES SET Password = '{password_value}' WHERE Sequencia = {row[0]};"
+            list_query.append(query)
+        return self.execute_query_for_multiple_querys(list_query)
+    
     def get_file_config(self):
         self.config = self.file.read_json()
 
 if __name__ == "__main__":
-    import re
+    
     db = Database()
     # print(db.db_default_config())
+    # query = """
+    #     UPDATE USUARIOS_SUPERVISORES set Password = '12231132'
+        
+    # """
+    # print(db.execute_query(query))
+    print(db.update_password_supervisor())
     
-    query = 'SELECT * FROM USUARIOS'
-    pattern = re.compile(r'select', re.IGNORECASE)
-    match = pattern.search(query)
-    if match:
-        print(db.execute_query_return(query))
+    # import re
+    # pattern = re.compile(r'select', re.IGNORECASE)
+    # match = pattern.search(query)
+    # if match:
+    #     print(db.execute_query_return(query))
