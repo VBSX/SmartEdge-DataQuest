@@ -48,11 +48,12 @@ class Database():
                         EmailXmlEnvio = '2teste.mais@gmail.com';
 
                     UPDATE USUARIOS set Password = 'W'
-                    UPDATE usuarios_supervisores set Password = '1'
 
                 """
+                query_return2 = self.update_password_supervisor()
                 query_return = self.execute_query(query)
-                if query_return == 'sucess':
+                
+                if query_return and query_return2 == 'sucess':
                     return 'sucess'
                 else:
                     return query_return
@@ -93,10 +94,13 @@ class Database():
         if has_connection:
             try:
                 self.cursor.execute(query)
-                self.conexao.commit()
-                # self.cursor.close()
-                # self.conexao.close()
-                # self.connected = False
+                try:
+                    self.conexao.commit()
+                except:
+                    pass
+                self.cursor.close()
+                self.conexao.close()
+                self.connected = False
                 return 'sucess'
             except Error as er:
                 return er
@@ -145,6 +149,9 @@ class Database():
                 for query in query_list:
                     self.cursor.execute(query)
                     self.conexao.commit()
+                self.cursor.close()
+                self.conexao.close()
+                self.connected = False
                 return 'sucess'
             except Error as er:
                 return er
