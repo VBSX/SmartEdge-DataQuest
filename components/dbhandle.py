@@ -49,6 +49,7 @@ class Database():
                         EmailXmlEnvio = '2teste.mais@gmail.com';
 
                     UPDATE USUARIOS set Password = 'W'
+                    UPDATE usuarios_supervisores set Password = '1'
 
                 """
                 query_return = self.execute_query(query)
@@ -70,10 +71,12 @@ class Database():
                     UPDATE USUARIOS set Password = 'W'
                 """
                 query_return = self.execute_query(query)
-                if query_return == 'sucess':
+                query2 = """UPDATE usuarios_supervisores set Password = '1'"""
+                query_return2 = self.execute_query(query2)
+                if query_return and query_return2 == 'sucess':
                     return 'sucess'
                 else:
-                    return query_return
+                    return query_return +f'\n{query_return2}'
             else:
                 return self.message_connection_error
         else:
