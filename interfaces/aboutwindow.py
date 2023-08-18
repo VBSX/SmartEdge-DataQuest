@@ -4,10 +4,8 @@ path = os.path.abspath('./')
 sys.path.append(path)
 from interfaces.base_window import BaseWindow
 from PySide6.QtGui import QIcon
-from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QPushButton,QLabel, QVBoxLayout, QWidget, QHBoxLayout
-
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget, QHBoxLayout
 
 class AboutProgramWindow(BaseWindow):
     def __init__(self, parent = None):
