@@ -12,7 +12,7 @@ class AboutProgramWindow(BaseWindow):
         super(AboutProgramWindow, self).__init__(parent)
         self.github_icon_path = r'images/github.png'
         self.oakbox_icon_path = r'images/oakbox.png'
-        self.escape_pressed = self.close_at_esc
+        self.keyPressEvent = self.close_at_esc
         self.setup_ui()
         
     def setup_ui(self):
@@ -28,7 +28,7 @@ class AboutProgramWindow(BaseWindow):
         
         self.visit_websites_button = self.create_button(
             config_style=False,
-            text='Visite Meus Site',
+            text='Visite Meu Site',
             function= lambda: self.open_browser_link(r'https://oakbox.com.br'),
             icon= self.oakbox_icon
             )
@@ -41,8 +41,9 @@ class AboutProgramWindow(BaseWindow):
         self.label_version = QLabel('Versão 1.0')
         self.layout_vertical_version.addWidget(self.label_version, alignment=Qt.AlignmentFlag.AlignCenter)
         
-        self.layout_principal.addWidget(self.visit_websites_button)
-        self.layout_principal.addWidget(self.button_git)
+
+        self.layout_principal.addWidget(self.visit_websites_button, alignment=Qt.AlignCenter)
+        self.layout_principal.addWidget(self.button_git, alignment=Qt.AlignCenter)
         self.layout_principal.addLayout(self.layout_vertical_version)
         
         self.central_widget.setLayout(self.layout_principal)
