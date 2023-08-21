@@ -1,6 +1,5 @@
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QPushButton
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QIcon
 import os
 import sys
 path = os.path.abspath('./')
@@ -39,6 +38,7 @@ class BaseWindow(QMainWindow):
         open_new_tab(
         link
         )
+        
     def show_dialog(self, text):
         QMessageBox.about(self, 'DIALOG', text)
 
@@ -64,6 +64,4 @@ class BaseWindow(QMainWindow):
             else:
                 button.setFixedSize(64,64)
         button.setCursor(Qt.PointingHandCursor)
-        return button
-    
-        
+        return button        
