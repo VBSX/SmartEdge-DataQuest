@@ -6,8 +6,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QWidget,
     QVBoxLayout,
-    QHBoxLayout,
-    QPushButton
+    QHBoxLayout
     )
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLineEdit
@@ -17,26 +16,25 @@ class ConfigWindow(BaseWindow):
     def __init__(self, parent=None):
         super(ConfigWindow,self).__init__(parent)
         self.keyPressEvent = self.close_at_esc
-        self.setup_ui()
-    def setup_ui(self):
-        
-        self.setWindowTitle("Config")
-        self.setFixedSize(430, 410)
-        
         self.user = self.file_handler.username
         self.password = self.file_handler.password
         self.host = self.file_handler.host
         self.port = self.file_handler.port
         self.database = self.file_handler.database
+        self.setup_ui()
         
+    def setup_ui(self):
+        self.setWindowTitle("Config")
+        self.setFixedSize(430, 410)
+
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         self.layout_vertical = QVBoxLayout()
 
         #save button
-        self.button_save = QPushButton('Salvar')
-        self.button_save.clicked.connect(self.save_data)
-        self.button_style_config(self.button_save)
+        self.button_save = self.create_button(
+            text='Salvar',
+            function=self.save_data)
              
         # Field username config
         self.label_username = QLabel('Usuário: ')
@@ -70,8 +68,7 @@ class ConfigWindow(BaseWindow):
             self.line_edit_host.setText(self.host)
         self.line_edit_host.setPlaceholderText('10.1.1.220')
         self.line_edit_host.returnPressed.connect(self.button_save.click)
-        
-        
+
         #field port config
         self.label_port = QLabel('Porta: ')
         self.line_edit_port = QLineEdit()
@@ -104,11 +101,7 @@ class ConfigWindow(BaseWindow):
         
         #absolute window, cant acess the main window ultil the window is closed
         self.setWindowModality(Qt.WindowModal)
-        self.show()   
-    
-    def button_style_config(self, button):
-        button.setStyleSheet("background-color: #FFFFFF;color: #000000;border-radius: 10px;")
-        button.setCursor(Qt.PointingHandCursor)
+        self.show()
     
     def horizontal_layout_set(self, first_item, second_item, third_item, fourth_item):
         layout_horizontal = QHBoxLayout()
@@ -121,7 +114,7 @@ class ConfigWindow(BaseWindow):
             layout_horizontal.addWidget(third_item)
             if fourth_item:
                 layout_horizontal.addWidget(fourth_item)
-        ## add the layout to the vertical layout
+        ## add the layout horizontal to the vertical layout
         self.layout_vertical.addLayout(layout_horizontal)
     
     def get_data_from_json(self):
@@ -133,49 +126,28 @@ class ConfigWindow(BaseWindow):
         host_input = self.line_edit_host.text()
         port_input = self.line_edit_port.text()
         database_input = self.line_edit_database.text()
-        username_not_changed = False
-        password_not_changed = False
-        host_not_changed = False
-        port_not_changed = False
-        database_not_changed = False
-              
         
-        if username_input != self.user:
-            self.file_handler.set_username(username_input)
-        else:
-            username_not_changed = True
-        if password_input != self.password:
-            self.file_handler.set_password(password_input)
-        else:
-            password_not_changed = True
+        if (username_input == self.user and
+            password_input == self.password and
+            host_input == self.host and
+            port_input == self.port and
+            database_input == self.database):
             
-        if host_input != self.host:
-            self.file_handler.set_host(host_input)
-        else:
-            host_not_changed = True
-            
-        if port_input != self.port:
-            self.file_handler.set_port(port_input)
-        else:
-            port_not_changed = True
-            
-        if database_input != self.database:
-            self.file_handler.set_database(database_input)
-        else: 
-            database_not_changed = True
-        
-        if username_not_changed and password_not_changed and host_not_changed and port_not_changed and database_not_changed:
             self.close()
         else:
+            self.file_handler.set_username(username_input)
+            self.file_handler.set_password(password_input)
+            self.file_handler.set_host(host_input)
+            self.file_handler.set_port(port_input)
+            self.file_handler.set_database(database_input)
+            
             return_file = self.file_handler.write_json()
             
             if return_file == 'sucess':
                 self.close()
                 self.parent().reset_layout()
                 self.parent().show_dialog("Configuração realizada com sucesso")
-    
-
-                         
+                       
 if __name__ == "__main__":
     import sys
     from PySide6.QtWidgets import QApplication
