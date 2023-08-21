@@ -30,6 +30,7 @@ class MainWindow(BaseWindow):
         self.img_about_path = r'images/about.png'
         self.img_smartedge_path = r'images/smartedge.png'
         self.img_pin_path = r'images/pin.png'
+        self.is_the_window_fixed = False
         self.setup_ui()
         
     def setup_ui(self):
@@ -113,14 +114,12 @@ class MainWindow(BaseWindow):
         self.setup_ui()
     
     def window_fixed(self):
-        # TODO verificar pq so está deixando a tela fixa e não está desfixando
-        window_fixed = False
-        if not window_fixed:
-            self.setWindowFlags(Qt.WindowStaysOnTopHint)
-            window_fixed = True
+        if not self.is_the_window_fixed:
+            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+            self.is_the_window_fixed = True
         else:
-            self.setWindowFlags(~Qt.WindowStaysOnTopHint)
-            window_fixed = False
+            self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
+            self.is_the_window_fixed = False
         self.show()
      
     def create_all_buttons_of_the_window(self):
