@@ -3,11 +3,14 @@ import sys
 path = os.path.abspath('./')
 sys.path.append(path)
 import json
+from components.ini_handle import IniConfig
 
 class File():
     def __init__(self):
+        self.ini_config = IniConfig()
         self.path_json = r'components/params.json'
         self.json_file = self.read_json()
+        self.init_json_config_align_with_dotini()
         self.username = self.get_username()
         self.password = self.get_password()
         self.host = self.get_host()
@@ -42,7 +45,17 @@ class File():
             with open(self.path_json, 'r') as f:
                 content = json.load(f)
                 return content
-                
+    
+    def init_json_config_align_with_dotini(self):
+            host = self.ini_config.host_ini
+            database = self.ini_config.database_ini
+            port = self.ini_config.port_ini
+            self.set_database(database)
+            self.set_host(host)
+            self.set_port(port)
+            
+            self.write_json()
+               
     def get_username(self):
         if self.verify_if_json_exists():
             if self.json_file['user']:
@@ -98,39 +111,32 @@ class File():
             self.create_json()
     
     def set_username(self, username):
-        if not self.verify_if_json_exists():
-            self.create_json()
-        self.json_file['user'] = username
-        self.write_json()
-        return 'sucess'
+        self.json_setter('user', username)
     
     def set_password(self, password):
-        if not self.verify_if_json_exists():
-            self.create_json()
-        self.json_file['password'] = password
-        self.write_json()
-        return 'sucess'
+        self.json_setter('password', password)
     
     def set_host(self, host):
-        if not self.verify_if_json_exists():
-            self.create_json()
-        self.json_file['host'] = host
-        self.write_json()
-        return 'sucess'
+        self.json_setter('host', host)
             
     def set_port(self, port):
-        if not self.verify_if_json_exists():
-            self.create_json()
-        self.json_file['port'] = port
-        self.write_json()
-        return 'sucess'
+        self.json_setter('port', port)
     
     def set_database(self, database):
+        self.json_setter('database', database)
+
+    def json_setter(self, key, value):
         if not self.verify_if_json_exists():
             self.create_json()
-            
-        self.json_file['database'] = database
+        self.json_file[key] = value
         self.write_json()
+        
+        if key == 'host':
+            key = 'IPServidor'
+        elif key == 'port':
+            key = 'PortaServidor'
+        if key != 'user' and key != 'password':
+            self.ini_config.config_att_value(key, value)
         return 'sucess'
 
     def write_json(self):
@@ -160,8 +166,9 @@ class File():
             return True
         else:
             return False
+        
 if __name__ == '__main__':
-    ''
+
     f = File()
     print(f.verify_if_images_path_exists())
     # f.set_host('10.1.1.220')

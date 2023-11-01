@@ -6,7 +6,8 @@ from PySide6.QtWidgets import (
     QLabel,
     QWidget,
     QVBoxLayout,
-    QHBoxLayout
+    QHBoxLayout,
+    QComboBox
     )
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLineEdit
@@ -61,14 +62,14 @@ class ConfigWindow(BaseWindow):
         
         #field host config
         self.label_host = QLabel('Host: ')
-        self.line_edit_host = QLineEdit()
+        self.combobox_host = QComboBox()
         if self.host == '':
-            self.line_edit_host.setPlaceholderText('10.1.1.220')
+            self.combobox_host.addItems(['10.1.1.220', 'localhost'])
+        elif self.host == 'localhost':
+            self.combobox_host.addItems(['localhost', '10.1.1.220'])
         else:
-            self.line_edit_host.setText(self.host)
-        self.line_edit_host.setPlaceholderText('10.1.1.220')
-        self.line_edit_host.returnPressed.connect(self.button_save.click)
-
+            self.combobox_host.addItems([self.host, 'localhost'])
+        
         #field port config
         self.label_port = QLabel('Porta: ')
         self.line_edit_port = QLineEdit()
@@ -81,7 +82,7 @@ class ConfigWindow(BaseWindow):
         self.line_edit_port.returnPressed.connect(self.button_save.click)
         
         # config of host and port itens on same line
-        self.horizontal_layout_set(self.label_host, self.line_edit_host,self.label_port, self.line_edit_port)
+        self.horizontal_layout_set(self.label_host, self.combobox_host,self.label_port, self.line_edit_port)
         
         #field database config
         self.label_database = QLabel('Nome do Banco: ')
@@ -123,7 +124,7 @@ class ConfigWindow(BaseWindow):
     def save_data(self):
         username_input = self.line_edit_username.text()
         password_input = self.line_edit_password.text()
-        host_input = self.line_edit_host.text()
+        host_input = self.combobox_host.currentText()
         port_input = self.line_edit_port.text()
         database_input = self.line_edit_database.text()
         

@@ -19,7 +19,7 @@ from interfaces.configwindow import ConfigWindow
 from components.os_handle import OsHandler
 from interfaces.base_window import BaseWindow
 from interfaces.aboutwindow import  AboutProgramWindow
-
+from components.last_version_finder import LatestVersion
 class MainWindow(BaseWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -30,6 +30,7 @@ class MainWindow(BaseWindow):
         self.img_about_path = r'images/about.png'
         self.img_smartedge_path = r'images/smartedge.png'
         self.img_pin_path = r'images/pin.png'
+        self.img_att_path = r'images/att_db.png'
         self.is_the_window_fixed = False
         self.setup_ui()
         
@@ -37,31 +38,62 @@ class MainWindow(BaseWindow):
         self.config_imgs()
         self.setWindowTitle("SmartEdge - DataQuest")
         self.resize(500, 500)
-        self.setStyleSheet("padding :15px;background-color: #000000;color: #FFFFFF;font-size: 17px; ")
+        default_style = """
+        QWidget {
+            padding: 15px;
+            background-color: #000000;
+            color: #FFFFFF;
+            font-size: 17px;
+        }
+
+        QComboBox ,QComboBox QAbstractItemView, QLineEdit {
+            border:2px solid white;
+            border-radius: 3px;
+        }
+
+        """
+        self.setStyleSheet(default_style)
         
         self.get_configs()
+        self.create_all_buttons_of_the_window()
+        self.create_all_labels_of_the_window()
+        
+        self.layout_horizontal_buttons_sql = QHBoxLayout()
+        self.layout_horizontal_buttons_sql.addWidget(self.button_db_default_config)
+        self.layout_horizontal_buttons_sql.addWidget(self.button_reset_users_password)
+        self.layout_horizontal_buttons_sql.addWidget(self.query_button)
+        
+        self.layout_horizontal_top_tools = QHBoxLayout()
         
         self.layout_horizontal_config_program = QHBoxLayout()
         self.layout_horizontal_close_programs = QHBoxLayout()
         
-        self.create_all_buttons_of_the_window()
+
+        self.layout_horizontal_top_tools.addWidget(self.button_pin)
+        self.layout_horizontal_top_tools.addWidget(self.button_att_db)
         self.layout_horizontal_config_program.addWidget(self.config_button)
         self.layout_horizontal_config_program.addWidget(self.button_about_program) 
-        
-        self.label_close_programs = QLabel()
-        self.label_close_programs.setText("Fechar programas")
 
         self.layout_horizontal_close_programs.addWidget(self.label_close_programs)
         self.layout_horizontal_close_programs.addWidget(self.button_close_mycommerce)
         
-        self.spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.spacer = QSpacerItem(20,50)
 
-        self.create_all_labels_of_the_widow()
-        
         self.layout_horizontal_database_info = QHBoxLayout()
         self.layout_horizontal_database_info.addWidget(self.host_label)
         self.layout_horizontal_database_info.addWidget(self.port_label)
         self.layout_horizontal_database_info.addWidget(self.database_label) 
+        
+        self.layout_horizontal_downloads = QHBoxLayout()
+        self.layout_horizontal_downloads.addWidget(self.label_last_build_version)
+        self.layout_horizontal_downloads.addWidget(
+            self.download_last_build_version_button)
+        
+        self.layout_horizontal_downloads.addWidget(self.label_last_release_version)
+        self.layout_horizontal_downloads.addWidget(
+            self.download_last_release_version_button)
+        
+
         self.layout_config()
     
     def config_imgs(self):
@@ -71,22 +103,23 @@ class MainWindow(BaseWindow):
             self.icon_config = QIcon(self.resource_path(self.img_config_path))
             self.icon_about = QIcon(self.resource_path(self.img_about_path))
             self.icon_pin = QIcon(self.resource_path(self.img_pin_path))
+            self.icon_att_db = QIcon(self.resource_path(self.img_att_path))
             self.setWindowIcon(QIcon(self.resource_path(self.img_smartedge_path)))
         else:
             self.icon_close_mycommerce = QIcon(self.img_mycommerce_path)
             self.icon_config = QIcon(self.img_config_path)
             self.icon_about = QIcon(self.img_about_path)
             self.icon_pin = QIcon(self.img_pin_path)
+            self.icon_att_db = QIcon(self.img_att_path)
             self.setWindowIcon(QIcon(self.img_smartedge_path))
           
     def layout_config(self):
         list_of_widgets = [
-            self.button_pin,
-            self.button_db_default_config,
-            self.button_reset_users_password,
-            self.spacer,
+            self.layout_horizontal_top_tools,
+            self.layout_horizontal_buttons_sql,
             self.layout_horizontal_close_programs,
-            self.query_button,
+            self.spacer,
+            self.layout_horizontal_downloads,
             self.spacer,
             self.layout_horizontal_config_program,
             self.layout_horizontal_database_info
@@ -132,8 +165,15 @@ class MainWindow(BaseWindow):
             )
         self.button_pin.setFixedSize(32,32)
         #
+        self.button_att_db = self.create_button(
+            config_style=False,
+            function=self.att_db_open,
+            icon=self.icon_att_db,
+            icon_size = 32)
+        self.button_att_db.setFixedSize(32,32)
+        #
         self.button_db_default_config = self.create_button(
-            text="Configuração padrão DB",
+            text="Configuração DB padrão",
             function=self.update_db
             )
         self.config_button = self.create_button(
@@ -150,7 +190,7 @@ class MainWindow(BaseWindow):
             )
         #
         self.button_reset_users_password = self.create_button(
-            text="Resetar senha de usuários",
+            text="Resetar senha dos usuários",
             function=self.reset_users_password
             )
         #
@@ -164,6 +204,14 @@ class MainWindow(BaseWindow):
             text="Iniciar uma Query",
             function=self.start_query
             )
+        self.download_last_build_version_button = self.create_button(
+            text="Baixar última Build",
+            function=self.download_last_build_version
+        )
+        self.download_last_release_version_button = self.create_button(
+            text="Baixar última Release",
+            function=self.download_last_release_version
+        )
              
     def update_db(self):
         # TODO
@@ -202,6 +250,7 @@ class MainWindow(BaseWindow):
         self.config_window.show()
     
     def get_configs(self):
+        self.file_handler.__init__()
         json_file = self.file_handler.read_json()
         self.host = json_file['host']
         self.port = json_file['port']
@@ -220,12 +269,34 @@ class MainWindow(BaseWindow):
         label = QLabel(text)
         return label
 
-    def create_all_labels_of_the_widow(self):
+    def create_all_labels_of_the_window(self):
         self.host_label = self.create_label(f"Host: {self.host}")
         
         self.port_label = self.create_label(f"Porta: {self.port}")
         
         self.database_label = self.create_label(f"Database: {self.database}")
+        
+        self.label_close_programs = self.create_label("Fechar programas")
+        
+        self.label_last_build_version = self.create_label(f"Última Build: {LatestVersion().latest_build_version_text()}")
+        
+        self.label_last_release_version = self.create_label(f"Última Release: {LatestVersion().latest_release_version_text()}")
+
+    def att_db_open(self):
+        self.get_configs()
+        os.startfile("C:\Visual Software\MyCommerce\AtualizarDB.exe")
+        self.reset_layout()
+    
+    def download_last_build_version(self):
+        self.reset_layout()
+        LatestVersion().download_latest_build()
+        self.show_dialog('Arquivo enviado a pasta Download')
+        
+    
+    def download_last_release_version(self):
+        self.reset_layout()
+        LatestVersion().download_latest_release() 
+        self.show_dialog('Arquivo enviado a pasta Download')
         
 if __name__ == "__main__": 
     app = QApplication(sys.argv)
