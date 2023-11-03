@@ -87,8 +87,9 @@ class ConfigWindow(BaseWindow):
         #field database config
         self.label_database = QLabel('Nome do Banco: ')
         self.line_edit_database = QLineEdit()
-        if not self.database:
-            self.line_edit_database.setText('db_name')
+        if not self.database or self.database =='None':
+            self.line_edit_database.setText('')
+            self.line_edit_database.setPlaceholderText('db_name')
         else:
             self.line_edit_database.setText(self.database)
         self.line_edit_database.setPlaceholderText('db_name')
