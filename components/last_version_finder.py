@@ -1,4 +1,5 @@
 import os
+from components.os_handle import OsHandler
 class LatestVersion():
     def __init__(self):
         self.path = r'\\10.1.1.110\\arquivos\\atualizacoes\\MyCommerce'
@@ -27,16 +28,7 @@ class LatestVersion():
         return text
     
     def download_file(self, file_name):
-        # copy file to downloads folder
-        d = os.path.join(os.path.expanduser('~'), 'Downloads')
-        download_folder = f""" "{d}" """
-        print(download_folder)
-        path = f""" "{self.path}\\{file_name}" """
-        print(path)
-        command = f'copy {path} {download_folder}'
-        print(command)
-        os.system(command)
-
+        OsHandler().download_version(self.path, file_name)
         return 'sucess'
     
     def download_latest_build(self):

@@ -8,11 +8,11 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QSpacerItem,
-    QSizePolicy,
     QHBoxLayout,
+    QProgressDialog,
 )
 import sys
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QThread,Signal
 from PySide6.QtGui import QIcon
 from interfaces.query_run_window import QueryWindow
 from interfaces.configwindow import ConfigWindow
@@ -20,6 +20,8 @@ from components.os_handle import OsHandler
 from interfaces.base_window import BaseWindow
 from interfaces.aboutwindow import  AboutProgramWindow
 from components.last_version_finder import LatestVersion
+from components.os_handle import OsHandler
+
 class MainWindow(BaseWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -35,9 +37,9 @@ class MainWindow(BaseWindow):
         self.setup_ui()
         
     def setup_ui(self):
+        
         self.config_imgs()
         self.setWindowTitle("SmartEdge - DataQuest")
-        self.resize(500, 500)
         default_style = """
         QWidget {
             padding: 15px;
@@ -53,7 +55,6 @@ class MainWindow(BaseWindow):
 
         """
         self.setStyleSheet(default_style)
-        
         self.get_configs()
         self.create_all_buttons_of_the_window()
         self.create_all_labels_of_the_window()
@@ -93,8 +94,8 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_downloads.addWidget(
             self.download_last_release_version_button)
         
-
         self.layout_config()
+        OsHandler()
     
     def config_imgs(self):
         has_image_folder = self.file_handler.verify_if_images_path_exists()
@@ -288,15 +289,49 @@ class MainWindow(BaseWindow):
         self.reset_layout()
     
     def download_last_build_version(self):
-        self.reset_layout()
-        LatestVersion().download_latest_build()
-        self.show_dialog('Arquivo enviado a pasta Download')
+        self.download_version(
+            "Baixando a última Build", is_build=True)
         
-    
     def download_last_release_version(self):
+        self.download_version(
+            "Baixando a última Release...", is_build=False)
+
+    def download_version(self, text, is_build):
+        self.progress_dialog = QProgressDialog(self)
+        self.progress_dialog.setWindowModality(Qt.WindowModal)
+        self.progress_dialog.setWindowTitle("Download")
+        self.progress_dialog.setLabelText(text)
+        self.progress_dialog.setRange(0, 0)
+        
+        self.download_thread = DownloadThread(is_build)
+        self.download_thread.download_finished.connect(self.download_finished)
+        self.download_thread.start()
         self.reset_layout()
-        LatestVersion().download_latest_release() 
-        self.show_dialog('Arquivo enviado a pasta Download')
+        
+        if is_build:
+            self.download_last_release_version_button.setEnabled(False)
+            self.download_last_release_version_button.setEnabled(True)  
+        else:
+            self.download_last_release_version_button.setEnabled(False)
+            self.download_last_release_version_button.setEnabled(True)  
+            
+    def download_finished(self):
+        self.progress_dialog.cancel()  
+        self.show_dialog('Arquivo enviado para a pasta de downloads')
+        
+class DownloadThread(QThread):
+    download_finished = Signal()
+
+    def __init__(self, is_build):
+        super().__init__()
+        self.is_build = is_build
+
+    def run(self):
+        if self.is_build:
+            LatestVersion().download_latest_build()
+        else:
+            LatestVersion().download_latest_release()
+        self.download_finished.emit()
         
 if __name__ == "__main__": 
     app = QApplication(sys.argv)
