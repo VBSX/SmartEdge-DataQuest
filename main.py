@@ -34,6 +34,7 @@ class MainWindow(BaseWindow):
         self.img_pin_path = r'images/pin.png'
         self.img_att_path = r'images/att_db.png'
         self.is_the_window_fixed = False
+
         self.setup_ui()
         
     def setup_ui(self):
@@ -218,6 +219,7 @@ class MainWindow(BaseWindow):
         # TODO
         # quando inicia com a porta do banco errada ele so diz
         # que o banco esta desconectado
+        self.get_configs()
         if self.file_handler.verify_if_json_exists():
             query_return = self.db.db_default_config()
             if query_return == 'sucess':
@@ -226,25 +228,30 @@ class MainWindow(BaseWindow):
                 self.show_dialog(str(query_return))
         else:
             self.show_dialog("Configuração ainda não realizada")
+        self.reset_layout()
     
     def reset_users_password(self):
+
         query_return = self.db.reset_users_password()
         if query_return == 'sucess':
             self.show_dialog("Senhas resetadas com sucesso")
         else:
             self.show_dialog(str(query_return))
+        self.reset_layout()
     
     def mycommerce_close(self):
         process = OsHandler().kill_mycommerce_process()
         self.show_dialog(str(process))
         
     def start_query(self):
+        self.get_configs()
         has_connection = self.db.start_connection()
         if has_connection:
             self.query_window = QueryWindow(self)
             self.query_window.show()
         else:
             self.show_dialog(str(self.db.message_connection_error))
+        self.reset_layout()
             
     def start_config(self):
         self.config_window = ConfigWindow(self)
@@ -316,8 +323,11 @@ class MainWindow(BaseWindow):
             self.download_last_release_version_button.setEnabled(True)  
             
     def download_finished(self):
-        self.progress_dialog.cancel()  
-        self.show_dialog('Arquivo enviado para a pasta de downloads')
+        self.progress_dialog.cancel()
+        if LatestVersion().latest_build_version_text() != 'SemBuild':
+            self.show_dialog('Arquivo enviado para a pasta de downloads')
+        else:
+            self.show_dialog('Não há build para baixar')
         
 class DownloadThread(QThread):
     download_finished = Signal()
