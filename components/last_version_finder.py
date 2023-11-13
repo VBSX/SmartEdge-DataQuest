@@ -12,7 +12,10 @@ class LatestVersion():
         all_archives = os.listdir(self.path)
         # find by .exe files
         archives = [archive for archive in all_archives if archive.endswith('0.exe') if not archive.endswith('MyCommerce_Full.exe')]
-        return archives[0]
+        if len(archives) >1:
+            return archives[-1]
+        elif len(archives) == 1:
+            return archives[0]
     
     def latest_release_version_text(self):
         return self.text_strip(self.latest_release_version())
@@ -51,7 +54,6 @@ class LatestVersion():
         return self.download_file(self.latest_release_version())
     
 if __name__ == '__main__':
-    print(LatestVersion().latest_release_version_text())
-    print(LatestVersion().latest_build_version_text())
-    print(LatestVersion().download_latest_build())
+    print(LatestVersion().latest_release_version())
+    
 
