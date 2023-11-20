@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QMainWindow, QMessageBox, QPushButton
+from PySide6.QtWidgets import QMainWindow, QMessageBox, QPushButton,QCheckBox, QLabel, QLineEdit
 from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QDoubleValidator
 import os
 import sys
 path = os.path.abspath('./')
@@ -65,3 +66,27 @@ class BaseWindow(QMainWindow):
                 button.setFixedSize(64,64)
         button.setCursor(Qt.PointingHandCursor)
         return button        
+    
+    def create_checkbox(self, text):
+        checkbox = QCheckBox()
+        # Deixa o checkbox ja marcado:
+        checkbox.setChecked(True)
+        checkbox.setCursor(Qt.PointingHandCursor)
+        checkbox.setText(text)
+        return checkbox
+
+    def create_label(self, text):
+        label = QLabel(text)
+        return label
+    
+    def create_line_edit(self, placeholder):
+        line_edit = QLineEdit()
+        line_edit.setPlaceholderText(placeholder)
+        # Definindo o validador para aceitar apenas números e o formato desejado
+        validator = QDoubleValidator(self)
+        validator.setBottom(0)  # Defina os valores mínimo e máximo conforme necessário
+        line_edit.setValidator(validator)
+        
+        # Configurando a máscara
+        line_edit.setInputMask("00.00.00.0000")
+        return line_edit

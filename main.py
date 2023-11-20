@@ -64,6 +64,7 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_buttons_sql.addWidget(self.button_db_default_config)
         self.layout_horizontal_buttons_sql.addWidget(self.button_reset_users_password)
         self.layout_horizontal_buttons_sql.addWidget(self.query_button)
+        self.layout_horizontal_buttons_sql.addWidget(self.button_release_the_version)
         
         self.layout_horizontal_top_tools = QHBoxLayout()
         
@@ -73,6 +74,8 @@ class MainWindow(BaseWindow):
 
         self.layout_horizontal_top_tools.addWidget(self.button_pin)
         self.layout_horizontal_top_tools.addWidget(self.button_att_db)
+        
+        
         self.layout_horizontal_config_program.addWidget(self.config_button)
         self.layout_horizontal_config_program.addWidget(self.button_about_program) 
 
@@ -214,11 +217,12 @@ class MainWindow(BaseWindow):
             text="Baixar última Release",
             function=self.download_last_release_version
         )
+        self.button_release_the_version = self.create_button(
+            text="Liberar a versão",
+            function=self.release_the_version
+        )
              
     def update_db(self):
-        # TODO
-        # quando inicia com a porta do banco errada ele so diz
-        # que o banco esta desconectado
         self.get_configs()
         if self.file_handler.verify_if_json_exists():
             query_return = self.db.db_default_config()
@@ -273,9 +277,6 @@ class MainWindow(BaseWindow):
             self.about_window.close()
             self.about_window.show()
     
-    def create_label(self, text):
-        label = QLabel(text)
-        return label
 
     def create_all_labels_of_the_window(self):
         self.host_label = self.create_label(f"Host: {self.host}")
@@ -328,6 +329,9 @@ class MainWindow(BaseWindow):
             self.show_dialog('Arquivo enviado para a pasta de downloads')
         else:
             self.show_dialog('Não há build para baixar')
+
+    def release_the_version(self):
+        pass
         
 class DownloadThread(QThread):
     download_finished = Signal()
