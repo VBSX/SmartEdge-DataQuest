@@ -100,6 +100,7 @@ class VersionReleaseInterface(BaseWindow):
             placeholder="versão do MyLocação"
         )
         self.horizontal_layout_mylocacao.addWidget(self.line_edit_mylocacao_version)
+
         
         self.line_edit_mypet = self.create_line_edit(
             placeholder="versão do MyPet"
@@ -115,6 +116,37 @@ class VersionReleaseInterface(BaseWindow):
             placeholder="versão do VsIntegracao"
         )
         self.horizontal_layout_vsintegracao.addWidget(self.line_edit_vsintegracao)
+        
+        # passa para o proximo line_edit quando o usuario pressionar enter
+        self.line_edit_return_pressed(self.line_edit_mylocacao_version, self.line_edit_mypet)
+        self.line_edit_return_pressed(self.line_edit_mypet, self.line_edit_myzap)
+        self.line_edit_return_pressed(self.line_edit_myzap, self.line_edit_vsintegracao)
+        self.line_edit_return_pressed(self.line_edit_vsintegracao, self.line_edit_mylocacao_version)
+
+    def line_edit_return_pressed(self, line_edit, next_focus):
+        line_edit.returnPressed.connect(lambda: self.process_input(line_edit))
+        line_edit.returnPressed.connect(lambda:next_focus.setFocus())
+        
+        print(next_focus)
+        
+    def process_input(self,line_edit ):
+        current_text = line_edit.text()
+        print(current_text)
+        if current_text != '...':
+            # Adicionando zeros à esquerda conforme necessário
+            parts = current_text.split('.')
+            formatted_parts = []
+            i = 1
+            for part in parts:
+                if i < 4:
+                    part = part.zfill(2)  
+                elif i == 4:
+                    part = part.zfill(4)
+                formatted_parts.append(part)
+                i += 1
+
+            formatted_text = '.'.join(formatted_parts)
+            line_edit.setText(formatted_text)
         
     def create_layouts(self, widget_list):
        
