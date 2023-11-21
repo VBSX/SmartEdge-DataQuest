@@ -4,9 +4,12 @@ from PySide6.QtWidgets import (
     QPushButton,
     QCheckBox,
     QLabel,
-    QLineEdit
+    QLineEdit,
+    QTextEdit
     )
 from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QTextOption
+import pyperclip
 import os
 import sys
 path = os.path.abspath('./')
@@ -73,10 +76,13 @@ class BaseWindow(QMainWindow):
         button.setCursor(Qt.PointingHandCursor)
         return button        
     
-    def create_checkbox(self, text):
+    def create_checkbox(self, text, marked = True):
         checkbox = QCheckBox()
         # Deixa o checkbox ja marcado:
-        checkbox.setChecked(True)
+        if marked:
+            checkbox.setChecked(True)
+        else:
+            checkbox.setChecked(False)
         checkbox.setCursor(Qt.PointingHandCursor)
         checkbox.setText(text)
         return checkbox
@@ -85,10 +91,25 @@ class BaseWindow(QMainWindow):
         label = QLabel(text)
         return label
     
-    def create_line_edit(self, placeholder):
+    def create_line_edit(self, placeholder, mask = True, fixed_size =True):
         line_edit = QLineEdit()
         line_edit.setPlaceholderText(placeholder)
 
-        # Configurando a máscara
-        line_edit.setInputMask("00.00.00.0000")
+        if mask:
+            # Configurando a máscara
+            line_edit.setInputMask("00.00.00.0000")
+        
+        if fixed_size:
+            line_edit.setFixedSize(140,53)
         return line_edit
+    
+    def create_text_edit(self, placeholder):
+        text_edit = QTextEdit()
+        text_edit.setPlaceholderText(placeholder)
+        text_edit.setWordWrapMode(QTextOption.WrapAtWordBoundaryOrAnywhere)
+        return text_edit
+    
+    def copy_to_clipboard(self, text):
+        pyperclip.copy(text)
+        # spam = pyperclip.paste()
+

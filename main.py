@@ -4,7 +4,6 @@ path = os.path.abspath('./')
 sys.path.append(path)
 from PySide6.QtWidgets import (
     QApplication,
-    QLabel,
     QVBoxLayout,
     QWidget,
     QSpacerItem,
@@ -21,6 +20,7 @@ from interfaces.base_window import BaseWindow
 from interfaces.aboutwindow import  AboutProgramWindow
 from components.last_version_finder import LatestVersion
 from components.os_handle import OsHandler
+from interfaces.interface_version_releaser import VersionReleaseInterface
 
 class MainWindow(BaseWindow):
     def __init__(self, parent=None):
@@ -38,7 +38,6 @@ class MainWindow(BaseWindow):
         self.setup_ui()
         
     def setup_ui(self):
-        
         self.config_imgs()
         self.setWindowTitle("SmartEdge - DataQuest")
         default_style = """
@@ -331,7 +330,8 @@ class MainWindow(BaseWindow):
             self.show_dialog('Não há build para baixar')
 
     def release_the_version(self):
-        pass
+        interface_version_relelaser = VersionReleaseInterface(self)
+        interface_version_relelaser.show()
         
 class DownloadThread(QThread):
     download_finished = Signal()
