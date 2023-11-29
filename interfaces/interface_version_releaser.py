@@ -3,7 +3,6 @@ import sys
 path = os.path.abspath('./')
 sys.path.append(path)
 from interfaces.base_window import BaseWindow
-from pywinauto import application
 from PySide6.QtCore import Qt
 from components.last_version_finder import LatestVersion
 from PySide6.QtWidgets import (
@@ -241,7 +240,7 @@ class VersionReleaseInterface(BaseWindow):
                 message_mycommerce_pdv = f'\nCompatível com a versão [b]{mycommerce_pdv}[/b] do [b]MyCommerce PDV[/b].'
         else:
             message_mycommerce_pdv = '\n[b]Não compatível[/b] com o [b]MyCommerce PDV[/b].'
-        if message_mycommerce_pdv:
+        if message_mycommerce_pdv:  
             list_messages.append(message_mycommerce_pdv)
         
         #mylocacao  
@@ -274,9 +273,9 @@ class VersionReleaseInterface(BaseWindow):
         #vsintegracao
         if self.checkbox_compativel_vsintegracao.isChecked():
             if vsintegracao != '...':
-                message_vsintegracao = f'\nCompatível com a versão [b]{vsintegracao}[/b] do [b]VsIntegracao[/b].'
+                message_vsintegracao = f'\nCompatível com a versão [b]{vsintegracao}[/b] do [b]VsIntegrações[/b].'
         else:
-            message_vsintegracao = '\n[b]Não compatível[/b] com o [b]VsIntegracao[/b].'
+            message_vsintegracao = '\n[b]Não compatível[/b] com o [b]VsIntegrações[/b].'
         if message_vsintegracao:
             list_messages.append(message_vsintegracao)
         
@@ -292,10 +291,11 @@ class VersionReleaseInterface(BaseWindow):
         if show_dialog:  
             self.copy_to_clipboard(str(final_message))
             self.show_dialog('Mensagem copiada para a área de transferência: \n'+ final_message)
-        try:
-            return final_message
-        except:
-            print('sem mensagem final')
+        else:
+            try:
+                return final_message
+            except:
+                print('sem mensagem final')
 
     def resize_text_edit(self, text_edit):
         # # TODO
@@ -321,6 +321,7 @@ class VersionReleaseInterface(BaseWindow):
             if initial_message:
                 if message_compatibilities is not None:
                     parts_of_text = initial_message.split('MyCommerce PDV[/b].')
+                    print(parts_of_text, '\n\n\n',parts_of_text[0])
                     parts_of_text[0] += 'MyCommerce PDV[/b]'
                     parts_of_text[0] += message_compatibilities
                     final_message = ''.join(parts_of_text)

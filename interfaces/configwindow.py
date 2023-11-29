@@ -46,6 +46,7 @@ class ConfigWindow(BaseWindow):
             self.line_edit_username.setText(self.user)
         self.line_edit_username.setPlaceholderText('root')
         self.line_edit_username.returnPressed.connect(self.button_save.click)
+        self.line_edit_username.setMaxLength(20)
         
         ## Set the layout of the label and the line edit in the same line
         self.horizontal_layout_set(self.label_username, self.line_edit_username, None, None)
@@ -58,6 +59,7 @@ class ConfigWindow(BaseWindow):
         self.line_edit_password.setPlaceholderText('****')
         self.line_edit_password.setText(self.password)
         self.line_edit_password.setEchoMode(QLineEdit.Password)
+        self.line_edit_password.setMaxLength(35)
         self.horizontal_layout_set(self.label_password, self.line_edit_password, None, None)
         
         #field host config
@@ -73,6 +75,8 @@ class ConfigWindow(BaseWindow):
         #field port config
         self.label_port = QLabel('Porta: ')
         self.line_edit_port = QLineEdit()
+        self.line_edit_port.setMaxLength(4)
+        
         if not self.port:
             self.line_edit_port.setText('3306')
         else: 
@@ -94,6 +98,7 @@ class ConfigWindow(BaseWindow):
             self.line_edit_database.setText(self.database)
         self.line_edit_database.setPlaceholderText('db_name')
         self.line_edit_database.returnPressed.connect(self.button_save.click)
+        self.line_edit_database.setMaxLength(20)
         
         self.horizontal_layout_set(self.label_database, self.line_edit_database, None, None)
         

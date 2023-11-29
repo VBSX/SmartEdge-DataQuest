@@ -55,6 +55,6 @@ class LatestVersion():
 
     
 if __name__ == '__main__':
-    print(LatestVersion().latest_release_version())
+    print(LatestVersion().latest_build_version_text())
     
 

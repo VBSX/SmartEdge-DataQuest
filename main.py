@@ -27,6 +27,9 @@ class MainWindow(BaseWindow):
         super(MainWindow, self).__init__(parent)
         self.config_window = None
         self.about_window_is_open = False
+        self.interface_version_relelaser_is_open = False
+        self.interface_query_window_is_open = False
+        
         self.img_mycommerce_path = r'images/mycommerce.png'
         self.img_config_path = r'images/config.png'
         self.img_about_path = r'images/about.png'
@@ -247,14 +250,20 @@ class MainWindow(BaseWindow):
         self.show_dialog(str(process))
         
     def start_query(self):
-        self.get_configs()
-        has_connection = self.db.start_connection()
-        if has_connection:
-            self.query_window = QueryWindow(self)
+        if not self.interface_query_window_is_open:
+            self.get_configs()
+            has_connection = self.db.start_connection()
+            if has_connection:
+                self.query_window = QueryWindow(self)
+                self.query_window.show()
+            else:
+                self.show_dialog(str(self.db.message_connection_error))
+            self.reset_layout()
+            self.interface_query_window_is_open = True
+        else:  
             self.query_window.show()
-        else:
-            self.show_dialog(str(self.db.message_connection_error))
-        self.reset_layout()
+    
+
             
     def start_config(self):
         self.config_window = ConfigWindow(self)
@@ -287,9 +296,11 @@ class MainWindow(BaseWindow):
         self.label_close_programs = self.create_label("Fechar programas")
         
         self.label_last_build_version = self.create_label(f"Última Build: {LatestVersion().latest_build_version_text()}")
+        # self.label_last_build_version.mouseDoubleClickEvent.connect(lambda: self.copy_to_clipboard(LatestVersion().latest_build_version_text()))
         
         self.label_last_release_version = self.create_label(f"Última Release: {LatestVersion().latest_release_version_text()}")
-
+        # self.label_last_release_version.clicked.connect(lambda: self.copy_to_clipboard(LatestVersion().latest_release_version_text()))
+    
     def att_db_open(self):
         self.get_configs()
         os.startfile("C:\Visual Software\MyCommerce\AtualizarDB.exe")
@@ -330,9 +341,13 @@ class MainWindow(BaseWindow):
             self.show_dialog('Não há build para baixar')
 
     def release_the_version(self):
-        interface_version_relelaser = VersionReleaseInterface(self)
-        interface_version_relelaser.show()
-        
+        if not self.interface_version_relelaser_is_open:
+            self.interface_version_relelaser = VersionReleaseInterface(self)
+            self.interface_version_relelaser.show()
+            self.interface_version_relelaser_is_open = True
+        else:
+            self.interface_version_relelaser.show()
+    
 class DownloadThread(QThread):
     download_finished = Signal()
 
