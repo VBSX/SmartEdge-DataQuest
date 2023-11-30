@@ -110,6 +110,42 @@ class File():
         else:
             self.create_json()
     
+    def get_bitrix_user(self):
+        if self.verify_if_json_exists():
+            if self.json_file['bitrix_user']:
+                return self.json_file['bitrix_user']
+            else:
+                return 'None'
+        else:
+            self.create_json()
+    
+    def get_bitrix_password(self):
+        if self.verify_if_json_exists():
+            if self.json_file['bitrix_password']:
+                return self.json_file['bitrix_password']
+            else:
+                return 'None'
+        else:
+            self.create_json()
+    
+    def get_forum_user(self):
+        if self.verify_if_json_exists():
+            if self.json_file['forum_user']:
+                return self.json_file['forum_user']
+            else:
+                return 'None'
+        else:
+            self.create_json()
+    
+    def get_forum_password(self):
+        if self.verify_if_json_exists():
+            if self.json_file['forum_password']:
+                return self.json_file['forum_password']
+            else:
+                return 'None'
+        else:
+            self.create_json()
+    
     def set_username(self, username):
         self.json_setter('user', username)
     
@@ -125,6 +161,18 @@ class File():
     def set_database(self, database):
         self.json_setter('database', database)
 
+    def set_bitrix_user(self, bitrix_user):
+        self.json_setter('bitrix_user', bitrix_user)
+    
+    def set_bitrix_password(self, bitrix_password):
+        self.json_setter('bitrix_password', bitrix_password)
+        
+    def set_forum_user(self, forum_user):
+        self.json_setter('forum_user', forum_user)
+    
+    def set_forum_password(self, forum_password):
+        self.json_setter('forum_password', forum_password)    
+    
     def json_setter(self, key, value):
         if not self.verify_if_json_exists():
             self.create_json()
@@ -158,7 +206,17 @@ class File():
     def create_defaut_json(self):
         if not self.verify_if_json_exists():
             with open(self.path_json, 'w') as f:
-                f.write("""{"user": "default", "password": "default", "host": "localhost", "port": "3306", "database": "default"}""")
+                f.write(
+                    """{"user": "default",
+                    "password": "default",
+                    "host": "localhost",
+                    "port": "3306",
+                    "database": "default",
+                    "bitrix_user":"default",
+                    "bitrix_password":"default",
+                    "forum_user":"default",
+                    "forum_password":"default"
+                    }""")
         return 'sucess'
     
     def verify_if_images_path_exists(self):

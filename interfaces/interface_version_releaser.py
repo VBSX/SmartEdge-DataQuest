@@ -4,7 +4,10 @@ path = os.path.abspath('./')
 sys.path.append(path)
 from interfaces.base_window import BaseWindow
 from PySide6.QtCore import Qt
+from interfaces.credentials_window import DialogCredentialsPosts
 from components.last_version_finder import LatestVersion
+from components.automation_windows.create_post import BrowserController
+
 from PySide6.QtWidgets import (
     QApplication,
     QVBoxLayout,
@@ -12,6 +15,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QSpacerItem
 )
+
 class VersionReleaseInterface(BaseWindow):
     def __init__(self, parent=None):
         super(VersionReleaseInterface, self).__init__(parent)
@@ -21,6 +25,7 @@ class VersionReleaseInterface(BaseWindow):
         self.setWindowTitle("Liberar Versão")
         
         self.setFixedSize(650, 700)
+        self.get_configs_forums()
         self.horizontal_layout_mycommerce_pdv = QHBoxLayout()
         self.horizontal_layout_mylocacao = QHBoxLayout()
         self.horizontal_layout_mypet = QHBoxLayout()
@@ -218,8 +223,34 @@ class VersionReleaseInterface(BaseWindow):
         pass
     
     def create_post(self):
-        pass
-    
+        
+        list_credentials = [
+            self.bitrix_username,
+            self.bitrix_password,
+            self.forum_username,
+            self.forum_password
+        ]
+
+        for credential in list_credentials:
+            if credential == 'default':
+                self.show_dialog('Você precisa configurar as credenciais antes de criar o post')
+                self.credentials_window = DialogCredentialsPosts(self)
+                self.get_configs_forums()
+                break
+            
+        message = self.copy_all_text_to_clipboard(notcopy=True)
+        # confirma antes de executar o script
+        if self.show_confirmation_dialog():
+            BrowserController(
+                    message_version=message,
+                    bitrix_username=self.bitrix_username,
+                    bitrix_passwd=self.bitrix_password,
+                    forum_username=self.forum_username,
+                    forum_passwd=self.forum_password
+                    )
+        else:
+            print(2)
+
     def copy_post_compatibilities(self, show_dialog = True):
         
         mycommerce_pdv = self.line_edit_mycommerce_pdv_version.text()
@@ -305,7 +336,7 @@ class VersionReleaseInterface(BaseWindow):
         # print(document_height)
         pass
 
-    def copy_all_text_to_clipboard(self):
+    def copy_all_text_to_clipboard(self, notcopy = False):
         mycommerce_version = self.line_edit_version_mycommerce_release.text()
         initial_message = self.line_edit_messages_fixes.toPlainText()
         # Olá! Versão 9.11.08.0000 do MyCommerce disponível para atualizações. 
@@ -326,16 +357,17 @@ class VersionReleaseInterface(BaseWindow):
                     parts_of_text[0] += message_compatibilities
                     final_message = ''.join(parts_of_text)
                     print(final_message)
-                    self.copy_to_clipboard(final_message)
-                    self.show_dialog('Mensagem copiada para a área de transferência')
+                    if notcopy:
+                        return final_message
+                    else:
+                        self.copy_to_clipboard(final_message)
+                        self.show_dialog('Mensagem copiada para a área de transferência')
         else:
             if initial_message:
                 if message_compatibilities is not None:
                     text_greetings = f"""Olá! Versão {mycommerce_version} do MyCommerce disponível para atualizações."""
-
                     text_obs = """Atenciosamente, Vitor Hugo Borges Dos Santos."""
-       
-            
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setAttribute(Qt.AA_EnableHighDpiScaling)

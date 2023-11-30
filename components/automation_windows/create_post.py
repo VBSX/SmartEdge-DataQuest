@@ -72,7 +72,7 @@ class BrowserController():
         active_element.send_keys(Keys.CONTROL + "c")
 
         # clica no botão de inserir mensagem do post
-        # self.click_base(insert_message_button)
+        self.click_base(insert_message_button)
     
     def click_base(self, path, xpath = True):
         if xpath:
@@ -102,8 +102,8 @@ class BrowserController():
     def create_posts_on_bitrix(self):
         link_bitrix = 'https://visualsoftware.bitrix24.com.br/stream/'
         self.open_bitrix(link_bitrix)
-        # self.bitrix_post1()
-        # self.bitrix_post_2()
+        self.bitrix_post1()
+        self.bitrix_post_2()
         
     def open_bitrix(self, link_bitrix):
         self.navegador.get(link_bitrix)
@@ -128,12 +128,10 @@ class BrowserController():
         
         # envia para o navegador, lembrar de verificar onde esta o foco antes de mandar o comando
         actions = ActionChains(self.navegador)
-        actions.send_keys('1')
-        actions.perform()
-
         active_element = self.navegador.execute_script("return document.activeElement;")
         active_element.send_keys(Keys.CONTROL + "v")
         active_element.send_keys(Keys.ENTER)
+        actions.perform()
     
     def bitrix_post_2(self):
         path_open_chat = r'/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[1]/div[1]/div[2]/div[1]/ul/li[3]/ul/li[2]/a'

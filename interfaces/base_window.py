@@ -5,8 +5,15 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QLabel,
     QLineEdit,
-    QTextEdit
+    QTextEdit,
+    QVBoxLayout,
+    QVBoxLayout,
+    QWidget,
+    QHBoxLayout,
+    QSpacerItem,
+    QMessageBox
     )
+
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QTextOption
 import pyperclip
@@ -91,13 +98,17 @@ class BaseWindow(QMainWindow):
         label = QLabel(text)
         return label
     
-    def create_line_edit(self, placeholder, mask = True, fixed_size =True):
+    def create_line_edit(self, placeholder, mask = True, fixed_size =True, password_hider = False):
         line_edit = QLineEdit()
         line_edit.setPlaceholderText(placeholder)
 
         if mask:
             # Configurando a máscara
             line_edit.setInputMask("00.00.00.0000")
+        
+        if password_hider:
+            line_edit.setEchoMode(QLineEdit.Password)
+
         
         if fixed_size:
             line_edit.setFixedSize(140,53)
@@ -112,4 +123,37 @@ class BaseWindow(QMainWindow):
     def copy_to_clipboard(self, text):
         pyperclip.copy(text)
         # spam = pyperclip.paste()
+
+    def get_configs_forums(self):
+        self.file_handler.__init__()
+        json_file = self.file_handler.read_json()
+        
+        self.bitrix_username = json_file['bitrix_user']
+        self.bitrix_password  = json_file['bitrix_password']
+        self.forum_username  = json_file['forum_user']
+        self.forum_password  = json_file['forum_password']
+
+    def create_layouts(self, widget_list):
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.layout_principal = QVBoxLayout()
+        
+        for item in widget_list:
+            if type(item) == QHBoxLayout:
+                self.layout_principal.addLayout(item)
+            elif type(item) == QSpacerItem:
+                self.layout_principal.addItem(item)
+            else:
+                self.layout_principal.addWidget(item)
+                
+        self.central_widget.setLayout(self.layout_principal)     
+    
+    def show_confirmation_dialog(self):
+
+        # Cria uma caixa de diálogo de confirmação
+        reply = QMessageBox.question(None, 'Confirmação', 'Você tem certeza que deseja continuar?',
+                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        # Verifica a resposta do usuário
+        return reply == QMessageBox.Yes
 

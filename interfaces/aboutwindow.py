@@ -38,7 +38,7 @@ class AboutProgramWindow(BaseWindow):
         self.layout_principal = QVBoxLayout()
         
         self.layout_vertical_version = QHBoxLayout()
-        self.label_version = QLabel('Versão 1.0')
+        self.label_version = QLabel('Versão 1.1')
         self.layout_vertical_version.addWidget(self.label_version, alignment=Qt.AlignmentFlag.AlignCenter)
         
 
