@@ -23,7 +23,6 @@ class VersionReleaseInterface(BaseWindow):
     
     def setup_ui(self):
         self.setWindowTitle("Liberar Versão")
-        
         self.setFixedSize(650, 700)
         self.get_configs_forums()
         self.horizontal_layout_mycommerce_pdv = QHBoxLayout()
@@ -223,33 +222,40 @@ class VersionReleaseInterface(BaseWindow):
         pass
     
     def create_post(self):
-        
+        self.get_configs_forums()
         list_credentials = [
             self.bitrix_username,
             self.bitrix_password,
             self.forum_username,
             self.forum_password
         ]
-
-        for credential in list_credentials:
+        for credential in list_credentials: 
             if credential == 'default':
                 self.show_dialog('Você precisa configurar as credenciais antes de criar o post')
                 self.credentials_window = DialogCredentialsPosts(self)
                 self.get_configs_forums()
                 break
-            
-        message = self.copy_all_text_to_clipboard(notcopy=True)
-        # confirma antes de executar o script
-        if self.show_confirmation_dialog():
-            BrowserController(
-                    message_version=message,
-                    bitrix_username=self.bitrix_username,
-                    bitrix_passwd=self.bitrix_password,
-                    forum_username=self.forum_username,
-                    forum_passwd=self.forum_password
-                    )
-        else:
-            print(2)
+            else:
+                message = self.copy_all_text_to_clipboard(notcopy=True)
+                print(message)
+                # confirma antes de executar o script
+                if message:
+                    if self.show_confirmation_dialog():
+                        BrowserController(
+                                message_version=message,
+                                bitrix_username=self.bitrix_username,
+                                bitrix_passwd=self.bitrix_password,
+                                forum_username=self.forum_username,
+                                forum_passwd=self.forum_password
+                                )
+                        break
+                    else:
+                        print(2)
+                        break
+                else:
+                    self.show_dialog('Não há mensagem para publicar')
+                    break
+                 
 
     def copy_post_compatibilities(self, show_dialog = True):
         

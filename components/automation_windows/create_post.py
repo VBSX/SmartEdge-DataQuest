@@ -139,15 +139,20 @@ class BrowserController():
         actions.send_keys("v")
         actions.key_up(Keys.CONTROL)
         actions.perform()
-        sleep(2)
-        for item in range(0,100):
-            try:
-                element = self.navegador.find_element(By.XPATH, f'/html/body/div[{item}]/span[3]/span[2]')       
-                element.click()
-                print('achou o elemento')
-                break
-            except:
-                print('Não achou o elemento')
+        sleep(5)
+        
+        # # clica no botão de formatar texto 
+        # ele está clicando no botão mas por algum motivo ele não está formatando o texto então por 
+        # enquanto vai ter que clicar manulmente
+        # for item in range(0,100):
+        #     try:
+        #         button_format_text = self.navegador.find_element(By.XPATH, f'/html/body/div[{item}]/span[3]/span[2]')       
+        #         button_format_text.click()
+        #         print('achou o elemento')
+        #         break
+        #     except:
+        #         print('Não achou o elemento')
+                
         actions.key_down(Keys.ENTER).perform()
         actions.key_up(Keys.ENTER).perform()
         sleep(10)
