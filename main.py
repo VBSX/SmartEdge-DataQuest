@@ -262,8 +262,6 @@ class MainWindow(BaseWindow):
             self.interface_query_window_is_open = True
         else:  
             self.query_window.show()
-    
-
             
     def start_config(self):
         self.config_window = ConfigWindow(self)

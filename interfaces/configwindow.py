@@ -141,6 +141,7 @@ class ConfigWindow(BaseWindow):
             database_input == self.database):
             
             self.close()
+            self.parent().reset_layout()
         else:
             self.file_handler.set_username(username_input)
             self.file_handler.set_password(password_input)

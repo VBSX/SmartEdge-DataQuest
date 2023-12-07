@@ -29,17 +29,31 @@ class File():
             return True
         
     def verify_if_json_exists(self):
-
         if os.path.exists(self.path_json):
             return True
         else:
             return False
     
-    def read_json(self):
+    
+    def read_json(self, database = False):
         if self.verify_if_json_exists():
-            with open(self.path_json, 'r') as f:
-                content = json.load(f)
-                return content
+                with open(self.path_json, 'r') as f:
+                    content = json.load(f)
+                if not database:
+                    return content   
+                else:
+                    # retira os campos referente as credenciais do bitrix e forum
+                    try:
+                        content.pop('bitrix_user')
+                        content.pop('bitrix_password')
+                        content.pop('forum_user')
+                        content.pop('forum_password')
+                        print(content)
+                    except:
+                        print('erro ao retirar os campos referente as credenciais do bitrix e forum')
+                        
+                    return content
+                
         else:
             self.create_json()
             with open(self.path_json, 'r') as f:
@@ -228,7 +242,7 @@ class File():
 if __name__ == '__main__':
 
     f = File()
-    print(f.verify_if_images_path_exists())
+    print(f.read_json(database=True))
     # f.set_host('10.1.1.220')
     # print(f.username, f.password, f.host, f.port, f.database, f.json_file)
     # f.set_username('root')

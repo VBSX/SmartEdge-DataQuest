@@ -179,7 +179,7 @@ class Database():
         return self.execute_query_for_multiple_querys(list_query)
     
     def get_file_config(self):
-        self.config = self.file.read_json()
+        self.config = self.file.read_json(database=True)
 
 if __name__ == "__main__":
     

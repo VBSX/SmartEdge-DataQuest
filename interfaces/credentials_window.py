@@ -23,7 +23,7 @@ class DialogCredentialsPosts(BaseWindow):
     
     def setup_ui(self):
         self.setWindowModality(Qt.WindowModal)
-        self.setFixedSize(260, 310)
+        self.setFixedSize(460, 410)
         self.setWindowTitle("Credenciais")
         self.get_configs_forums()
         self.layout_vertical_instructions = QHBoxLayout()
