@@ -365,3 +365,5 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     app.exec()
+
+# pyinstaller --onefile --windowed --name=DataQuest --icon=images/smartedge.png --add-data="images/*.png;images/" main.py
