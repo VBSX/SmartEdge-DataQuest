@@ -12,7 +12,18 @@ from selenium.webdriver.common.action_chains import ActionChains
 import os
 
 class BrowserController():
-    def __init__(self, message_version, forum_username, forum_passwd, bitrix_username, bitrix_passwd):
+    def __init__(
+        self,
+        message_version,
+        forum_username,
+        forum_passwd,
+        bitrix_username,
+        bitrix_passwd,
+        test_mode = False,
+        final_version = False,
+        topic_name_of_final_version =None
+        ):
+        
         self.path_user = os.getenv('APPDATA')
         self.navegador = self.browser()
         self.wait = WebDriverWait(self.navegador, 10)
@@ -21,7 +32,9 @@ class BrowserController():
         self.forum_passwd = forum_passwd
         self.bitrix_username = bitrix_username
         self.bitrix_passwd = bitrix_passwd
-
+        self.test_mode = test_mode
+        self.final_version = final_version
+        self.topic_name_of_final_version = topic_name_of_final_version
         self.forum_post()
         sleep(5)
         self.create_posts_on_bitrix()
@@ -33,8 +46,11 @@ class BrowserController():
     
     def forum_post(self):
         self.open_browser('https://forum.visualsoftware.inf.br/forumdisplay.php?fid=30')
-        self.open_last_version_forum()
-        self.add_new_response()
+        if self.final_version:
+            self.insert_new_topic_for_final_version()
+        else:
+            self.open_last_version_forum()
+            self.add_new_response()
         
     def set_chrome_options(self):
         options = webdriver.ChromeOptions()
@@ -58,22 +74,42 @@ class BrowserController():
         click_last_post.click()
             
     def add_new_response(self):
-        path = '/html/body/div[1]/div[2]/div/div[3]/a' 
         path_body_message = '/html/body/div/div[2]/div/form/table[1]/tbody/tr[6]/td[2]/div/iframe'
         insert_message_button = '/html/body/div/div[2]/div/form/div/input[1]'
-        self.click_base(path)
-        self.click_base(path_body_message).send_keys(self.message_version)
+        path = '/html/body/div[1]/div[2]/div/div[3]/a' 
+        path_js_body = "#content > div > form > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(2) > div > iframe"
         
-        active_element = self.navegador.execute_script("""return document.querySelector("#content > div > form > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(2) > div > iframe")""")
+        if  self.final_version:
+            path_js_body = "#content > div > form > table:nth-child(2) > tbody > tr:nth-child(5) > td:nth-child(2) > div > iframe"
+            path_body_message = '/html/body/div/div[2]/div/form/table[1]/tbody/tr[5]/td[2]/div/iframe'
+            path_topic_name_label = '/html/body/div/div[2]/div/form/table[1]/tbody/tr[3]/td[2]/input'
+            self.click_base(path_topic_name_label).send_keys(self.topic_name_of_final_version)
+
+            # sleep(600)
+        else:    
+            self.click_base(path)    
+            
+        self.click_base(path_body_message).send_keys(self.message_version)
+            
+        active_element = self.navegador.execute_script(f"""return document.querySelector("{path_js_body}")""")
         active_element.send_keys(Keys.CONTROL + "a")
         active_element.send_keys(Keys.CONTROL + "c")
         active_element.send_keys(Keys.CONTROL + "v")
         active_element.send_keys(Keys.CONTROL + "a")
         active_element.send_keys(Keys.CONTROL + "c")
-
-        # clica no botão de inserir mensagem do post
-        self.click_base(insert_message_button)
+            
+        if not self.test_mode:    
+            # clica no botão de inserir mensagem do post
+            self.click_base(insert_message_button)
+        else:
+            print('modo de teste')
     
+    def insert_new_topic_for_final_version(self):
+        click_new_topic_path = '/html/body/div/div[2]/div/div[3]/a/span'
+        self.click_base(click_new_topic_path)
+        self.add_new_response()
+ 
+      
     def click_base(self, path, xpath = True):
         if xpath:
             click = self.wait.until(EC.presence_of_element_located((By.XPATH, path)))
@@ -152,10 +188,13 @@ class BrowserController():
         #         break
         #     except:
         #         print('Não achou o elemento')
-                
-        actions.key_down(Keys.ENTER).perform()
-        actions.key_up(Keys.ENTER).perform()
-        sleep(10)
+        if not self.test_mode:
+            actions.key_down(Keys.ENTER).perform()
+            actions.key_up(Keys.ENTER).perform()
+            sleep(10)
+        else:
+            print('modo de teste')
+            sleep(10)
     
     def bitrix_post_2(self):
         path_open_chat = r'/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[1]/div[1]/div[2]/div[1]/ul/li[3]/ul/li[2]/a'
@@ -176,26 +215,34 @@ class BrowserController():
                 actions.send_keys("v").perform()
                 actions.key_up(Keys.CONTROL).perform()
                 
-                actions.key_down(Keys.ENTER).perform()
-                actions.key_up(Keys.ENTER).perform()
-                
-                sleep(7)
+                if not self.test_mode:
+                    actions.key_down(Keys.ENTER).perform()
+                    actions.key_up(Keys.ENTER).perform()
+                    sleep(7)
+                else:
+                    print('modo de teste')
                 break
+            
             except:
                 print('erro', element)
 
 if __name__ == '__main__':
-    navegador = BrowserController("""Olá! Versão [b]9.11.13.0000[/b] do [b]MyCommerce[/b] disponível para atualizações. 
+    navegador = BrowserController(
+        """Olá! Versão [b]9.11.13.0000[/b] do [b]MyCommerce[/b] disponível para atualizações. 
 
-[b]INCONSISTÊNCIAS ENCONTRADAS INTERNAMENTE[/b]
-[b]143232[/b] - Ajustada inconsistência ao incluir produtos do tipo grade.
+        [b]INCONSISTÊNCIAS ENCONTRADAS INTERNAMENTE[/b]
+        [b]143232[/b] - Ajustada inconsistência ao incluir produtos do tipo grade.
 
-Compatível com a versão [b]1.32.13.2132[/b] do [b]MyCommerce PDV[/b]. 
+        Compatível com a versão [b]1.32.13.2132[/b] do [b]MyCommerce PDV[/b]. 
 
-Atenciosamente, Vitor Hugo Borges Dos Santos.""",
-bitrix_username='',
-bitrix_passwd='',
-forum_username='',
-forum_passwd=''
-)
+        Atenciosamente, Vitor Hugo Borges Dos Santos.""",
+        bitrix_username='',
+        bitrix_passwd='',
+        forum_username='',
+        forum_passwd='',
+        test_mode=True,
+        final_version=True,
+        topic_name_of_final_version= '9.12.x'
+        
+        )
 

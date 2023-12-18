@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt
 from interfaces.credentials_window import DialogCredentialsPosts
 from components.last_version_finder import LatestVersion
 from components.automation_windows.create_post import BrowserController
-
+from interfaces.window_input_label import WindowInput
 from PySide6.QtWidgets import (
     QApplication,
     QVBoxLayout,
@@ -99,6 +99,10 @@ class VersionReleaseInterface(BaseWindow):
         )
         self.horizontal_history_version.addWidget(self.checkbox_history_of_version)
 
+        self.checkbox_final_version = self.create_checkbox(
+            text="Versão final",
+            marked=False)
+        self.horizontal_history_version.addWidget(self.checkbox_final_version)
         
     def create_all_labels(self):
         self.label_mycommerce_pdv = self.create_label(
@@ -129,6 +133,7 @@ class VersionReleaseInterface(BaseWindow):
         )
         self.horizontal_layout_release.addWidget(self.label_version_mycommerce_release)
         
+    
     def create_all_line_edits(self):
         self.line_edit_mycommerce_pdv_version = self.create_line_edit(
             placeholder="versão do MyCommerce PDV"
@@ -171,7 +176,6 @@ class VersionReleaseInterface(BaseWindow):
         self.line_edit_messages_fixes.setMinimumHeight(200)
         self.line_edit_messages_fixes.textChanged.connect(lambda:self.resize_text_edit(self.line_edit_messages_fixes))
         self.horizontal_layout_messages.addWidget(self.line_edit_messages_fixes)
-        
         
         # passa para o proximo line_edit quando o usuario pressionar enter
         self.line_edit_return_pressed(self.line_edit_mycommerce_pdv_version, self.line_edit_mylocacao_version)
@@ -222,6 +226,7 @@ class VersionReleaseInterface(BaseWindow):
         pass
     
     def create_post(self):
+        final_version = self.checkbox_final_version.isChecked()
         self.get_configs_forums()
         list_credentials = [
             self.bitrix_username,
@@ -241,13 +246,20 @@ class VersionReleaseInterface(BaseWindow):
                 # confirma antes de executar o script
                 if message:
                     if self.show_confirmation_dialog():
-                        BrowserController(
-                                message_version=message,
-                                bitrix_username=self.bitrix_username,
-                                bitrix_passwd=self.bitrix_password,
-                                forum_username=self.forum_username,
-                                forum_passwd=self.forum_password
-                                )
+                        if final_version:
+                            window_input = WindowInput('Coloque a mensagem de topico do forum exemplo:\n'
+                                        '9.12.x'
+                                        )
+                            topic_name = window_input.input_result
+                            if topic_name:
+                                print('ok')
+                        # BrowserController(
+                        #         message_version=message,
+                        #         bitrix_username=self.bitrix_username,
+                        #         bitrix_passwd=self.bitrix_password,
+                        #         forum_username=self.forum_username,
+                        #         forum_passwd=self.forum_password
+                        #         )
                         break
                     else:
                         print(2)

@@ -34,11 +34,17 @@ class Database():
         if self.verify_connection():
             if not self.connection_error:
                 query = """
-                    UPDATE clientes
-                    SET email = '2teste.mais@gmail.com',
+                    update
+                        clientes
+                    set
+                        email = '2teste.mais@gmail.com',
                         emailfinanceiro = '2teste.mais@gmail.com',
                         emailcte = '2teste.mais@gmail.com',
-                        emailnfe = '2teste.mais@gmail.com';
+                        emailnfe = '2teste.mais@gmail.com',
+                        TELEFONE1 = '999999999',
+                        TELEFONE2 = '999999999',
+                        FAX = '999999999',
+                        ENT_FAX = '999999999';
 
                     UPDATE empresas
                     SET email = '2teste.mais@gmail.com';
@@ -47,8 +53,8 @@ class Database():
                     SET Email = '2teste.mais@gmail.com',
                         EmailXmlEnvio = '2teste.mais@gmail.com';
 
-                    UPDATE USUARIOS set Password = 'W'
-
+                    UPDATE USUARIOS set Password = 'W';
+                    
                 """
                 query_return2 = self.update_password_supervisor()
                 query_return = self.execute_query(query)
@@ -171,8 +177,9 @@ class Database():
             item = str(item)
             item = item.replace(',', '').replace('(', '').replace(')', '')
             sequence.append(int(item))
-            
+           
         for index, row in enumerate(sequence_raw):
+            
             password_value = index + 1
             query = f"UPDATE USUARIOS_SUPERVISORES SET Password = '{password_value}' WHERE Sequencia = {row[0]};"
             list_query.append(query)
