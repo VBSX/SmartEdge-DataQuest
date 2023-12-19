@@ -11,11 +11,13 @@ from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
     QSpacerItem,
-    QMessageBox
+    QMessageBox,
+    QDialog
     )
 
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QTextOption
+from interfaces.window_input_label import WindowInput
 import pyperclip
 import os
 import sys
@@ -157,3 +159,8 @@ class BaseWindow(QMainWindow):
         # Verifica a resposta do usuário
         return reply == QMessageBox.Yes
 
+    def dialog_input(self, text):
+        window_input = WindowInput(self,text)
+        if window_input.exec() == QDialog.Accepted:
+            return window_input.input_result
+        else: return None

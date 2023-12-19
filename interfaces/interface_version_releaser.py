@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt
 from interfaces.credentials_window import DialogCredentialsPosts
 from components.last_version_finder import LatestVersion
 from components.automation_windows.create_post import BrowserController
-from interfaces.window_input_label import WindowInput
+
 from PySide6.QtWidgets import (
     QApplication,
     QVBoxLayout,
@@ -246,20 +246,23 @@ class VersionReleaseInterface(BaseWindow):
                 # confirma antes de executar o script
                 if message:
                     if self.show_confirmation_dialog():
+                        topic_name = None
                         if final_version:
-                            window_input = WindowInput('Coloque a mensagem de topico do forum exemplo:\n'
-                                        '9.12.x'
+                            print(1)
+                            topic_name = self.dialog_input('Coloque a mensagem de tópico do fórum, exemplo: 9.12.x'
                                         )
-                            topic_name = window_input.input_result
-                            if topic_name:
-                                print('ok')
-                        # BrowserController(
-                        #         message_version=message,
-                        #         bitrix_username=self.bitrix_username,
-                        #         bitrix_passwd=self.bitrix_password,
-                        #         forum_username=self.forum_username,
-                        #         forum_passwd=self.forum_password
-                        #         )
+                            if not topic_name:
+                                break
+                            
+                        BrowserController(
+                                message_version=message,
+                                bitrix_username=self.bitrix_username,
+                                bitrix_passwd=self.bitrix_password,
+                                forum_username=self.forum_username,
+                                forum_passwd=self.forum_password,
+                                final_version=True,
+                                topic_name_of_final_version=topic_name
+                                )
                         break
                     else:
                         print(2)
@@ -267,7 +270,7 @@ class VersionReleaseInterface(BaseWindow):
                 else:
                     self.show_dialog('Não há mensagem para publicar')
                     break
-                 
+  
 
     def copy_post_compatibilities(self, show_dialog = True):
         
