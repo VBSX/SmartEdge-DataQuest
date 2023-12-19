@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QProgressDialog,
 )
+import gc
 import sys
 from PySide6.QtCore import Qt, QThread,Signal
 from PySide6.QtGui import QIcon
@@ -151,8 +152,10 @@ class MainWindow(BaseWindow):
         self.centralWidget().setParent(None)
         self.clearLayout(self.layout_principal)
         self.clearLayout(self.layout_horizontal_database_info)
+        
         self.setup_ui()
-    
+        # Coletar lixo manualmente
+        gc.collect()
     def window_fixed(self):
         if not self.is_the_window_fixed:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
