@@ -38,11 +38,12 @@ class MainWindow(BaseWindow):
         self.img_pin_path = r'images/pin.png'
         self.img_att_path = r'images/att_db.png'
         self.is_the_window_fixed = False
-
+        OsHandler()
         self.setup_ui()
         
-    def setup_ui(self):
-        self.config_imgs()
+    def setup_ui(self, reset_layout= False):
+        if not reset_layout:
+            self.config_imgs()
         self.setWindowTitle("SmartEdge - DataQuest")
         default_style = """
         QWidget {
@@ -78,7 +79,6 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_top_tools.addWidget(self.button_pin)
         self.layout_horizontal_top_tools.addWidget(self.button_att_db)
         
-        
         self.layout_horizontal_config_program.addWidget(self.config_button)
         self.layout_horizontal_config_program.addWidget(self.button_about_program) 
 
@@ -100,10 +100,8 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_downloads.addWidget(self.label_last_release_version)
         self.layout_horizontal_downloads.addWidget(
             self.download_last_release_version_button)
-        
         self.layout_config()
-        OsHandler()
-    
+        
     def config_imgs(self):
         has_image_folder = self.file_handler.verify_if_images_path_exists()
         if not has_image_folder:
@@ -149,13 +147,13 @@ class MainWindow(BaseWindow):
         self.central_widget.setLayout(self.layout_principal)      
                     
     def reset_layout(self):
-        self.centralWidget().setParent(None)
+        self.centralWidget().destroy()
         self.clearLayout(self.layout_principal)
         self.clearLayout(self.layout_horizontal_database_info)
-        
-        self.setup_ui()
+        self.setup_ui(reset_layout=True)
         # Coletar lixo manualmente
-        gc.collect()
+        gc.collect() 
+            
     def window_fixed(self):
         if not self.is_the_window_fixed:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
@@ -271,7 +269,6 @@ class MainWindow(BaseWindow):
         self.config_window.show()
     
     def get_configs(self):
-        self.file_handler.__init__()
         json_file = self.file_handler.read_json()
         self.host = json_file['host']
         self.port = json_file['port']
