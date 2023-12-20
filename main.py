@@ -10,7 +10,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QProgressDialog,
 )
-import gc
 import sys
 from PySide6.QtCore import Qt, QThread,Signal
 from PySide6.QtGui import QIcon
@@ -44,7 +43,7 @@ class MainWindow(BaseWindow):
     def setup_ui(self, reset_layout= False):
         if not reset_layout:
             self.config_imgs()
-        self.setWindowTitle("SmartEdge - DataQuest")
+        self.setWindowTitle('SmartEdge - DataQuest')
         default_style = """
         QWidget {
             padding: 15px;
@@ -118,7 +117,8 @@ class MainWindow(BaseWindow):
             self.icon_pin = QIcon(self.img_pin_path)
             self.icon_att_db = QIcon(self.img_att_path)
             self.setWindowIcon(QIcon(self.img_smartedge_path))
-          
+
+       
     def layout_config(self):
         list_of_widgets = [
             self.layout_horizontal_top_tools,
@@ -151,8 +151,6 @@ class MainWindow(BaseWindow):
         self.clearLayout(self.layout_principal)
         self.clearLayout(self.layout_horizontal_database_info)
         self.setup_ui(reset_layout=True)
-        # Coletar lixo manualmente
-        gc.collect() 
             
     def window_fixed(self):
         if not self.is_the_window_fixed:
@@ -181,12 +179,12 @@ class MainWindow(BaseWindow):
         self.button_att_db.setFixedSize(32,32)
         #
         self.button_db_default_config = self.create_button(
-            text="Configuração DB padrão",
+            text='Configuração DB padrão',
             function=self.update_db
             )
         self.config_button = self.create_button(
             config_style=False,
-            text="Config",
+            text='Config',
             function=self.start_config,
             icon= self.icon_config
             )
@@ -198,7 +196,7 @@ class MainWindow(BaseWindow):
             )
         #
         self.button_reset_users_password = self.create_button(
-            text="Resetar senha dos usuários",
+            text='Resetar senha dos usuários',
             function=self.reset_users_password
             )
         #
@@ -209,19 +207,19 @@ class MainWindow(BaseWindow):
             )
         #
         self.query_button = self.create_button(
-            text="Iniciar uma Query",
+            text='Iniciar uma Query',
             function=self.start_query
             )
         self.download_last_build_version_button = self.create_button(
-            text="Baixar última Build",
+            text='Baixar última Build',
             function=self.download_last_build_version
         )
         self.download_last_release_version_button = self.create_button(
-            text="Baixar última Release",
+            text='Baixar última Release',
             function=self.download_last_release_version
         )
         self.button_release_the_version = self.create_button(
-            text="Liberar a versão",
+            text='Liberar a versão',
             function=self.release_the_version
         )
              
@@ -230,18 +228,18 @@ class MainWindow(BaseWindow):
         if self.file_handler.verify_if_json_exists():
             query_return = self.db.db_default_config()
             if query_return == 'sucess':
-                self.show_dialog("Configuração realizada com sucesso")
+                self.show_dialog('Configuração realizada com sucesso')
             else:
                 self.show_dialog(str(query_return))
         else:
-            self.show_dialog("Configuração ainda não realizada")
+            self.show_dialog('Configuração ainda não realizada')
         self.reset_layout()
     
     def reset_users_password(self):
 
         query_return = self.db.reset_users_password()
         if query_return == 'sucess':
-            self.show_dialog("Senhas resetadas com sucesso")
+            self.show_dialog('Senhas resetadas com sucesso')
         else:
             self.show_dialog(str(query_return))
         self.reset_layout()
@@ -285,37 +283,37 @@ class MainWindow(BaseWindow):
     
 
     def create_all_labels_of_the_window(self):
-        self.host_label = self.create_label(f"Host: {self.host}")
+        self.host_label = self.create_label(f'Host: {self.host}')
         
-        self.port_label = self.create_label(f"Porta: {self.port}")
+        self.port_label = self.create_label(f'Porta: {self.port}')
         
-        self.database_label = self.create_label(f"Database: {self.database}")
+        self.database_label = self.create_label(f'Database: {self.database}')
         
-        self.label_close_programs = self.create_label("Fechar programas")
+        self.label_close_programs = self.create_label('Fechar programas')
         
-        self.label_last_build_version = self.create_label(f"Última Build: {LatestVersion().latest_build_version_text()}")
+        self.label_last_build_version = self.create_label(f'Última Build: {LatestVersion().latest_build_version_text()}')
         # self.label_last_build_version.mouseDoubleClickEvent.connect(lambda: self.copy_to_clipboard(LatestVersion().latest_build_version_text()))
         
-        self.label_last_release_version = self.create_label(f"Última Release: {LatestVersion().latest_release_version_text()}")
+        self.label_last_release_version = self.create_label(f'Última Release: {LatestVersion().latest_release_version_text()}')
         # self.label_last_release_version.clicked.connect(lambda: self.copy_to_clipboard(LatestVersion().latest_release_version_text()))
     
     def att_db_open(self):
         self.get_configs()
-        os.startfile("C:\Visual Software\MyCommerce\AtualizarDB.exe")
+        os.startfile('C:\Visual Software\MyCommerce\AtualizarDB.exe')
         self.reset_layout()
     
     def download_last_build_version(self):
         self.download_version(
-            "Baixando a última Build", is_build=True)
+            'Baixando a última Build', is_build=True)
         
     def download_last_release_version(self):
         self.download_version(
-            "Baixando a última Release...", is_build=False)
+            'Baixando a última Release...', is_build=False)
 
     def download_version(self, text, is_build):
         self.progress_dialog = QProgressDialog(self)
         self.progress_dialog.setWindowModality(Qt.WindowModal)
-        self.progress_dialog.setWindowTitle("Download")
+        self.progress_dialog.setWindowTitle('Download')
         self.progress_dialog.setLabelText(text)
         self.progress_dialog.setRange(0, 0)
         
@@ -360,7 +358,7 @@ class DownloadThread(QThread):
             LatestVersion().download_latest_release()
         self.download_finished.emit()
         
-if __name__ == "__main__": 
+if __name__ == '__main__': 
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
