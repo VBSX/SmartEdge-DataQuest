@@ -6,22 +6,44 @@ from components.os_handle import OsHandler
 
 class LatestVersion():
     def __init__(self):
-        self.path_mycommerce_att = r'\\10.1.1.110\\arquivos\\atualizacoes\\MyCommerce'
+        base_path = r'\\10.1.1.110\\Arquivos\\Atualizacoes\\'
+        self.path_mycommerce_att = base_path+'MyCommerce'
+        self.path_mycommerce_pdv = base_path+'MyCommercePDV'
+        self.path_mylocacao = base_path+'MyLocacao'
+        self.path_mypet = base_path+'PetShop'
+        self.path_myzap = base_path+'MyZap - Configurador'
+        self.path_vsintegracoes = base_path+'vsIntegracoes'
+        
         self.os_handler = OsHandler()
         self.has_connection = self.os_handler.verify_if_has_connection()
         
-    def latest_release_version(self):
+    def latest_release_version(self, path, software_name):
         if self.has_connection:
-            all_archives = os.listdir(self.path_mycommerce_att)
+            all_archives = os.listdir(path)
             # find by .exe files
-            archives = [archive for archive in all_archives if archive.endswith('0.exe') if not archive.endswith('MyCommerce_Full.exe')]
+            if software_name =='Mycommerce':
+                endswith = 'MyCommerce_Full.exe'
+            elif software_name == 'MycommercePDV':
+                endswith = 'MyCommercePDV - Initial_Install - 3.60.42.0.exe'
+            elif software_name == 'MyLocacao':
+                endswith = 'MyLocacao_Full.exe'
+            elif software_name == 'MyPet':
+                endswith = 'PetShop_Full.exe'
+            elif software_name == 'MyZap':
+                endswith = 'MyZap - Configurador_Full.exe'
+            elif software_name == 'vsIntegracoes':
+                endswith = 'vsIntegracoes_Full.exe'
+            
+            archives = [archive for archive in all_archives if archive.endswith('0.exe') if not archive.endswith(endswith)]
             if len(archives) >1:
+                # aqui ele vai ordernar do menor para o maior, no caso o maoir é o mais recente
+                archives.sort()
                 return archives[-1]
             elif len(archives) == 1:
                 return archives[0]
     
     def latest_release_version_text(self):
-        return self.text_strip(self.latest_release_version())
+        return self.text_strip(self.latest_release_version(self.path_mycommerce_att, 'Mycommerce'))
     
     def latest_build_version(self):
         if self.has_connection:
@@ -42,8 +64,17 @@ class LatestVersion():
             return self.text_strip(self.latest_build_version())
    
     def text_strip(self, text):
+        list_of_text = ['MyCommercePDV_FULL_',
+                        'MyCommerce_Atu',
+                        'PetShopAtu_',
+                        'vsIntegracoes_Atu_',
+                        'MyLocacao_', 'Robô MyZap - Atu_'
+                        ]
         if text:
-            text = text.replace('.exe', '').replace('MyCommerce_Atu', '').replace(' ', '')
+            for item in list_of_text:
+                if item in text:
+                    text = text.replace(item, '').replace('.exe', '')
+
         return text
 
     def download_file(self, file_name):
@@ -65,8 +96,27 @@ class LatestVersion():
             return self.download_file(self.latest_release_version())
         else:
             return 'SemBuild'
+
+    def latest_release_version_text_pdv(self):
+        return self.text_strip(self.latest_release_version(self.path_mycommerce_pdv, 'MycommercePDV'))
+    
+    def latest_release_version_text_mylocacao(self):
+        return self.text_strip(self.latest_release_version(self.path_mylocacao, 'MyLocacao'))
+    
+    def latest_release_version_text_mypet(self):
+        return self.text_strip(self.latest_release_version(self.path_mypet,'MyPet'))
+    
+    def latest_release_version_text_myzap(self):
+        return self.text_strip(self.latest_release_version(self.path_myzap,'MyZap'))
+    
+    def latest_release_version_text_vsintegracoes(self):
+        return self.text_strip(self.latest_release_version(self.path_vsintegracoes, 'vsIntegracoes'))
     
 if __name__ == '__main__':
-    print(LatestVersion().latest_build_version_text())
+    # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())
+    print('mypet',LatestVersion().latest_release_version_text_mypet())
+    # print('myzap',LatestVersion().latest_release_version_text_myzap())
+    # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
+    
     
 

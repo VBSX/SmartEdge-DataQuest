@@ -16,7 +16,7 @@ from interfaces.base_window import BaseWindow
 class ConfigWindow(BaseWindow):
     def __init__(self, parent=None):
         super(ConfigWindow,self).__init__(parent)
-        self.keyPressEvent = self.close_at_esc
+        self.keyPressEvent = self.key_pressed_handle
         self.user = self.file_handler.username
         self.password = self.file_handler.password
         self.host = self.file_handler.host

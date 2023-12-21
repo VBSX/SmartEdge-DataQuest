@@ -51,7 +51,7 @@ class OsHandler():
             
     def verify_if_has_connection(self):
         # caminho da rede a ser verificado
-        path = r'\\10.1.1.110'
+        path = r'\\10.1.1.110\Arquivos'
         
         # verifica se o caminho é acessível
         if os.path.exists(path):
@@ -61,4 +61,6 @@ class OsHandler():
             
 if __name__ == "__main__":
     os_handler = OsHandler()
+    print(
+    os_handler.verify_if_has_connection())
 

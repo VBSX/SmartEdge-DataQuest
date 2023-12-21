@@ -12,7 +12,7 @@ class AboutProgramWindow(BaseWindow):
         super(AboutProgramWindow, self).__init__(parent)
         self.github_icon_path = r'images/github.png'
         self.oakbox_icon_path = r'images/oakbox.png'
-        self.keyPressEvent = self.close_at_esc
+        self.keyPressEvent = self.key_pressed_handle
         self.setup_ui()
         
     def setup_ui(self):

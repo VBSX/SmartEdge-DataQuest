@@ -103,7 +103,7 @@ class VersionReleaseInterface(BaseWindow):
             text="Versão final",
             marked=False)
         self.horizontal_history_version.addWidget(self.checkbox_final_version)
-        
+
     def create_all_labels(self):
         self.label_mycommerce_pdv = self.create_label(
             text="MyCommerce PDV: ")
@@ -136,42 +136,52 @@ class VersionReleaseInterface(BaseWindow):
     
     def create_all_line_edits(self):
         self.line_edit_mycommerce_pdv_version = self.create_line_edit(
-            placeholder="versão do MyCommerce PDV"
+            placeholder="versão do MyCommerce PDV",
+            set_text=LatestVersion().latest_release_version_text_pdv()
         )
         self.horizontal_layout_mycommerce_pdv.addWidget(self.line_edit_mycommerce_pdv_version)
         
         self.line_edit_mylocacao_version = self.create_line_edit(
-            placeholder="versão do MyLocação"
+            placeholder="versão do MyLocação",
+            set_text=LatestVersion().latest_release_version_text_mylocacao()
         )
         self.horizontal_layout_mylocacao.addWidget(self.line_edit_mylocacao_version)
 
         self.line_edit_mypet = self.create_line_edit(
-            placeholder="versão do MyPet"
+            placeholder="versão do MyPet",
+            set_text=LatestVersion().latest_release_version_text_mypet()
         )
         self.horizontal_layout_mypet.addWidget(self.line_edit_mypet)
         
         self.line_edit_myzap = self.create_line_edit(
-            placeholder="versão do MyZap"
+            placeholder="versão do MyZap",
+            set_text=LatestVersion().latest_release_version_text_myzap()
         )
         self.horizontal_layout_myzap.addWidget(self.line_edit_myzap)
         
         self.line_edit_vsintegracao = self.create_line_edit(
-            placeholder="versão do VsIntegracao"
+            placeholder="versão do VsIntegracao",
+            set_text=LatestVersion().latest_release_version_text_vsintegracoes()
         )
         self.horizontal_layout_vsintegracao.addWidget(self.line_edit_vsintegracao)
         
         self.line_edit_version_mycommerce_release = self.create_line_edit(
-            placeholder="versão do MyCommerce"
+            placeholder="versão do MyCommerce",
+            set_text=LatestVersion().latest_release_version_text()
         )
         self.horizontal_layout_release.addWidget(self.line_edit_version_mycommerce_release)
-        self.line_edit_version_mycommerce_release.setText(
-            LatestVersion().latest_release_version_text())
-
+    
         self.process_input(self.line_edit_version_mycommerce_release)
+        self.process_input(self.line_edit_mycommerce_pdv_version)
+        self.process_input(self.line_edit_mylocacao_version)
+        self.process_input(self.line_edit_mypet)
+        self.process_input(self.line_edit_myzap)
+        self.process_input(self.line_edit_vsintegracao)
         
         self.line_edit_messages_fixes = self.create_text_edit(
             placeholder="Mensagens ajustes",
         )
+        
         # ajusta a altura e largura do line edit conforme for inserido o texto
         self.line_edit_messages_fixes.setMinimumHeight(200)
         self.line_edit_messages_fixes.textChanged.connect(lambda:self.resize_text_edit(self.line_edit_messages_fixes))
@@ -360,14 +370,8 @@ class VersionReleaseInterface(BaseWindow):
     def copy_all_text_to_clipboard(self, notcopy = False):
         mycommerce_version = self.line_edit_version_mycommerce_release.text()
         initial_message = self.line_edit_messages_fixes.toPlainText()
-        # Olá! Versão 9.11.08.0000 do MyCommerce disponível para atualizações. 
-
-        # INCONSISTÊNCIAS RELATADAS POR CLIENTES
-        # 142545 - Ajustada inconsistência no relatório de ordem de entrega
-
-        # Compatível com a versão 3.33.33.3333 do MyCommerce PDV. 
-
-        # Atenciosamente, Vitor Hugo Borges Dos Santos.
+        is_final_version = self.checkbox_final_version.isChecked()
+        
         message_compatibilities = self.copy_post_compatibilities(show_dialog=False)
         if not self.checkbox_history_of_version.isChecked():
             if initial_message:
@@ -385,10 +389,64 @@ class VersionReleaseInterface(BaseWindow):
                         self.show_dialog('Mensagem copiada para a área de transferência')
         else:
             if initial_message:
-                if message_compatibilities is not None:
-                    text_greetings = f"""Olá! Versão {mycommerce_version} do MyCommerce disponível para atualizações."""
-                    text_obs = """Atenciosamente, Vitor Hugo Borges Dos Santos."""
-
+                if message_compatibilities is not None:   
+                    message_forum = self.make_text_for_forum(initial_message)
+                    text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
+                    if not is_final_version:
+                        text_greetings = f'Olá! Versão [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
+                        final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
+                        if notcopy:
+                            return notcopy
+                        else:
+                            self.copy_to_clipboard(final_message)
+                            self.show_dialog('Mensagem copiada para a área de transferência')
+                    else: 
+                        text_greetings = f'Olá! Versão final [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
+                        final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
+                        if notcopy:
+                            return final_message
+                        else:
+                            self.copy_to_clipboard(final_message)
+                            self.show_dialog('Mensagem copiada para a área de transferência')
+                        
+    def make_text_for_forum(self, text):
+        list_messages = text.split('\n')
+        message_forum = []
+        relatadas_por_clientes = 'INCONSISTÊNCIAS RELATADAS POR CLIENTES:'
+        relatadas_por_clientes_forum = '[b]INCONSISTÊNCIAS RELATADAS POR CLIENTES:[/b]'
+        inconsistencias_encontradas_internamente = 'INCONSISTÊNCIAS ENCONTRADAS INTERNAMENTE:'
+        inconsistencias_encontradas_internamente_forum = '[b]INCONSISTÊNCIAS ENCONTRADAS INTERNAMENTE:[/b]'
+        customizacoes_incluidas = 'CUSTOMIZAÇÕES INCLUSAS:'
+        customizacoes_incluidas_forum = '[b]CUSTOMIZAÇÕES INCLUSAS:[/b]'
+        
+        final_message= []
+        
+        for message in list_messages:
+            if message:
+                if message == relatadas_por_clientes:
+                    message = relatadas_por_clientes_forum
+                elif message == inconsistencias_encontradas_internamente:
+                    message = inconsistencias_encontradas_internamente_forum
+                elif message == customizacoes_incluidas:
+                    message = customizacoes_incluidas_forum
+                message_forum.append(message)
+            else:
+                message_forum.append(message)
+            
+        for message in message_forum:
+            if message:
+                print(message)
+                if message == relatadas_por_clientes_forum or  message == inconsistencias_encontradas_internamente_forum or message == customizacoes_incluidas_forum:
+                    final_message.append(message)
+                else:
+                    spli_task = message.split(' - ')
+                    spli_task[0] = '[b]' + spli_task[0] + '[/b]'
+                    message = ' - '.join(spli_task)
+                    final_message.append(message)
+            else:
+                final_message.append(message)
+        return '\n'.join(final_message)
+                               
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setAttribute(Qt.AA_EnableHighDpiScaling)

@@ -33,9 +33,9 @@ class BaseWindow(QMainWindow):
         self.db = Database()
         self.file_handler = File()
         
-    def close_at_esc(self, event):
+    def key_pressed_handle(self, event):
         if event.key() == Qt.Key_Escape:
-            self.close() 
+            self.close()
              
     def setup_ui(self):
         self.setWindowTitle("Base Window")
@@ -100,7 +100,7 @@ class BaseWindow(QMainWindow):
         label = QLabel(text)
         return label
     
-    def create_line_edit(self, placeholder, mask = True, fixed_size =True, password_hider = False):
+    def create_line_edit(self, placeholder, mask = True, fixed_size =True, password_hider = False, set_text =None):
         line_edit = QLineEdit()
         line_edit.setPlaceholderText(placeholder)
 
@@ -111,9 +111,12 @@ class BaseWindow(QMainWindow):
         if password_hider:
             line_edit.setEchoMode(QLineEdit.Password)
 
-        
         if fixed_size:
             line_edit.setFixedSize(140,53)
+
+        if set_text:
+            line_edit.setText(set_text)
+        
         return line_edit
     
     def create_text_edit(self, placeholder):
