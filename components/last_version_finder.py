@@ -20,6 +20,7 @@ class LatestVersion():
     def latest_release_version(self, path, software_name):
         if self.has_connection:
             all_archives = os.listdir(path)
+            archives = []
             # find by .exe files
             if software_name =='Mycommerce':
                 endswith = 'MyCommerce_Full.exe'
@@ -34,7 +35,11 @@ class LatestVersion():
             elif software_name == 'vsIntegracoes':
                 endswith = 'vsIntegracoes_Full.exe'
             
-            archives = [archive for archive in all_archives if archive.endswith('0.exe') if not archive.endswith(endswith)]
+
+            for archive in all_archives:
+                if archive.endswith('0.exe') and not archive.endswith(endswith):
+                    archives.append(archive)
+                    
             if len(archives) >1:
                 # aqui ele vai ordernar do menor para o maior, no caso o maoir é o mais recente
                 archives.sort()

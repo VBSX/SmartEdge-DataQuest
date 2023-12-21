@@ -236,7 +236,7 @@ class VersionReleaseInterface(BaseWindow):
         pass
     
     def create_post(self):
-        final_version = self.checkbox_final_version.isChecked()
+        is_final_version = self.checkbox_final_version.isChecked()
         self.get_configs_forums()
         list_credentials = [
             self.bitrix_username,
@@ -257,20 +257,19 @@ class VersionReleaseInterface(BaseWindow):
                 if message:
                     if self.show_confirmation_dialog():
                         topic_name = None
-                        if final_version:
+                        if is_final_version:
                             print(1)
                             topic_name = self.dialog_input('Coloque a mensagem de tópico do fórum, exemplo: 9.12.x'
                                         )
                             if not topic_name:
                                 break
-                            
                         BrowserController(
                                 message_version=message,
                                 bitrix_username=self.bitrix_username,
                                 bitrix_passwd=self.bitrix_password,
                                 forum_username=self.forum_username,
                                 forum_passwd=self.forum_password,
-                                final_version=True,
+                                final_version=is_final_version,
                                 topic_name_of_final_version=topic_name
                                 )
                         break
@@ -281,7 +280,6 @@ class VersionReleaseInterface(BaseWindow):
                     self.show_dialog('Não há mensagem para publicar')
                     break
   
-
     def copy_post_compatibilities(self, show_dialog = True):
         
         mycommerce_pdv = self.line_edit_mycommerce_pdv_version.text()
