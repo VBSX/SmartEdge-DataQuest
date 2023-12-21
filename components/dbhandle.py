@@ -17,7 +17,6 @@ class Database():
     def start_connection(self):
         self.connection_error = False
         self.get_file_config()
-        print(self.config)
         try:
             self.conexao = connect(**self.config)
             self.connected = True

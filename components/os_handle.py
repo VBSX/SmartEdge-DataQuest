@@ -36,13 +36,8 @@ class OsHandler():
         # copy file to downloads folder
         d = os.path.join(os.path.expanduser('~'), 'Downloads')
         download_folder = f""" "{d}" """
-        
-        print(download_folder)
-        
         path = f""" "{path}\\{file_name}" """
-        print(path)
         command = f'copy {path} {download_folder}'
-        print(command)
         subprocess.call(command, shell=True)
 
     def delete_atalho(self):
@@ -53,6 +48,16 @@ class OsHandler():
                 subprocess.call('ie4uinit.exe -show', shell=True)
                 print('arquivo de atalho deletado')
             sleep(1)
+            
+    def verify_if_has_connection(self):
+        # caminho da rede a ser verificado
+        path = r'\\10.1.1.110'
+        
+        # verifica se o caminho é acessível
+        if os.path.exists(path):
+            return True
+        else:
+            return False
             
 if __name__ == "__main__":
     os_handler = OsHandler()

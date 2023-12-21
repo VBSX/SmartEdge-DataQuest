@@ -48,7 +48,6 @@ class File():
                         content.pop('bitrix_password')
                         content.pop('forum_user')
                         content.pop('forum_password')
-                        print(content)
                     except:
                         print('erro ao retirar os campos referente as credenciais do bitrix e forum')
                         
