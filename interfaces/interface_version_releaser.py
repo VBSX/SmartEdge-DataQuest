@@ -252,13 +252,12 @@ class VersionReleaseInterface(BaseWindow):
                 break
             else:
                 message = self.copy_all_text_to_clipboard(notcopy=True)
-                print(message)
+
                 # confirma antes de executar o script
                 if message:
                     if self.show_confirmation_dialog():
                         topic_name = None
                         if is_final_version:
-                            print(1)
                             topic_name = self.dialog_input('Coloque a mensagem de tópico do fórum, exemplo: 9.12.x'
                                         )
                             if not topic_name:
@@ -394,7 +393,7 @@ class VersionReleaseInterface(BaseWindow):
                         text_greetings = f'Olá! Versão [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
                         final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
                         if notcopy:
-                            return notcopy
+                            return final_message
                         else:
                             self.copy_to_clipboard(final_message)
                             self.show_dialog('Mensagem copiada para a área de transferência')
