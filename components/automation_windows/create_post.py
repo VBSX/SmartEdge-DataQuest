@@ -84,8 +84,6 @@ class BrowserController():
             path_body_message = '/html/body/div/div[2]/div/form/table[1]/tbody/tr[5]/td[2]/div/iframe'
             path_topic_name_label = '/html/body/div/div[2]/div/form/table[1]/tbody/tr[3]/td[2]/input'
             self.click_base(path_topic_name_label).send_keys(self.topic_name_of_final_version)
-
-            # sleep(600)
         else:    
             self.click_base(path)    
             
@@ -179,7 +177,7 @@ class BrowserController():
         
         # # clica no botão de formatar texto 
         # ele está clicando no botão mas por algum motivo ele não está formatando o texto então por 
-        # enquanto vai ter que clicar manulmente
+        # enquanto vai ter que clicar manualmente
         # for item in range(0,100):
         #     try:
         #         button_format_text = self.navegador.find_element(By.XPATH, f'/html/body/div[{item}]/span[3]/span[2]')       
@@ -197,8 +195,7 @@ class BrowserController():
             sleep(10)
     
     def bitrix_post_2(self):
-        path_open_chat = r'/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[1]/div[1]/div[2]/div[1]/ul/li[3]/ul/li[2]/a'
-
+        path_open_chat = r'/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[1]/div[1]/div[2]/div[1]/ul/li[3]/ul/li[2]/a/span[2]'
         self.click_base(path_open_chat)
         text_find_chat = 'canais - avisos'
         sleep(7)
@@ -221,6 +218,7 @@ class BrowserController():
                     sleep(7)
                 else:
                     print('modo de teste')
+                    sleep(60)
                 break
             
             except:

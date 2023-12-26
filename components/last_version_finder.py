@@ -98,7 +98,7 @@ class LatestVersion():
             
     def download_latest_release(self):
         if self.has_connection:
-            return self.download_file(self.latest_release_version())
+            return self.download_file(self.latest_release_version(self.path_mycommerce_att,'Mycommerce'))
         else:
             return 'SemBuild'
 
@@ -119,9 +119,11 @@ class LatestVersion():
     
 if __name__ == '__main__':
     # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())
-    print('mypet',LatestVersion().latest_release_version_text_mypet())
+    # print('mypet',LatestVersion().latest_release_version_text_mypet())
     # print('myzap',LatestVersion().latest_release_version_text_myzap())
     # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
+    print(LatestVersion().download_latest_release())
+    # print(LatestVersion().latest_release_version_text())
     
     
 
