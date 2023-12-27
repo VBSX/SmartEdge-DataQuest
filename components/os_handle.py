@@ -8,8 +8,9 @@ from time import sleep
 
 class OsHandler():
     def __init__(self):
-        thread = threading.Thread(target=self.delete_atalho)
-        thread.start()
+        self.loop = True
+        self.thread = threading.Thread(target=self.delete_atalho)
+        self.thread.start()
 
     def kill_mycommerce_process(self):
         process_name = "mycommerce.exe"
@@ -41,7 +42,7 @@ class OsHandler():
         subprocess.call(command, shell=True)
 
     def delete_atalho(self):
-        while True:
+        while self.loop:
             path = r'C:\Users\Visual Software\Desktop\Suporte Web Visual Software.lnk'
             if os.path.exists(path):
                 os.remove(path)
@@ -58,9 +59,13 @@ class OsHandler():
             return True
         else:
             return False
-            
+    
+    def stop_loop_delete_atalho(self):
+        self.loop = False     
+        
 if __name__ == "__main__":
     os_handler = OsHandler()
     print(
     os_handler.verify_if_has_connection())
+    os_handler.stop_loop_delete_atalho()
 

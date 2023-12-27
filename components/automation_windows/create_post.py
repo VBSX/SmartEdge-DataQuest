@@ -226,25 +226,8 @@ class BrowserController():
 
 if __name__ == '__main__':
     navegador = BrowserController(
-        """
-Olá! Versão [b]9.12.04.0000[/b] do [b]MyCommerce[/b] disponível para atualizações. 
-
-[b]INCONSISTÊNCIAS RELATADAS POR CLIENTES[/b]
-[b]144024[/b] - Ajustada inconsistência na tela de lista de compras, onde as colunas não estavam sendo salvas ao personalizar as mesmas.
-[b]144026[/b] - Ajustada inconsistência na qual não buscava os produtos quando se adicionava o código ou descrição no importador de nf-e.
-[b]144101[/b] - Ajustada inconsistência ao gerar venda e não ser apresentada a tela de impressão com o parâmetro para imprimir o carnê e a venda ao finalizá-la.
-[b]144210[/b] - Ajustada inconsistência ao gerar venda oriunda de um orçamento em que o serviço era oferecido por terceiros na tela de orçamentos.
-
-[b]CUSTOMIZAÇÕES INCLUSAS[/b]
-[b]143793[/b] - Liberado campo "tipo_pedido" para personalização do relatório de pedidos em pré-vendas (pedidospre.rpt).
-
-Compatível com a versão [b]3.62.00.0000[/b] do [b]MyCommerce PDV[/b]
-Compatível com a versão [b]09.12.00.0000[/b] do [b]MyLocação[/b].
-Compatível com a versão [b]09.08.02.0000[/b] do [b]MyPet[/b].
-Compatível com a versão [b]02.11.03.0000[/b] do [b]MyZap[/b].
-Compatível com a versão [b]06.11.02.0000[/b] do [b]VsIntegrações[/b]. 
-
-Atenciosamente, Vitor Hugo Borges Dos Santos.
+        message_version="""
+            Olá! Versão [b]9.12.04.0000[/b] do [b]MyCommerce[/b] disponível para atualizações. 
         """,
         bitrix_username='',
         bitrix_passwd='',
@@ -253,6 +236,5 @@ Atenciosamente, Vitor Hugo Borges Dos Santos.
         test_mode=True,
         # final_version=True,
         # topic_name_of_final_version= '9.12.x'
-        
         )
 

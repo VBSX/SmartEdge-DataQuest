@@ -78,7 +78,6 @@ class BaseWindow(QMainWindow):
             if text:
                 width = len(text)
                 width = width*14
-                print(width)
                 button.setFixedSize(width+64,64)
             else:
                 button.setFixedSize(64,64)

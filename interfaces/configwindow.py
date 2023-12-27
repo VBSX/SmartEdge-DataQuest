@@ -7,10 +7,10 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QComboBox
+    QComboBox,
+    QLineEdit
     )
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QLineEdit
 from interfaces.base_window import BaseWindow
 
 class ConfigWindow(BaseWindow):
@@ -140,6 +140,7 @@ class ConfigWindow(BaseWindow):
             port_input == self.port and
             database_input == self.database):
             
+            del self.file_handler
             self.close()
             self.parent().reset_layout()
         else:

@@ -2,8 +2,8 @@ import os
 import sys
 path = os.path.abspath('./')
 sys.path.append(path)
+
 from interfaces.base_window import BaseWindow
-from PySide6.QtCore import Qt
 from interfaces.credentials_window import DialogCredentialsPosts
 from components.last_version_finder import LatestVersion
 from components.automation_windows.create_post import BrowserController
@@ -23,7 +23,9 @@ class VersionReleaseInterface(BaseWindow):
     
     def setup_ui(self):
         self.setWindowTitle("Liberar Versão")
-        self.setFixedSize(650, 700)
+        width = 650
+        height = 700
+        self.setFixedSize(width, height)
         self.get_configs_forums()
         self.horizontal_layout_mycommerce_pdv = QHBoxLayout()
         self.horizontal_layout_mylocacao = QHBoxLayout()
@@ -199,23 +201,29 @@ class VersionReleaseInterface(BaseWindow):
         line_edit.returnPressed.connect(lambda: self.process_input(line_edit))
         line_edit.returnPressed.connect(lambda:next_focus.setFocus())
      
-    def process_input(self,line_edit ):
+    def process_input(self,line_edit):
         current_text = line_edit.text()
         if current_text != '...':
-            # Adicionando zeros à esquerda conforme necessário
             parts = current_text.split('.')
-            formatted_parts = []
-            i = 1
-            for part in parts:
-                if i < 4:
-                    part = part.zfill(2)  
-                elif i == 4:
-                    part = part.zfill(4)
-                formatted_parts.append(part)
-                i += 1
-
-            formatted_text = '.'.join(formatted_parts)
+            formatted_text = self.add_zero_to_left(parts)
             line_edit.setText(formatted_text)
+
+    def add_zero_to_left(self, parts_of_text):
+        # Adicionando zeros à esquerda conforme necessário
+        # Exemplo: 9.1.3.4 -> 09.01.03.0004
+        
+        formatted_parts = []
+        index_of_parts = 1
+        for part in parts_of_text:
+            if index_of_parts < 4:
+                part = part.zfill(2)  
+            elif index_of_parts == 4:
+                part = part.zfill(4)
+            formatted_parts.append(part)
+            index_of_parts += 1
+
+        formatted_text = '.'.join(formatted_parts)
+        return formatted_text
         
     def create_layouts(self, widget_list):
         self.central_widget = QWidget()
@@ -372,7 +380,7 @@ class VersionReleaseInterface(BaseWindow):
         message_compatibilities = self.copy_post_compatibilities(show_dialog=False)
         if not self.checkbox_history_of_version.isChecked():
             if initial_message:
-                if message_compatibilities is not None:
+                if message_compatibilities:
                     parts_of_text = initial_message.split('MyCommerce PDV[/b].')
                     print(parts_of_text, '\n\n\n',parts_of_text[0])
                     parts_of_text[0] += 'MyCommerce PDV[/b]'
@@ -386,7 +394,7 @@ class VersionReleaseInterface(BaseWindow):
                         self.show_dialog('Mensagem copiada para a área de transferência')
         else:
             if initial_message:
-                if message_compatibilities is not None:   
+                if message_compatibilities:   
                     message_forum = self.make_text_for_forum(initial_message)
                     text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
                     if not is_final_version:
@@ -446,8 +454,7 @@ class VersionReleaseInterface(BaseWindow):
                                
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setAttribute(Qt.AA_EnableHighDpiScaling)
-    app.setAttribute(Qt.AA_UseHighDpiPixmaps)
+
     window = VersionReleaseInterface()
     window.show()
     app.exec()

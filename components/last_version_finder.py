@@ -13,7 +13,6 @@ class LatestVersion():
         self.path_mypet = base_path+'PetShop'
         self.path_myzap = base_path+'MyZap - Configurador'
         self.path_vsintegracoes = base_path+'vsIntegracoes'
-        
         self.os_handler = OsHandler()
         self.has_connection = self.os_handler.verify_if_has_connection()
         
@@ -83,7 +82,7 @@ class LatestVersion():
         return text
 
     def download_file(self, file_name):
-        OsHandler().download_version(self.path_mycommerce_att, file_name)
+        self.os_handler.download_version(self.path_mycommerce_att, file_name)
         return 'sucess'
     
     def download_latest_build(self):
@@ -116,6 +115,9 @@ class LatestVersion():
     
     def latest_release_version_text_vsintegracoes(self):
         return self.text_strip(self.latest_release_version(self.path_vsintegracoes, 'vsIntegracoes'))
+    
+    def close(self):
+        self.os_handler.stop_loop_delete_atalho()
     
 if __name__ == '__main__':
     # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())

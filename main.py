@@ -15,18 +15,17 @@ from PySide6.QtCore import Qt, QThread,Signal
 from PySide6.QtGui import QIcon
 from interfaces.query_run_window import QueryWindow
 from interfaces.configwindow import ConfigWindow
-from components.os_handle import OsHandler
 from interfaces.base_window import BaseWindow
 from interfaces.aboutwindow import  AboutProgramWindow
 from components.last_version_finder import LatestVersion
 from components.os_handle import OsHandler
 from interfaces.interface_version_releaser import VersionReleaseInterface
+# from memory_profiler import profile
 
 class MainWindow(BaseWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.config_window = None
-        self.about_window_is_open = False
         self.interface_version_relelaser_is_open = False
         self.interface_query_window_is_open = False
         
@@ -37,9 +36,9 @@ class MainWindow(BaseWindow):
         self.img_pin_path = r'images/pin.png'
         self.img_att_path = r'images/att_db.png'
         self.is_the_window_fixed = False
-        OsHandler()
+        self.os_handler = OsHandler()
         self.setup_ui()
-        
+  
     def setup_ui(self, reset_layout= False):
         if not reset_layout:
             self.config_imgs()
@@ -118,9 +117,8 @@ class MainWindow(BaseWindow):
             self.icon_att_db = QIcon(self.img_att_path)
             self.setWindowIcon(QIcon(self.img_smartedge_path))
 
-       
     def layout_config(self):
-        list_of_widgets = [
+        self.list_of_widgets = [
             self.layout_horizontal_top_tools,
             self.layout_horizontal_buttons_sql,
             self.layout_horizontal_close_programs,
@@ -135,8 +133,7 @@ class MainWindow(BaseWindow):
         self.setCentralWidget(self.central_widget)
         self.layout_principal = QVBoxLayout()
         
-        for item in list_of_widgets:
-
+        for item in self.list_of_widgets:
             if type(item) == QHBoxLayout:
                 self.layout_principal.addLayout(item)
             elif type(item) == QSpacerItem:
@@ -145,11 +142,25 @@ class MainWindow(BaseWindow):
                 self.layout_principal.addWidget(item)
                 
         self.central_widget.setLayout(self.layout_principal)      
-                    
+        
+    # @profile               
     def reset_layout(self):
-        self.centralWidget().destroy()
+        try:
+            self.config_window.destroy()
+            del self.config_window
+            self.config_window = None
+        except:
+            print('Janela "config" fechada')
+        try:
+            self.about_window.destroy()
+            self.about_window = None
+        except:
+            print('Janela "sobre" fechada')
+
+        self.centralWidget().deleteLater() 
         self.clearLayout(self.layout_principal)
         self.clearLayout(self.layout_horizontal_database_info)
+        
         self.setup_ui(reset_layout=True)
             
     def window_fixed(self):
@@ -160,6 +171,7 @@ class MainWindow(BaseWindow):
             self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
             self.is_the_window_fixed = False
         self.show()
+        
      
     def create_all_buttons_of_the_window(self):
         #
@@ -236,7 +248,6 @@ class MainWindow(BaseWindow):
         self.reset_layout()
     
     def reset_users_password(self):
-
         query_return = self.db.reset_users_password()
         if query_return == 'sucess':
             self.show_dialog('Senhas resetadas com sucesso')
@@ -245,7 +256,7 @@ class MainWindow(BaseWindow):
         self.reset_layout()
     
     def mycommerce_close(self):
-        process = OsHandler().kill_mycommerce_process()
+        process = self.os_handler.kill_mycommerce_process()
         self.show_dialog(str(process))
         
     def start_query(self):
@@ -261,7 +272,7 @@ class MainWindow(BaseWindow):
             self.interface_query_window_is_open = True
         else:  
             self.query_window.show()
-            
+  
     def start_config(self):
         self.config_window = ConfigWindow(self)
         self.config_window.show()
@@ -273,14 +284,8 @@ class MainWindow(BaseWindow):
         self.database = json_file['database']
     
     def about_program_window(self):
-        if not self.about_window_is_open:
-            self.about_window = AboutProgramWindow(self)
-            self.about_window.show()
-            self.about_window_is_open = True
-        else:
-            self.about_window.close()
-            self.about_window.show()
-    
+        self.about_window = AboutProgramWindow(self)
+        self.about_window.show()
 
     def create_all_labels_of_the_window(self):
         self.host_label = self.create_label(f'Host: {self.host}')
@@ -334,7 +339,7 @@ class MainWindow(BaseWindow):
         if LatestVersion().latest_build_version_text() != 'SemBuild':
             self.show_dialog('Arquivo enviado para a pasta de downloads')
         else:
-            self.show_dialog('Não há build para baixar')
+            self.show_dialog('Não há arquivo para baixar')
 
     def release_the_version(self):
         if not self.interface_version_relelaser_is_open:
@@ -343,10 +348,17 @@ class MainWindow(BaseWindow):
             self.interface_version_relelaser_is_open = True
         else:
             self.interface_version_relelaser.show()
-    
+   
+    def stop_all(self):
+        self.os_handler.stop_loop_delete_atalho()
+        del self.os_handler
+        
+    def closeEvent(self, event):
+        self.stop_all()
+        event.accept() 
+        
 class DownloadThread(QThread):
     download_finished = Signal()
-
     def __init__(self, is_build):
         super().__init__()
         self.is_build = is_build
@@ -363,5 +375,5 @@ if __name__ == '__main__':
     window = MainWindow()
     window.show()
     app.exec()
-
+    
 # pyinstaller --onefile --windowed --name=DataQuest --icon=images/smartedge.png --add-data="images/*.png;images/" main.py

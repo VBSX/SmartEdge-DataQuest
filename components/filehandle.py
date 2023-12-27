@@ -34,7 +34,6 @@ class File():
         else:
             return False
     
-    
     def read_json(self, database = False):
         if self.verify_if_json_exists():
                 with open(self.path_json, 'r') as f:
