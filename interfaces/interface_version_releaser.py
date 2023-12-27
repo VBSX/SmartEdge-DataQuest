@@ -6,19 +6,23 @@ sys.path.append(path)
 from interfaces.base_window import BaseWindow
 from interfaces.credentials_window import DialogCredentialsPosts
 from components.last_version_finder import LatestVersion
-from components.automation_windows.create_post import BrowserController
 
+from interfaces.thread_pyside import DownloadThread
+
+from PySide6.QtCore import Qt 
 from PySide6.QtWidgets import (
     QApplication,
     QVBoxLayout,
     QWidget,
     QHBoxLayout,
-    QSpacerItem
+    QSpacerItem,
+    QProgressDialog
 )
 
 class VersionReleaseInterface(BaseWindow):
     def __init__(self, parent=None):
         super(VersionReleaseInterface, self).__init__(parent)
+        self.latest_version_handler = LatestVersion()
         self.setup_ui()
     
     def setup_ui(self):
@@ -36,7 +40,6 @@ class VersionReleaseInterface(BaseWindow):
         self.horizontal_layout_manual_release = QHBoxLayout()
         self.horizontal_layout_messages = QHBoxLayout()
         self.horizontal_history_version = QHBoxLayout()
-        
         final_list =[
             self.horizontal_layout_release,self.horizontal_layout_mycommerce_pdv,
             self.horizontal_layout_mylocacao, 
@@ -139,37 +142,37 @@ class VersionReleaseInterface(BaseWindow):
     def create_all_line_edits(self):
         self.line_edit_mycommerce_pdv_version = self.create_line_edit(
             placeholder="versão do MyCommerce PDV",
-            set_text=LatestVersion().latest_release_version_text_pdv()
+            set_text=self.latest_version_handler.latest_release_version_text_pdv()
         )
         self.horizontal_layout_mycommerce_pdv.addWidget(self.line_edit_mycommerce_pdv_version)
         
         self.line_edit_mylocacao_version = self.create_line_edit(
             placeholder="versão do MyLocação",
-            set_text=LatestVersion().latest_release_version_text_mylocacao()
+            set_text=self.latest_version_handler.latest_release_version_text_mylocacao()
         )
         self.horizontal_layout_mylocacao.addWidget(self.line_edit_mylocacao_version)
 
         self.line_edit_mypet = self.create_line_edit(
             placeholder="versão do MyPet",
-            set_text=LatestVersion().latest_release_version_text_mypet()
+            set_text=self.latest_version_handler.latest_release_version_text_mypet()
         )
         self.horizontal_layout_mypet.addWidget(self.line_edit_mypet)
         
         self.line_edit_myzap = self.create_line_edit(
             placeholder="versão do MyZap",
-            set_text=LatestVersion().latest_release_version_text_myzap()
+            set_text=self.latest_version_handler.latest_release_version_text_myzap()
         )
         self.horizontal_layout_myzap.addWidget(self.line_edit_myzap)
         
         self.line_edit_vsintegracao = self.create_line_edit(
             placeholder="versão do VsIntegracao",
-            set_text=LatestVersion().latest_release_version_text_vsintegracoes()
+            set_text=self.latest_version_handler.latest_release_version_text_vsintegracoes()
         )
         self.horizontal_layout_vsintegracao.addWidget(self.line_edit_vsintegracao)
         
         self.line_edit_version_mycommerce_release = self.create_line_edit(
             placeholder="versão do MyCommerce",
-            set_text=LatestVersion().latest_release_version_text()
+            set_text=self.latest_version_handler.latest_release_version_text()
         )
         self.horizontal_layout_release.addWidget(self.line_edit_version_mycommerce_release)
     
@@ -252,43 +255,58 @@ class VersionReleaseInterface(BaseWindow):
             self.forum_username,
             self.forum_password
         ]
+        if not self.verify_if_has_login_configs(list_credentials):
+            self.show_dialog('Você precisa configurar as credenciais antes de criar o post')
+            self.credentials_window = DialogCredentialsPosts(self)
+            self.get_configs_forums()
+        else:
+            message = self.copy_all_text_to_clipboard(notcopy=True)
+            # confirma antes de executar o script
+            if message:
+                if self.show_confirmation_dialog():
+                    topic_name = None
+                    if is_final_version:
+                        topic_name = self.dialog_input('Coloque a mensagem de tópico do fórum, exemplo: 9.12.x'
+                                    )
+                    self.start_automation_create_post(topic_name, is_final_version, message)
+            else:
+                self.show_dialog('Não há mensagem para publicar') 
+            
+    def verify_if_has_login_configs(self, list_credentials):
         for credential in list_credentials: 
             if credential == 'default':
-                self.show_dialog('Você precisa configurar as credenciais antes de criar o post')
-                self.credentials_window = DialogCredentialsPosts(self)
-                self.get_configs_forums()
-                break
-            else:
-                message = self.copy_all_text_to_clipboard(notcopy=True)
+                return False
+        return True
+    
+    def start_automation_create_post(self, topic_name, is_final_version, message):
+        if topic_name and is_final_version or not topic_name and not is_final_version:
+            self.progress_dialog = QProgressDialog(self) 
+            self.config_window_progress()
+            self.thread_create_post = DownloadThread(
+                thread_create_post=True,
+                message=message,
+                bitrix_username=self.bitrix_username,
+                bitrix_passwd=self.bitrix_password,
+                forum_username=self.forum_username,
+                forum_password=self.forum_password,
+                final_version=is_final_version,
+                topic_name_of_final_version=topic_name
+                
+                )
+            self.thread_create_post.download_finished.connect(self.thread_finished)
+            self.thread_create_post.start()
+            
+    def config_window_progress(self):
+        self.progress_dialog.setWindowModality(Qt.WindowModal)
+        self.progress_dialog.setWindowTitle('Criando Posts')
+        self.progress_dialog.setLabelText('Aguarde enquanto é criado os posts')
+        self.progress_dialog.setRange(0, 0)    
 
-                # confirma antes de executar o script
-                if message:
-                    if self.show_confirmation_dialog():
-                        topic_name = None
-                        if is_final_version:
-                            topic_name = self.dialog_input('Coloque a mensagem de tópico do fórum, exemplo: 9.12.x'
-                                        )
-                            if not topic_name:
-                                break
-                        BrowserController(
-                                message_version=message,
-                                bitrix_username=self.bitrix_username,
-                                bitrix_passwd=self.bitrix_password,
-                                forum_username=self.forum_username,
-                                forum_passwd=self.forum_password,
-                                final_version=is_final_version,
-                                topic_name_of_final_version=topic_name
-                                )
-                        break
-                    else:
-                        print(2)
-                        break
-                else:
-                    self.show_dialog('Não há mensagem para publicar')
-                    break
-  
-    def copy_post_compatibilities(self, show_dialog = True):
+    def thread_finished(self):
+        self.progress_dialog.cancel()
+        self.show_dialog('Posts criados com sucesso')
         
+    def copy_post_compatibilities(self, show_dialog = True):
         mycommerce_pdv = self.line_edit_mycommerce_pdv_version.text()
         mylocacao = self.line_edit_mylocacao_version.text()
         mypet = self.line_edit_mypet.text()
@@ -346,14 +364,14 @@ class VersionReleaseInterface(BaseWindow):
         if message_vsintegracao:
             list_messages.append(message_vsintegracao)
         
-        i=0
+        index_itens_message=0
         for item in list_messages:
             if item:
-                if i==0:
+                if index_itens_message==0:
                     final_message = item
                 else:
                     final_message += item
-                i+=1
+                index_itens_message+=1
         print(show_dialog)
         if show_dialog:  
             self.copy_to_clipboard(str(final_message))
@@ -454,7 +472,6 @@ class VersionReleaseInterface(BaseWindow):
                                
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-
     window = VersionReleaseInterface()
     window.show()
     app.exec()

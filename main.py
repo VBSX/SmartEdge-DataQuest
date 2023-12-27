@@ -8,10 +8,10 @@ from PySide6.QtWidgets import (
     QWidget,
     QSpacerItem,
     QHBoxLayout,
-    QProgressDialog,
+    QProgressDialog
 )
 import sys
-from PySide6.QtCore import Qt, QThread,Signal
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from interfaces.query_run_window import QueryWindow
 from interfaces.configwindow import ConfigWindow
@@ -20,6 +20,7 @@ from interfaces.aboutwindow import  AboutProgramWindow
 from components.last_version_finder import LatestVersion
 from components.os_handle import OsHandler
 from interfaces.interface_version_releaser import VersionReleaseInterface
+from interfaces.thread_pyside import DownloadThread
 # from memory_profiler import profile
 
 class MainWindow(BaseWindow):
@@ -28,7 +29,7 @@ class MainWindow(BaseWindow):
         self.config_window = None
         self.interface_version_relelaser_is_open = False
         self.interface_query_window_is_open = False
-        
+        self.latest_version_handler = LatestVersion()
         self.img_mycommerce_path = r'images/mycommerce.png'
         self.img_config_path = r'images/config.png'
         self.img_about_path = r'images/about.png'
@@ -223,11 +224,11 @@ class MainWindow(BaseWindow):
             function=self.start_query
             )
         self.download_last_build_version_button = self.create_button(
-            text='Baixar última Build',
+            text='Baixar Build',
             function=self.download_last_build_version
         )
         self.download_last_release_version_button = self.create_button(
-            text='Baixar última Release',
+            text='Baixar Release',
             function=self.download_last_release_version
         )
         self.button_release_the_version = self.create_button(
@@ -296,11 +297,11 @@ class MainWindow(BaseWindow):
         
         self.label_close_programs = self.create_label('Fechar programas')
         
-        self.label_last_build_version = self.create_label(f'Última Build: {LatestVersion().latest_build_version_text()}')
-        # self.label_last_build_version.mouseDoubleClickEvent.connect(lambda: self.copy_to_clipboard(LatestVersion().latest_build_version_text()))
+        self.label_last_build_version = self.create_label(f'Última Build: {self.latest_version_handler.latest_build_version_text()}')
+        self.label_last_build_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(self.latest_version_handler.latest_build_version_text())
         
-        self.label_last_release_version = self.create_label(f'Última Release: {LatestVersion().latest_release_version_text()}')
-        # self.label_last_release_version.clicked.connect(lambda: self.copy_to_clipboard(LatestVersion().latest_release_version_text()))
+        self.label_last_release_version = self.create_label(f'Última Release: {self.latest_version_handler.latest_release_version_text()}')
+        self.label_last_release_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(self.latest_version_handler.latest_release_version_text())
     
     def att_db_open(self):
         self.get_configs()
@@ -336,7 +337,7 @@ class MainWindow(BaseWindow):
             
     def download_finished(self):
         self.progress_dialog.cancel()
-        if LatestVersion().latest_build_version_text() != 'SemBuild':
+        if self.latest_version_handler.latest_build_version_text() != 'SemBuild':
             self.show_dialog('Arquivo enviado para a pasta de downloads')
         else:
             self.show_dialog('Não há arquivo para baixar')
@@ -356,19 +357,6 @@ class MainWindow(BaseWindow):
     def closeEvent(self, event):
         self.stop_all()
         event.accept() 
-        
-class DownloadThread(QThread):
-    download_finished = Signal()
-    def __init__(self, is_build):
-        super().__init__()
-        self.is_build = is_build
-
-    def run(self):
-        if self.is_build:
-            LatestVersion().download_latest_build()
-        else:
-            LatestVersion().download_latest_release()
-        self.download_finished.emit()
         
 if __name__ == '__main__': 
     app = QApplication(sys.argv)
