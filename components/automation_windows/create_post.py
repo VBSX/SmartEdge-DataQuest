@@ -164,6 +164,7 @@ class BrowserController():
 
     def bitrix_post1 (self):
         path_post_body = '/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td/div/div[2]/div/div[1]/div/div/div[2]/div'
+        path_button_send = '/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td/div/div[2]/div/div[1]/div/div/div[3]/form/div[4]/span[1]'
         
         self.click_base(path_post_body)
         sleep(0.5)
@@ -173,7 +174,7 @@ class BrowserController():
         actions.send_keys("v")
         actions.key_up(Keys.CONTROL)
         actions.perform()
-        sleep(5)
+        sleep(7)
         
         # # clica no botão de formatar texto 
         # ele está clicando no botão mas por algum motivo ele não está formatando o texto então por 
@@ -186,9 +187,9 @@ class BrowserController():
         #         break
         #     except:
         #         print('Não achou o elemento')
+        
         if not self.test_mode:
-            actions.key_down(Keys.ENTER).perform()
-            actions.key_up(Keys.ENTER).perform()
+            self.click_base(path_button_send) 
             sleep(10)
         else:
             print('modo de teste')
