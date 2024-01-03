@@ -9,6 +9,7 @@ class File():
     def __init__(self):
         self.ini_config = IniConfig()
         self.path_json = r'components/params.json'
+        self.path_log = 'components/log.txt'
         self.json_file = self.read_json()
         self.init_json_config_align_with_dotini()
         self.username = self.get_username()
@@ -17,8 +18,32 @@ class File():
         self.port = self.get_port()
         self.database = self.get_database()
     
+    def create_local_log_txt(self):
+        if self.verify_if_path_exists(log = True):
+            return False
+        elif not self.verify_if_path_components_exist():
+            self.create_components_path()
+            return True
+        else:
+            self.log_local_write('File Created')
+            return True
+    
+    def log_local_write(self, text):
+        if self.verify_if_path_exists(log = True):
+            return False
+        elif not self.verify_if_path_components_exist():
+            self.create_components_path()
+            return True
+        else:
+            with open(self.path_log, 'w') as f:
+                f.write(text, '\n')
+            return True
+    
+    def create_remote_log_txt():
+        open('\\servername\path\resource.txt@username:pass', 'r')
+       
     def create_json(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             return False
         elif not self.verify_if_path_components_exist():
             self.create_components_path()
@@ -28,14 +53,20 @@ class File():
             self.create_defaut_json()
             return True
         
-    def verify_if_json_exists(self):
-        if os.path.exists(self.path_json):
-            return True
+    def verify_if_path_exists(self, log = False):
+        if not log:
+            if os.path.exists(self.path_json):
+                return True
+            else:
+                return False
         else:
-            return False
-    
+            if os.path.exists(self.path_log):
+                return True
+            else:
+                return False
+        
     def read_json(self, database = False):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
                 with open(self.path_json, 'r') as f:
                     content = json.load(f)
                 if not database:
@@ -65,11 +96,9 @@ class File():
             self.set_database(database)
             self.set_host(host)
             self.set_port(port)
-            
-            self.write_json()
                
     def get_username(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['user']:
                 return self.json_file['user']
             else:
@@ -78,7 +107,7 @@ class File():
             self.create_json()
     
     def get_password(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['password']:
                 return self.json_file['password']
             else:
@@ -87,7 +116,7 @@ class File():
             self.create_json()
             
     def get_host(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['host']:
                 return self.json_file['host']
             else:
@@ -96,7 +125,7 @@ class File():
             self.create_json()
             
     def get_port(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['port']:
                 return self.json_file['port']
             else:
@@ -105,7 +134,7 @@ class File():
             self.create_json()
             
     def get_port(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['port']:
                 return self.json_file['port']
             else:
@@ -114,7 +143,7 @@ class File():
             self.create_json()
             
     def get_database(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['database']:
                 return self.json_file['database']
             else:
@@ -123,7 +152,7 @@ class File():
             self.create_json()
     
     def get_bitrix_user(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['bitrix_user']:
                 return self.json_file['bitrix_user']
             else:
@@ -132,7 +161,7 @@ class File():
             self.create_json()
     
     def get_bitrix_password(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['bitrix_password']:
                 return self.json_file['bitrix_password']
             else:
@@ -141,7 +170,7 @@ class File():
             self.create_json()
     
     def get_forum_user(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['forum_user']:
                 return self.json_file['forum_user']
             else:
@@ -150,7 +179,7 @@ class File():
             self.create_json()
     
     def get_forum_password(self):
-        if self.verify_if_json_exists():
+        if self.verify_if_path_exists():
             if self.json_file['forum_password']:
                 return self.json_file['forum_password']
             else:
@@ -186,7 +215,7 @@ class File():
         self.json_setter('forum_password', forum_password)    
     
     def json_setter(self, key, value):
-        if not self.verify_if_json_exists():
+        if not self.verify_if_path_exists():
             self.create_json()
         self.json_file[key] = value
         self.write_json()
@@ -216,7 +245,7 @@ class File():
         return 'sucess'
 
     def create_defaut_json(self):
-        if not self.verify_if_json_exists():
+        if not self.verify_if_path_exists():
             with open(self.path_json, 'w') as f:
                 f.write(
                     """{"user": "default",
@@ -240,7 +269,8 @@ class File():
 if __name__ == '__main__':
 
     f = File()
-    print(f.read_json(database=True))
+    f.create_local_log_txt()
+    # print(f.read_json(database=True))
     # f.set_host('10.1.1.220')
     # print(f.username, f.password, f.host, f.port, f.database, f.json_file)
     # f.set_username('root')

@@ -50,10 +50,12 @@ class OsHandler():
                 print('arquivo de atalho deletado')
             sleep(1)
             
-    def verify_if_has_connection(self):
+    def verify_if_has_connection(self, mycommerce = True, log_path = False):
         # caminho da rede a ser verificado
-        path = r'\\10.1.1.110\Arquivos'
-        
+        if mycommerce:
+            path = r'\\10.1.1.110\Arquivos'
+        elif log_path:
+            path = '\\192.168.2.244\shared'
         # verifica se o caminho é acessível
         if os.path.exists(path):
             return True

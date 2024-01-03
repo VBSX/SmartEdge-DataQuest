@@ -21,6 +21,7 @@ from components.last_version_finder import LatestVersion
 from components.os_handle import OsHandler
 from interfaces.interface_version_releaser import VersionReleaseInterface
 from interfaces.thread_pyside import DownloadThread
+
 # from memory_profiler import profile
 
 class MainWindow(BaseWindow):
@@ -156,6 +157,7 @@ class MainWindow(BaseWindow):
             self.about_window.destroy()
             self.about_window = None
         except:
+            
             print('Janela "sobre" fechada')
 
         self.centralWidget().deleteLater() 
@@ -238,7 +240,7 @@ class MainWindow(BaseWindow):
              
     def update_db(self):
         self.get_configs()
-        if self.file_handler.verify_if_json_exists():
+        if self.file_handler.verify_if_path_exists():
             query_return = self.db.db_default_config()
             if query_return == 'sucess':
                 self.show_dialog('Configuração realizada com sucesso')
