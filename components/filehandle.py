@@ -64,18 +64,19 @@ class File():
         
     def log_write(self, text, remote = False):
         actual_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        text = text+f'     || {actual_datetime}\n'
         if not remote:
             if not self.verify_if_path_components_exist():
                 self.create_components_path()
                 return True
             else:
                 with open(self.path_log, 'a') as f:
-                    f.write(text+f' {actual_datetime}\n')
+                    f.write(text)
                 return True
         else:
             if self.os_handler.verify_if_has_connection(log_path=True):
                 with open(self.remote_path_log, 'a') as f:
-                    f.write(text+f' {actual_datetime}\n')
+                    f.write(text)
                 return True
             else:   
                 return False
@@ -104,7 +105,7 @@ class File():
         )
 
         # Encode the string into bytes
-        text = text+f' {actual_datetime}\n'
+        text = text+f'    || {actual_datetime}\n'
         text = text.encode()
 
         # Set the file pointer to the end of the file to append content
