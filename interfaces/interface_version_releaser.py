@@ -380,6 +380,7 @@ class VersionReleaseInterface(BaseWindow):
             try:
                 return final_message
             except:
+                self.file_handler.add_new_logs('sem mensagem final')
                 print('sem mensagem final')
 
     def resize_text_edit(self, text_edit):

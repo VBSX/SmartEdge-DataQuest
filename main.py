@@ -42,6 +42,7 @@ class MainWindow(BaseWindow):
         self.setup_ui()
   
     def setup_ui(self, reset_layout= False):
+        
         if not reset_layout:
             self.config_imgs()
         self.setWindowTitle('SmartEdge - DataQuest')
@@ -101,6 +102,7 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_downloads.addWidget(
             self.download_last_release_version_button)
         self.layout_config()
+        self.file_handler.init_txt()
         
     def config_imgs(self):
         has_image_folder = self.file_handler.verify_if_images_path_exists()
@@ -152,12 +154,13 @@ class MainWindow(BaseWindow):
             del self.config_window
             self.config_window = None
         except:
+            self.file_handler.add_new_logs('Janela "config" fechada')
             print('Janela "config" fechada')
         try:
             self.about_window.destroy()
             self.about_window = None
         except:
-            
+            self.file_handler.add_new_logs('Janela "sobre" fechada')
             print('Janela "sobre" fechada')
 
         self.centralWidget().deleteLater() 
@@ -361,6 +364,7 @@ class MainWindow(BaseWindow):
         event.accept() 
         
 if __name__ == '__main__': 
+
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

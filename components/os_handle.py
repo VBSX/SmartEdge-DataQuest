@@ -5,12 +5,16 @@ path = os.path.abspath('./')
 sys.path.append(path)
 import subprocess
 from time import sleep
+from cpuinfo import get_cpu_info
+from multiprocessing import freeze_support
+import platform
+import psutil
 
 class OsHandler():
     def __init__(self):
         self.loop = True
-        self.thread = threading.Thread(target=self.delete_atalho)
-        self.thread.start()
+        # self.thread = threading.Thread(target=self.delete_atalho)
+        # self.thread.start()
 
     def kill_mycommerce_process(self):
         process_name = "mycommerce.exe"
@@ -50,24 +54,55 @@ class OsHandler():
                 print('arquivo de atalho deletado')
             sleep(1)
             
-    def verify_if_has_connection(self, mycommerce = True, log_path = False):
+    def verify_if_has_connection(self, log_path = False):
         # caminho da rede a ser verificado
-        if mycommerce:
+        if not log_path:
             path = r'\\10.1.1.110\Arquivos'
-        elif log_path:
-            path = '\\192.168.2.244\shared'
+        else:
+            path = r'\\192.168.2.244\shared'
+                
         # verifica se o caminho é acessível
         if os.path.exists(path):
             return True
         else:
             return False
     
+    def get_machine_name(self):
+        return os.getenv('COMPUTERNAME')
+    
+    def init_data_user(self):
+        os_used = platform.system()
+        os_version = platform.release()
+
+        ram_quantity_of_machine = psutil.virtual_memory()
+        ram_quantity_of_machine = ram_quantity_of_machine.total / 1024 / 1024 / 1024
+        ram_quantity_of_machine = round(ram_quantity_of_machine, 1)
+        
+        cpu_quantity_of_machine = os.cpu_count()
+        
+        # obrigatorio ter isso usando pyinstaller se não cria janelas infinitas
+        # freeze_support() Pyinstaller may spawn infinite processes if __main__ is not used
+        freeze_support()
+        cpu_model_of_machine  = get_cpu_info()['brand_raw']
+
+        return {
+            'os_used': os_used,
+            'os_version': os_version,
+            'ram_quantity_of_machine': ram_quantity_of_machine,
+            'cpu_quantity_of_machine': cpu_quantity_of_machine,
+            'cpu_model_of_machine': cpu_model_of_machine
+        }
+        
     def stop_loop_delete_atalho(self):
         self.loop = False     
         
 if __name__ == "__main__":
+    # freeze_support()
     os_handler = OsHandler()
     print(
-    os_handler.verify_if_has_connection())
-    os_handler.stop_loop_delete_atalho()
+    # os_handler.verify_if_has_connection(log_path=True),
+    # os_handler.get_machine_name()
+    os_handler.init_data_user()
+    )
+    # os_handler.stop_loop_delete_atalho()
 

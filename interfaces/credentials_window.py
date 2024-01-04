@@ -104,6 +104,7 @@ class DialogCredentialsPosts(BaseWindow):
             decrypted_text = cipher.decrypt(encrypted_bytes).decode('utf-8')
             return decrypted_text
         except Exception as e:
+            self.file_handler.add_new_logs(f"Erro ao descriptografar: {e}")
             print(f"Erro ao descriptografar: {e}")
             return None
         
