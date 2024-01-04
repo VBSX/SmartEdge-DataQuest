@@ -38,29 +38,31 @@ class File():
         
     
     def init_txt(self):
-        if self.verify_if_path_exists(self.path_log) and self.verify_if_path_exists(self.remote_path_log):
-            return True
-        else:
-            self.create_log_txt()
-            return True
-        
+        if self.os_handler.verify_if_has_connection(log_path=True):
+
+            if self.verify_if_path_exists(self.path_log) and self.verify_if_path_exists(self.remote_path_log):
+                return True
+            else:
+                self.create_log_txt()
+                return True
+          
     def create_log_txt(self):
-        if self.verify_if_path_exists(self.path_log) and self.verify_if_path_exists(self.remote_path_log):
-            return False
-        elif not self.verify_if_path_components_exist():
-            self.create_components_path()
-            return True
-        else:
-            data_list = self.os_handler.init_data_user()
-            for item in data_list:
-                value = data_list.get(item)
-                self.log_write(item+ ': '+ str(value))
-                
-                if not self.local_machine:
-                    self.write_to_file(self.remote_path_log, item+': '+str(value))
-                else:
-                    self.log_write(item+ ': '+ str(value), remote=True)
-            return True
+            if self.verify_if_path_exists(self.path_log) and self.verify_if_path_exists(self.remote_path_log):
+                return True
+            elif not self.verify_if_path_components_exist():
+                self.create_components_path()
+                return True
+            else:
+                data_list = self.os_handler.init_data_user()
+                for item in data_list:
+                    value = data_list.get(item)
+                    self.log_write(item+ ': '+ str(value))
+                    if self.os_handler.verify_if_has_connection(log_path = True):
+                        if not self.local_machine:
+                            self.write_to_file(self.remote_path_log, item+': '+str(value))
+                        else:
+                            self.log_write(item+ ': '+ str(value), remote=True)         
+                return True
         
     def log_write(self, text, remote = False):
         actual_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -87,10 +89,11 @@ class File():
             if self.local_machine:
                 self.log_write(text, remote=True)
             else:
-                self.write_to_file(self.remote_path_log, text)
+                self.write_to_file(self.remote_path_log, text) 
         else:
             self.create_log_txt()
-            
+
+                
     def write_to_file(self, filename, text):
         actual_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         # Open the file or create it if it doesn't exist
