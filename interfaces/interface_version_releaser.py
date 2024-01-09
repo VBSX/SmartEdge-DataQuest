@@ -40,10 +40,12 @@ class VersionReleaseInterface(BaseWindow):
         self.horizontal_layout_manual_release = QHBoxLayout()
         self.horizontal_layout_messages = QHBoxLayout()
         self.horizontal_history_version = QHBoxLayout()
+        self.horizontal_layout_mycomanda = QHBoxLayout()
         final_list =[
             self.horizontal_layout_release,self.horizontal_layout_mycommerce_pdv,
             self.horizontal_layout_mylocacao, 
             self.horizontal_layout_mypet, self.horizontal_layout_myzap, self.horizontal_layout_vsintegracao,
+            self.horizontal_layout_mycomanda,
             self.horizontal_history_version,
             self.horizontal_layout_messages ,self.horizontal_layout_manual_release
             ]
@@ -109,6 +111,9 @@ class VersionReleaseInterface(BaseWindow):
             marked=False)
         self.horizontal_history_version.addWidget(self.checkbox_final_version)
 
+        self.checkbox_compativel_mycomanda = self.create_checkbox(text= "Compatível")
+        self.horizontal_layout_mycomanda.addWidget(self.checkbox_compativel_mycomanda)
+        
     def create_all_labels(self):
         self.label_mycommerce_pdv = self.create_label(
             text="MyCommerce PDV: ")
@@ -138,7 +143,11 @@ class VersionReleaseInterface(BaseWindow):
         )
         self.horizontal_layout_release.addWidget(self.label_version_mycommerce_release)
         
-    
+        self.label_mycomanda = self.create_label(
+            text="MyComanda: "
+        )
+        self.horizontal_layout_mycomanda.addWidget(self.label_mycomanda)
+        
     def create_all_line_edits(self):
         self.line_edit_mycommerce_pdv_version = self.create_line_edit(
             placeholder="versão do MyCommerce PDV",
@@ -175,13 +184,17 @@ class VersionReleaseInterface(BaseWindow):
             set_text=self.latest_version_handler.latest_release_version_text()
         )
         self.horizontal_layout_release.addWidget(self.line_edit_version_mycommerce_release)
-    
+
+        self.line_edit_mycomanda = self.create_line_edit(placeholder="Versão Mycomanda")
+        self.horizontal_layout_mycomanda.addWidget(self.line_edit_mycomanda)
+        
         self.process_input(self.line_edit_version_mycommerce_release)
         self.process_input(self.line_edit_mycommerce_pdv_version)
         self.process_input(self.line_edit_mylocacao_version)
         self.process_input(self.line_edit_mypet)
         self.process_input(self.line_edit_myzap)
         self.process_input(self.line_edit_vsintegracao)
+        self.process_input(self.line_edit_mycomanda)
         
         self.line_edit_messages_fixes = self.create_text_edit(
             placeholder="Mensagens ajustes",
@@ -198,7 +211,8 @@ class VersionReleaseInterface(BaseWindow):
         self.line_edit_return_pressed(self.line_edit_mypet, self.line_edit_myzap)
         self.line_edit_return_pressed(self.line_edit_myzap, self.line_edit_vsintegracao)
         self.line_edit_return_pressed(self.line_edit_vsintegracao, self.line_edit_version_mycommerce_release)
-        self.line_edit_return_pressed(self.line_edit_version_mycommerce_release, self.line_edit_mycommerce_pdv_version)
+        self.line_edit_return_pressed(self.line_edit_version_mycommerce_release, self.line_edit_mycomanda)
+        self.line_edit_return_pressed(self.line_edit_mycomanda, self.line_edit_mycommerce_pdv_version)
 
     def line_edit_return_pressed(self, line_edit, next_focus):
         line_edit.returnPressed.connect(lambda: self.process_input(line_edit))
@@ -312,58 +326,42 @@ class VersionReleaseInterface(BaseWindow):
         mypet = self.line_edit_mypet.text()
         myzap = self.line_edit_myzap.text()
         vsintegracao = self.line_edit_vsintegracao.text()
+        mycomanda = self.line_edit_mycomanda.text()
+        list_of_compatibilities = ['MyCommerce PDV', 'MyLocação', 'MyPet', 'MyZap', 'VsIntegrações', 'MyComanda']
+        list_of_versions = [mycommerce_pdv, mylocacao, mypet, myzap, vsintegracao, mycomanda]
+        list_of_is_compatible = [
+            self.checkbox_compativel_mycommerce_pdv.isChecked(),
+            self.checkbox_compativel_mylocacao.isChecked(),
+            self.checkbox_compativel_mypet.isChecked(),
+            self.checkbox_compativel_myzap.isChecked(),
+            self.checkbox_compativel_vsintegracao.isChecked(),
+            self.checkbox_compativel_mycomanda.isChecked()
+            ]
         list_messages = []   
         message_mylocacao = ''
         message_mypet = ''
         message_myzap = ''
         message_vsintegracao = ''
         message_mycommerce_pdv = ''
-        
-        #mycommerce_pdv
-        if self.checkbox_compativel_mycommerce_pdv.isChecked():
-            if mycommerce_pdv != '...':
-                message_mycommerce_pdv = f'\nCompatível com a versão [b]{mycommerce_pdv}[/b] do [b]MyCommerce PDV[/b].'
-        else:
-            message_mycommerce_pdv = '\n[b]Não compatível[/b] com o [b]MyCommerce PDV[/b].'
-        if message_mycommerce_pdv:  
-            list_messages.append(message_mycommerce_pdv)
-        
-        #mylocacao  
-        if self.checkbox_compativel_mylocacao.isChecked():
-            if mylocacao != '...':
-                message_mylocacao = f'\nCompatível com a versão [b]{mylocacao}[/b] do [b]MyLocação[/b].'
-        else:
-            message_mylocacao = '\n[b]Não compatível[/b] com o [b]MyLocação[/b].' 
-        if message_mylocacao:
-            list_messages.append(message_mylocacao)
+        message_mycomanda = ''
+        list_messages_raw = [message_mycommerce_pdv, message_mylocacao, message_mypet,message_myzap, message_vsintegracao, message_mycomanda  ]
 
-        #mypet
-        if self.checkbox_compativel_mypet.isChecked():
-            if mypet != '...':
-                message_mypet = f'\nCompatível com a versão [b]{mypet}[/b] do [b]MyPet[/b].'
-        else:
-            message_mypet = '\n[b]Não compatível[/b] com o [b]MyPet[/b].'
-        if message_mypet:
-            list_messages.append(message_mypet)
-        
-        #myzap
-        if self.checkbox_compativel_myzap.isChecked():
-            if myzap != '...':
-                message_myzap = f'\nCompatível com a versão [b]{myzap}[/b] do [b]MyZap[/b].'
-        else:
-            message_myzap = '\n[b]Não compatível[/b] com o [b]MyZap[/b].'
-        if message_myzap:
-            list_messages.append(message_myzap)
-        
-        #vsintegracao
-        if self.checkbox_compativel_vsintegracao.isChecked():
-            if vsintegracao != '...':
-                message_vsintegracao = f'\nCompatível com a versão [b]{vsintegracao}[/b] do [b]VsIntegrações[/b].'
-        else:
-            message_vsintegracao = '\n[b]Não compatível[/b] com o [b]VsIntegrações[/b].'
-        if message_vsintegracao:
-            list_messages.append(message_vsintegracao)
-        
+        for index, version in enumerate(list_of_versions):
+            name_of_program = list_of_compatibilities[index]
+            is_compatible = list_of_is_compatible[index]
+            
+            if version != '...':
+                text1_compatible = f'\nCompatível com a versão '
+                text1_not_compatible = f'\nNão compatível com a versão '
+                text2 = f'[b]{version}[/b] do [b]{name_of_program}[/b].'
+                
+                if is_compatible:
+                    message = text1_compatible + text2
+                else:
+                    message = text1_not_compatible + text2
+                list_messages.append(message)
+                list_messages_raw[index] = message
+                
         index_itens_message=0
         for item in list_messages:
             if item:
@@ -413,26 +411,36 @@ class VersionReleaseInterface(BaseWindow):
                         self.show_dialog('Mensagem copiada para a área de transferência')
         else:
             if initial_message:
-                if message_compatibilities:   
-                    message_forum = self.make_text_for_forum(initial_message)
-                    text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
-                    if not is_final_version:
-                        text_greetings = f'Olá! Versão [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
-                        final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
-                        if notcopy:
-                            return final_message
-                        else:
-                            self.copy_to_clipboard(final_message)
-                            self.show_dialog('Mensagem copiada para a área de transferência')
-                    else: 
-                        text_greetings = f'Olá! Versão final [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
-                        final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
-                        if notcopy:
-                            return final_message
-                        else:
-                            self.copy_to_clipboard(final_message)
-                            self.show_dialog('Mensagem copiada para a área de transferência')
-                        
+                self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
+            else:
+                # caso não seja preenchido nada naquele textbox para o usuário escrever
+                # será enviado o texto padrão 
+                self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
+    
+    def cook_message(self, is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy):
+        if message_compatibilities:   
+            message_forum = self.make_text_for_forum(initial_message)
+            text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
+            if not is_final_version:
+                text_greetings = f'Olá! Versão [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
+                final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
+                if notcopy:
+                    return final_message
+                else:
+                    self.copy_to_clipboard(final_message)
+                    self.show_dialog('Mensagem copiada para a área de transferência')
+            else: 
+                text_greetings = f'Olá! Versão final [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
+                if message_forum:
+                    final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
+                else:
+                    final_message = text_greetings + message_compatibilities + text_obs
+                if notcopy:
+                    return final_message
+                else:
+                    self.copy_to_clipboard(final_message)
+                    self.show_dialog('Mensagem copiada para a área de transferência')
+                
     def make_text_for_forum(self, text):
         list_messages = text.split('\n')
         message_forum = []
