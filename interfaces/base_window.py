@@ -25,6 +25,7 @@ path = os.path.abspath('./')
 sys.path.append(path)
 from components.filehandle import File
 from components.dbhandle import Database
+from components.cript_handle import Cripter
 from webbrowser import open_new_tab 
 
 class BaseWindow(QMainWindow):
@@ -32,6 +33,7 @@ class BaseWindow(QMainWindow):
         super(BaseWindow, self).__init__(parent)
         self.db = Database()
         self.file_handler = File()
+        self.cripter = Cripter()
         
     def key_pressed_handle(self, event):
         if event.key() == Qt.Key_Escape:

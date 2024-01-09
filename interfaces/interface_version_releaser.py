@@ -299,13 +299,12 @@ class VersionReleaseInterface(BaseWindow):
             self.thread_create_post = DownloadThread(
                 thread_create_post=True,
                 message=message,
-                bitrix_username=self.bitrix_username,
-                bitrix_passwd=self.bitrix_password,
-                forum_username=self.forum_username,
-                forum_password=self.forum_password,
+                bitrix_username=self.cripter.decrypt(self.bitrix_username),
+                bitrix_passwd=self.cripter.decrypt(self.bitrix_password),
+                forum_username=self.cripter.decrypt(self.forum_username),
+                forum_password=self.cripter.decrypt(self.forum_password),
                 final_version=is_final_version,
                 topic_name_of_final_version=topic_name
-                
                 )
             self.thread_create_post.download_finished.connect(self.thread_finished)
             self.thread_create_post.start()
@@ -411,11 +410,9 @@ class VersionReleaseInterface(BaseWindow):
                         self.show_dialog('Mensagem copiada para a área de transferência')
         else:
             if initial_message:
-                self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
+                return self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
             else:
-                # caso não seja preenchido nada naquele textbox para o usuário escrever
-                # será enviado o texto padrão 
-                self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
+                return self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
     
     def cook_message(self, is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy):
         if message_compatibilities:   

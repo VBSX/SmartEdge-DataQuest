@@ -334,11 +334,9 @@ class MainWindow(BaseWindow):
         self.reset_layout()
         
         if is_build:
-            self.download_last_release_version_button.setEnabled(False)
-            self.download_last_release_version_button.setEnabled(True)  
+            self.download_last_release_version_button.setEnabled(True)
         else:
-            self.download_last_release_version_button.setEnabled(False)
-            self.download_last_release_version_button.setEnabled(True)  
+            self.download_last_release_version_button.setEnabled(False)  
             
     def download_finished(self):
         self.progress_dialog.cancel()
