@@ -82,9 +82,8 @@ class LatestVersion():
         return text
 
     def download_file(self, file_name):
-        self.os_handler.download_version(self.path_mycommerce_att, file_name)
-        return 'sucess'
-    
+        return self.os_handler.download_version(self.path_mycommerce_att, file_name)
+
     def download_latest_build(self):
         if self.has_connection:
             build = self.latest_build_version() 

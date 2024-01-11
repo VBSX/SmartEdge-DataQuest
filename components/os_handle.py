@@ -43,8 +43,14 @@ class OsHandler():
         download_folder = f""" "{d}" """
         path = f""" "{path}\\{file_name}" """
         command = f'copy {path} {download_folder}'
+        path_exe_on_download_folder = rf"""{d}\{file_name}"""
         subprocess.call(command, shell=True)
-
+        try:
+            os.startfile(path_exe_on_download_folder)
+        except OSError as err:
+            return err
+        return "sucess"
+        
     def delete_atalho(self):
         while self.loop:
             path = r'C:\Users\Visual Software\Desktop\Suporte Web Visual Software.lnk'
