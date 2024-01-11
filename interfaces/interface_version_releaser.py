@@ -303,12 +303,11 @@ class VersionReleaseInterface(BaseWindow):
                 thread_create_post=True,
                 message=message,
                 bitrix_username=bitrix_username,
-                bitrix_passwd=bitrix_passwd,
+                bitrix_password=bitrix_passwd,
                 forum_username= forum_username,
                 forum_password=forum_password,
                 final_version=is_final_version,
-                topic_name_of_final_version=topic_name,
-                test_mode=True
+                topic_name_of_final_version=topic_name
                 )
             self.thread_create_post.download_finished.connect(self.thread_finished)
             self.thread_create_post.start()

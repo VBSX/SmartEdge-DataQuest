@@ -35,8 +35,9 @@ class BrowserController():
         self.test_mode = test_mode
         self.final_version = final_version
         self.topic_name_of_final_version = topic_name_of_final_version
+
         self.forum_post()
-        sleep(5)
+        sleep(6)
         self.create_posts_on_bitrix()
       
     def browser(self):
@@ -151,16 +152,23 @@ class BrowserController():
         
     def login_bitrix(self):
         # verifica se existe um elemento antes de proseguir
-        logged = self.navegador.find_element(By.XPATH, "/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[1]/div[1]/div[2]/div[1]/ul")
-
-        if not logged.is_displayed():
+        try:
+            logged = self.navegador.find_element(By.XPATH, "/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[1]/div[1]/div[2]/div[1]/ul")
+            is_logged = logged.is_displayed()
+        except:
+            is_logged = False
+        if not is_logged:
             path_email = '/html/body/div[1]/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[1]/div/input'
             path_passwd = '/html/body/div[1]/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[2]/div/div[1]/div/input'
-            path_next_login = '/div/form/div/div[5]/button[1]'
+            path_next_login = '/html/body/div[1]/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[5]/button[1]'
+            path_next_login2 = '/html/body/div[1]/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[3]/button[1]'
+            
             self.send_keys_base(path_email, self.bitrix_username)
+            sleep(2)
             self.click_base(path_next_login)
+
             self.send_keys_base(path_passwd, self.bitrix_passwd)
-            self.click_base(path_next_login)
+            self.click_base(path_next_login2)
 
     def bitrix_post1 (self):
         path_post_body = '/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td/div/div[2]/div/div[1]/div/div/div[2]/div'
