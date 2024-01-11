@@ -1,4 +1,7 @@
 import sys
+import os
+path = os.path.abspath('./')
+sys.path.append(path)
 from interfaces.base_window import BaseWindow
 from PySide6.QtWidgets import (
     QApplication,
@@ -17,8 +20,7 @@ class DialogCredentialsPosts(BaseWindow):
 
         self.setup_ui()
         self.show()
-        
-    
+
     def setup_ui(self):
         self.setWindowModality(Qt.WindowModal)
         self.setFixedSize(460, 410)
@@ -31,7 +33,6 @@ class DialogCredentialsPosts(BaseWindow):
         self.layout_vertical_password_bitrix = QHBoxLayout()
         self.layout_vertical_buttons = QHBoxLayout()
 
-        
         final_list =[
             self.layout_vertical_instructions ,
             self.layout_vertical_username_forum ,
@@ -92,8 +93,6 @@ class DialogCredentialsPosts(BaseWindow):
         self.layout_vertical_username_bitrix.addWidget(self.line_edit_bitrix_username)                 
         self.layout_vertical_password_bitrix.addWidget(self.line_edit_bitrix_password)
     
-
-    
     def create_all_buttons(self):
         self.button_save = self.create_button(text="Salvar", function=self.save)
         self.layout_vertical_buttons.addWidget(self.button_save)
@@ -103,10 +102,11 @@ class DialogCredentialsPosts(BaseWindow):
         forum_username_encripted= self.cripter.encrypt(forum_username)
         forum_username_json_decripted = self.cripter.decrypt(self.forum_username)
         
+        
         forum_password = self.line_edit_forum_password.text()
         forum_password_encripted= self.cripter.encrypt(forum_password)
         forum_password_json_decripted = self.cripter.decrypt(self.forum_password)
-        
+
         bitrix_username = self.line_edit_bitrix_username.text()
         bitrix_username_encripted= self.cripter.encrypt(bitrix_username)
         bitrix_username_json_decripted = self.cripter.decrypt(self.bitrix_username)
@@ -115,29 +115,42 @@ class DialogCredentialsPosts(BaseWindow):
         bitrix_password_encripted= self.cripter.encrypt(bitrix_password)
         bitrix_password_json_decripted = self.cripter.decrypt(self.bitrix_password)
         
-        if (forum_username == '' or
-            forum_password == '' or
-            bitrix_username == '' or
-            bitrix_password == ''
-        ):
+        list_user_input = [forum_username, forum_password, bitrix_username, bitrix_password]
+        list_credentials_decript = [forum_username_json_decripted, forum_password_json_decripted, bitrix_username_json_decripted, bitrix_password_json_decripted]
+        
+        if self.verify_if_is_empty(list_user_input): 
             self.show_dialog("Preencha todos os campos")
         else:
-            if (forum_username == forum_username_json_decripted and
-                forum_password == forum_password_json_decripted and
-                bitrix_username == bitrix_username_json_decripted and
-                bitrix_password == bitrix_password_json_decripted):
-
+            if self.verify_if_is_equal(list_user_input, list_credentials_decript):
                 self.close()
             else:
                 self.file_handler.set_forum_user(forum_username_encripted)
-                self.file_handler.set_forum_password(forum_password_encripted)
+                if not self.verify_if_is_default(forum_password):
+                    self.file_handler.set_forum_password(forum_password_encripted)
                 self.file_handler.set_bitrix_user(bitrix_username_encripted)
-                self.file_handler.set_bitrix_password(bitrix_password_encripted)        
+                if not self.verify_if_is_default(bitrix_password):
+                    self.file_handler.set_bitrix_password(bitrix_password_encripted)        
                 return_file = self.file_handler.write_json()
-                
                 if return_file == 'sucess':
                     self.close()
                     
+    def verify_if_is_empty(self, list_user_input):
+        for item in list_user_input:
+            if item == '':
+                return True
+        return False 
+    
+    def verify_if_is_equal(self, list_user_input, list_credentials):
+        for index, user_input in enumerate(list_user_input):
+            if user_input[index] != list_credentials[index]:
+                return False
+        return True
+    
+    def verify_if_is_default(self, input):
+        if input == '******':
+            return True
+        return False
+    
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = DialogCredentialsPosts()

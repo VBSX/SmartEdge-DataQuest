@@ -6,7 +6,6 @@ sys.path.append(path)
 from interfaces.base_window import BaseWindow
 from interfaces.credentials_window import DialogCredentialsPosts
 from components.last_version_finder import LatestVersion
-
 from interfaces.thread_pyside import DownloadThread
 
 from PySide6.QtCore import Qt 
@@ -55,7 +54,7 @@ class VersionReleaseInterface(BaseWindow):
         self.create_all_line_edits()
         self.create_all_buttons()
         self.create_layouts(final_list)
-
+    
     def create_all_buttons(self):
         self.button_release_version = self.create_button(
             text="Liberar Versão", function=self.release_version)
@@ -296,15 +295,20 @@ class VersionReleaseInterface(BaseWindow):
         if topic_name and is_final_version or not topic_name and not is_final_version:
             self.progress_dialog = QProgressDialog(self) 
             self.config_window_progress()
+            bitrix_username = self.cripter.decrypt(self.bitrix_username)
+            bitrix_passwd = self.cripter.decrypt(self.bitrix_password)
+            forum_username = self.cripter.decrypt(self.forum_username)
+            forum_password= self.cripter.decrypt(self.forum_password)
             self.thread_create_post = DownloadThread(
                 thread_create_post=True,
                 message=message,
-                bitrix_username=self.cripter.decrypt(self.bitrix_username),
-                bitrix_passwd=self.cripter.decrypt(self.bitrix_password),
-                forum_username=self.cripter.decrypt(self.forum_username),
-                forum_password=self.cripter.decrypt(self.forum_password),
+                bitrix_username=bitrix_username,
+                bitrix_passwd=bitrix_passwd,
+                forum_username= forum_username,
+                forum_password=forum_password,
                 final_version=is_final_version,
-                topic_name_of_final_version=topic_name
+                topic_name_of_final_version=topic_name,
+                test_mode=True
                 )
             self.thread_create_post.download_finished.connect(self.thread_finished)
             self.thread_create_post.start()
