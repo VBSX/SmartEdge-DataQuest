@@ -27,7 +27,7 @@ class VersionReleaseInterface(BaseWindow):
     def setup_ui(self):
         self.setWindowTitle("Liberar Versão")
         width = 650
-        height = 700
+        height = 800
         self.setFixedSize(width, height)
         self.get_configs_forums()
         self.horizontal_layout_mycommerce_pdv = QHBoxLayout()
