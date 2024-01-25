@@ -6,6 +6,7 @@ dist
 .VSCodeCounter
 DataQuest.spec
 tmp
-components\log.txt
-
+log.html
+report.html
+output.xml
 components/log.txt

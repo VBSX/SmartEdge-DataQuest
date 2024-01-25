@@ -28,7 +28,7 @@ class MainWindow(BaseWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.config_window = None
-        self.interface_version_relelaser_is_open = False
+        self.interface_version_releaser_is_open = False
         self.interface_query_window_is_open = False
         self.latest_version_handler = LatestVersion()
         self.img_mycommerce_path = r'images/mycommerce.png'
@@ -322,45 +322,51 @@ class MainWindow(BaseWindow):
             'Baixando a última Release...', is_build=False)
 
     def download_version(self, text, is_build):
+        self.download_thread = DownloadThread(is_build)
+        self.download_thread.download_finished.connect(self.download_finished)
+        self.download_thread.start()
+        
         self.progress_dialog = QProgressDialog(self)
         self.progress_dialog.setWindowModality(Qt.WindowModal)
         self.progress_dialog.setWindowTitle('Download')
         self.progress_dialog.setLabelText(text)
         self.progress_dialog.setRange(0, 0)
-        
-        self.download_thread = DownloadThread(is_build)
-        self.download_thread.download_finished.connect(self.download_finished)
-        self.download_thread.start()
+        self.progress_dialog.canceled.connect(self.cancel_download)
+        self.progress_dialog.show()
         self.reset_layout()
-        
-        if is_build:
-            self.download_last_release_version_button.setEnabled(True)
-        else:
-            self.download_last_release_version_button.setEnabled(False)  
+
+        self.download_last_release_version_button.setEnabled(False)
+    
+        self.download_last_build_version_button.setEnabled(False)  
             
     def download_finished(self):
+
         self.progress_dialog.cancel()
         if self.latest_version_handler.latest_build_version_text() != 'SemBuild':
             self.show_dialog('Arquivo enviado para a pasta de downloads')
         else:
             self.show_dialog('Não há arquivo para baixar')
+        self.download_last_release_version_button.setEnabled(True)
+    
+        self.download_last_build_version_button.setEnabled(True)  
+
+    def cancel_download(self):
+        self.download_thread.cancel()
+        if self.download_thread.download_cancelled:
+            self.download_last_release_version_button.setEnabled(True)
+            self.download_last_build_version_button.setEnabled(True)  
+            self.show_dialog('Download cancelado')
+        
 
     def release_the_version(self):
-        if not self.interface_version_relelaser_is_open:
-            self.interface_version_relelaser = VersionReleaseInterface(self)
-            self.interface_version_relelaser.show()
-            self.interface_version_relelaser_is_open = True
+        if not self.interface_version_releaser_is_open:
+            self.interface_version_releaser = VersionReleaseInterface(self)
+            self.interface_version_releaser.show()
+            self.interface_version_releaser_is_open = True
         else:
-            self.interface_version_relelaser.show()
+            self.interface_version_releaser.show()
    
-    def stop_all(self):
-        self.os_handler.stop_loop_delete_atalho()
-        del self.os_handler
-        
-    def closeEvent(self, event):
-        self.stop_all()
-        event.accept() 
-        
+
 if __name__ == '__main__': 
 
     app = QApplication(sys.argv)

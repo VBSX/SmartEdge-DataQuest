@@ -26,8 +26,8 @@ class VersionReleaseInterface(BaseWindow):
     
     def setup_ui(self):
         self.setWindowTitle("Liberar Versão")
-        width = 650
-        height = 800
+        width = 730
+        height = 850
         self.setFixedSize(width, height)
         self.get_configs_forums()
         self.horizontal_layout_mycommerce_pdv = QHBoxLayout()
@@ -73,6 +73,11 @@ class VersionReleaseInterface(BaseWindow):
             text="Copiar mensagem completa", function=self.copy_all_text_to_clipboard
         ) 
         self.horizontal_layout_manual_release.addWidget(self.button_copy_complete_message)
+        
+        self.button_cancel = self.create_button(
+            text = "Cancelar/Sair" , function=self.close_reset_the_class
+        )
+        self.horizontal_layout_manual_release.addWidget(self.button_cancel)
         
     def create_all_checkboxes(self):
         self.checkbox_compativel_mycommerce_pdv = self.create_checkbox(
@@ -478,7 +483,14 @@ class VersionReleaseInterface(BaseWindow):
             else:
                 final_message.append(message)
         return '\n'.join(final_message)
-                               
+    
+    def close_reset_the_class(self):
+        # fecha a janela e toda a construção desta classe
+        self.close()
+        self.destroy()
+        self.parent().interface_version_releaser_is_open = False
+        del self
+                                
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = VersionReleaseInterface()

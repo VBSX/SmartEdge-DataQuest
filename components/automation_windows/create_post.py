@@ -35,7 +35,6 @@ class BrowserController():
         self.test_mode = test_mode
         self.final_version = final_version
         self.topic_name_of_final_version = topic_name_of_final_version
-
         self.forum_post()
         sleep(6)
         self.create_posts_on_bitrix()
