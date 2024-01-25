@@ -9,7 +9,7 @@ from cpuinfo import get_cpu_info
 from multiprocessing import freeze_support
 import platform
 import psutil
-
+from time import sleep
 class OsHandler():
     def __init__(self):
         self.loop = True
@@ -38,19 +38,48 @@ class OsHandler():
             return f"Erro ao tentar encerrar o processo:\n{stderr_str}"
 
     def download_version(self, path, file_name ):
+        self.canceled = False
         # copy file to downloads folder
         d = os.path.join(os.path.expanduser('~'), 'Downloads')
         download_folder = f""" "{d}" """
         path = f""" "{path}\\{file_name}" """
         command = f'copy {path} {download_folder}'
         path_exe_on_download_folder = rf"""{d}\{file_name}"""
-        subprocess.call(command, shell=True)
-        try:
-            os.startfile(path_exe_on_download_folder)
-        except OSError as err:
-            return err
-        return "sucess"
+
+        download_sub = subprocess.Popen(
+            command, stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE,shell=True)
         
+        # ele fica verificando quando o download_sub terminou, dando margem para que o mesmo
+        # possa ser cancelado quando necessário
+        try:
+            while True:
+                if not self.canceled:
+                    # Verificar se o processo terminou
+                    try:
+                        result, error = download_sub.communicate(timeout=0)
+                        result = result.decode('utf-8', errors='ignore')
+                        if result:
+                            if not error:
+                                os.startfile(path_exe_on_download_folder)
+                                return "sucesso"
+                            break
+                    except:
+                        pass    
+                else:
+                    # Cancelar o processo se a flag 'canceled' estiver definida
+                    print('cancelado')
+                    download_sub.kill()
+                    break
+        except Exception as err:
+            return err
+    
+    def download_process_stop(self):
+        # ele vai parar a função download_version quando chamado
+        self.canceled = True
+        sleep(1)
+        
+
     def delete_atalho(self):
         while self.loop:
             path = r'C:\Users\Visual Software\Desktop\Suporte Web Visual Software.lnk'
@@ -104,11 +133,15 @@ class OsHandler():
         
 if __name__ == "__main__":
     # freeze_support()
-    os_handler = OsHandler()
-    print(
+    os_handler = OsHandler() 
+
+    os_handler.download_version(
+        r'\\10.1.1.110\Arquivos\Atualizacoes\MyCommerce', 'MyCommerce_Atu 9.13.10.0.exe')
+    print('mudar status')
+    os_handler.download_process_stop()
     # os_handler.verify_if_has_connection(log_path=True),
     # os_handler.get_machine_name()
-    os_handler.init_data_user()
-    )
+    # os_handler.init_data_user()
+
     # os_handler.stop_loop_delete_atalho()
 

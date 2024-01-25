@@ -29,10 +29,10 @@ class DownloadThread(QThread):
         self.is_final_version = final_version
         self.topic_name_of_final_version = topic_name_of_final_version
         self.download = LatestVersion()
+        self.canceled = False
 
     def run(self):
         if self.is_build:
-            
             self.download.download_latest_build()
         elif self.thread_create_post:
             BrowserController(
@@ -47,9 +47,12 @@ class DownloadThread(QThread):
             print('thread finished')     
         else:
             self.download.download_latest_release()
-        self.download_finished.emit()
+        if not self.canceled:
+            self.download_finished.emit()
     
     def cancel(self):
+        self.canceled = True
+        self.download.cancel_download()
         self.terminate()
         self.wait()
         print('thread canceled')

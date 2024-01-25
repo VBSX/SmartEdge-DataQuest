@@ -322,10 +322,6 @@ class MainWindow(BaseWindow):
             'Baixando a última Release...', is_build=False)
 
     def download_version(self, text, is_build):
-        self.download_thread = DownloadThread(is_build)
-        self.download_thread.download_finished.connect(self.download_finished)
-        self.download_thread.start()
-        
         self.progress_dialog = QProgressDialog(self)
         self.progress_dialog.setWindowModality(Qt.WindowModal)
         self.progress_dialog.setWindowTitle('Download')
@@ -334,17 +330,21 @@ class MainWindow(BaseWindow):
         self.progress_dialog.canceled.connect(self.cancel_download)
         self.progress_dialog.show()
         self.reset_layout()
-
+        
+        self.download_thread = DownloadThread(is_build)
+        self.download_thread.download_finished.connect(self.download_finished)
+        self.download_thread.start()
+        
         self.download_last_release_version_button.setEnabled(False)
     
         self.download_last_build_version_button.setEnabled(False)  
             
     def download_finished(self):
 
-        self.progress_dialog.cancel()
+        self.progress_dialog.close()
         if self.latest_version_handler.latest_build_version_text() != 'SemBuild':
             self.show_dialog('Arquivo enviado para a pasta de downloads')
-        else:
+        else:   
             self.show_dialog('Não há arquivo para baixar')
         self.download_last_release_version_button.setEnabled(True)
     
@@ -357,7 +357,6 @@ class MainWindow(BaseWindow):
             self.download_last_build_version_button.setEnabled(True)  
             self.show_dialog('Download cancelado')
         
-
     def release_the_version(self):
         if not self.interface_version_releaser_is_open:
             self.interface_version_releaser = VersionReleaseInterface(self)

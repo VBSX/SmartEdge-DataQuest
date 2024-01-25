@@ -118,6 +118,9 @@ class LatestVersion():
     def close(self):
         self.os_handler.stop_loop_delete_atalho()
     
+    def cancel_download(self):
+        self.os_handler.download_process_stop()
+    
 if __name__ == '__main__':
     # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())
     # print('mypet',LatestVersion().latest_release_version_text_mypet())
