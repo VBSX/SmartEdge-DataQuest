@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 class VersionReleaseInterface(BaseWindow):
     def __init__(self, parent=None):
         super(VersionReleaseInterface, self).__init__(parent)
+        self.keyPressEvent = self.key_pressed_handle
         self.latest_version_handler = LatestVersion()
         self.setup_ui()
     
@@ -56,6 +57,11 @@ class VersionReleaseInterface(BaseWindow):
         self.create_layouts(final_list)
     
     def create_all_buttons(self):
+        self.button_config = self.create_button(
+            text="Configurações", function=self.open_credentials_window
+        )
+        self.horizontal_history_version.addWidget(self.button_config)
+        
         self.button_release_version = self.create_button(
             text="Liberar Versão", function=self.release_version)
         self.horizontal_layout_release.addWidget(self.button_release_version)
@@ -264,6 +270,9 @@ class VersionReleaseInterface(BaseWindow):
     def release_version(self):
         pass
     
+    def open_credentials_window(self):
+        self.credentials_window = DialogCredentialsPosts(self)
+    
     def create_post(self):
         is_final_version = self.checkbox_final_version.isChecked()
         self.get_configs_forums()
@@ -275,7 +284,7 @@ class VersionReleaseInterface(BaseWindow):
         ]
         if not self.verify_if_has_login_configs(list_credentials):
             self.show_dialog('Você precisa configurar as credenciais antes de criar o post')
-            self.credentials_window = DialogCredentialsPosts(self)
+            self.open_credentials_window()
             self.get_configs_forums()
         else:
             message = self.copy_all_text_to_clipboard(notcopy=True)

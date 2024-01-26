@@ -70,15 +70,20 @@ class OsHandler():
                     # Cancelar o processo se a flag 'canceled' estiver definida
                     print('cancelado')
                     download_sub.kill()
+                    download_sub.wait()
+                    print('processo cancelado')
+                    delete = subprocess.Popen(f'del "{path_exe_on_download_folder}"' ,shell=True)
+                    self.finished = True
                     break
         except Exception as err:
             return err
     
     def download_process_stop(self):
+        self.finished = False
         # ele vai parar a função download_version quando chamado
         self.canceled = True
-        sleep(1)
-        
+        while not self.finished:
+            pass
 
     def delete_atalho(self):
         while self.loop:

@@ -101,7 +101,14 @@ class BaseWindow(QMainWindow):
         label = QLabel(text)
         return label
     
-    def create_line_edit(self, placeholder, mask = True, fixed_size =True, password_hider = False, set_text =None):
+    def create_line_edit(
+        self, placeholder,
+        mask = True,
+        fixed_size =True,
+        password_hider = False,
+        set_text =None,
+        limit_char = None
+        ):
         line_edit = QLineEdit()
         line_edit.setPlaceholderText(placeholder)
 
@@ -117,6 +124,9 @@ class BaseWindow(QMainWindow):
 
         if set_text:
             line_edit.setText(set_text)
+        
+        if limit_char:
+            line_edit.setMaxLength(limit_char)
         
         return line_edit
     
@@ -138,6 +148,8 @@ class BaseWindow(QMainWindow):
         self.bitrix_password  = json_file['bitrix_password']
         self.forum_username  = json_file['forum_user']
         self.forum_password  = json_file['forum_password']
+        self.user_releaser = json_file['user_releaser']
+        self.name_of_program = json_file['name_of_program']
 
     def create_layouts(self, widget_list):
         self.central_widget = QWidget()

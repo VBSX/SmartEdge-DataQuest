@@ -323,11 +323,11 @@ class MainWindow(BaseWindow):
 
     def download_version(self, text, is_build):
         self.progress_dialog = QProgressDialog(self)
+        self.progress_dialog.canceled.connect(self.cancel_download)
         self.progress_dialog.setWindowModality(Qt.WindowModal)
         self.progress_dialog.setWindowTitle('Download')
         self.progress_dialog.setLabelText(text)
         self.progress_dialog.setRange(0, 0)
-        self.progress_dialog.canceled.connect(self.cancel_download)
         self.progress_dialog.show()
         self.reset_layout()
         

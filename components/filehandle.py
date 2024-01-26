@@ -150,6 +150,8 @@ class File():
                         content.pop('bitrix_password')
                         content.pop('forum_user')
                         content.pop('forum_password')
+                        content.pop('user_releaser')
+                        content.pop('name_of_program')
                     except:
                         print('erro ao retirar os campos referente as credenciais do bitrix e forum')
                     return content
@@ -258,6 +260,24 @@ class File():
         else:
             self.create_json()
     
+    def get_user_releaser(self):
+        if self.verify_if_path_exists(self.path_json):
+            if self.json_file['user_releaser']:
+                return self.json_file['user_releaser']
+            else:
+                return 'None'
+        else:
+            self.create_json()
+    
+    def get_program_name(self):
+        if self.verify_if_path_exists(self.path_json):
+            if self.json_file['name_of_program']:
+                return self.json_file['name_of_program']
+            else:
+                return 'None'
+        else:
+            self.create_json()
+    
     def set_username(self, username):
         self.json_setter('user', username)
     
@@ -284,6 +304,12 @@ class File():
     
     def set_forum_password(self, forum_password):
         self.json_setter('forum_password', forum_password)    
+    
+    def set_user_releaser(self, user_releaser):
+        self.json_setter('user_releaser', user_releaser)
+    
+    def set_name_of_program(self, name_of_program):
+        self.json_setter('name_of_program', name_of_program)
     
     def json_setter(self, key, value):
         if not self.verify_if_path_exists(self.path_json):
@@ -327,7 +353,9 @@ class File():
                     "bitrix_user":"default",
                     "bitrix_password":"default",
                     "forum_user":"default",
-                    "forum_password":"default"
+                    "forum_password":"default",
+                    "user_releaser":"default",
+                    "name_of_program":"default"
                     }""")
         return 'sucess'
     
