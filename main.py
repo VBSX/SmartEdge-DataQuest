@@ -21,6 +21,7 @@ from components.last_version_finder import LatestVersion
 from components.os_handle import OsHandler
 from interfaces.interface_version_releaser import VersionReleaseInterface
 from interfaces.thread_pyside import DownloadThread
+from interfaces.sovis_window import SovisWindow
 
 # from memory_profiler import profile
 
@@ -71,6 +72,9 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_buttons_sql.addWidget(self.button_reset_users_password)
         self.layout_horizontal_buttons_sql.addWidget(self.query_button)
         self.layout_horizontal_buttons_sql.addWidget(self.button_release_the_version)
+        
+        self.layout_horizontal_buttons_sql2 = QHBoxLayout()
+        self.layout_horizontal_buttons_sql2.addWidget(self.button_open_sovis_window)
         
         self.layout_horizontal_top_tools = QHBoxLayout()
         
@@ -131,6 +135,7 @@ class MainWindow(BaseWindow):
         self.list_of_widgets = [
             self.layout_horizontal_top_tools,
             self.layout_horizontal_buttons_sql,
+            self.layout_horizontal_buttons_sql2,
             self.layout_horizontal_close_programs,
             self.spacer,
             self.layout_horizontal_downloads,
@@ -230,6 +235,11 @@ class MainWindow(BaseWindow):
             text='Resetar senha dos usuários',
             function=self.reset_users_password
             )
+        #
+        self.button_open_sovis_window = self.create_button(
+            text='Sovis',
+            function=self.open_sovis_window
+        )
         #
         self.button_close_mycommerce = self.create_button(
             config_style=False,
@@ -403,7 +413,10 @@ class MainWindow(BaseWindow):
         else:
             self.interface_version_releaser.show()
    
-
+    def open_sovis_window(self):
+        self.sovis_window = SovisWindow(self)
+        self.sovis_window.show()
+        
 if __name__ == '__main__': 
 
     app = QApplication(sys.argv)
