@@ -37,6 +37,7 @@ class MainWindow(BaseWindow):
         self.img_smartedge_path = r'images/smartedge.png'
         self.img_pin_path = r'images/pin.png'
         self.img_att_path = r'images/att_db.png'
+        self.img_mymonitorfat_path = r'images/mymonitorfat.png'
         self.is_the_window_fixed = False
         self.os_handler = OsHandler()
         self.setup_ui()
@@ -79,12 +80,15 @@ class MainWindow(BaseWindow):
 
         self.layout_horizontal_top_tools.addWidget(self.button_pin)
         self.layout_horizontal_top_tools.addWidget(self.button_att_db)
+        self.layout_horizontal_top_tools.addWidget(self.button_open_mymonitorfat)
         
         self.layout_horizontal_config_program.addWidget(self.config_button)
         self.layout_horizontal_config_program.addWidget(self.button_about_program) 
 
         self.layout_horizontal_close_programs.addWidget(self.label_close_programs)
         self.layout_horizontal_close_programs.addWidget(self.button_close_mycommerce)
+        self.layout_horizontal_close_programs.addWidget(self.button_close_mymonitorfat)
+        self.layout_horizontal_close_programs.addWidget(self.button_close_att_db)
         
         self.spacer = QSpacerItem(20,50)
 
@@ -112,6 +116,7 @@ class MainWindow(BaseWindow):
             self.icon_about = QIcon(self.resource_path(self.img_about_path))
             self.icon_pin = QIcon(self.resource_path(self.img_pin_path))
             self.icon_att_db = QIcon(self.resource_path(self.img_att_path))
+            self.icon_mymonitorfat = QIcon(self.resource_path(self.img_mymonitorfat_path))
             self.setWindowIcon(QIcon(self.resource_path(self.img_smartedge_path)))
         else:
             self.icon_close_mycommerce = QIcon(self.img_mycommerce_path)
@@ -119,6 +124,7 @@ class MainWindow(BaseWindow):
             self.icon_about = QIcon(self.img_about_path)
             self.icon_pin = QIcon(self.img_pin_path)
             self.icon_att_db = QIcon(self.img_att_path)
+            self.icon_mymonitorfat = QIcon(self.img_mymonitorfat_path)
             self.setWindowIcon(QIcon(self.img_smartedge_path))
 
     def layout_config(self):
@@ -196,6 +202,13 @@ class MainWindow(BaseWindow):
             icon_size = 32)
         self.button_att_db.setFixedSize(32,32)
         #
+        self.button_open_mymonitorfat = self.create_button(
+            config_style=False,
+            function=self.mymonitor_faturamento_open,
+            icon=self.icon_mymonitorfat,
+            icon_size = 32
+        )
+        #
         self.button_db_default_config = self.create_button(
             text='Configuração DB padrão',
             function=self.update_db
@@ -224,6 +237,18 @@ class MainWindow(BaseWindow):
             icon=self.icon_close_mycommerce
             )
         #
+        self.button_close_mymonitorfat = self.create_button(
+            config_style=False,
+            function=self.mymonitor_faturamento_close,
+            icon=self.icon_mymonitorfat
+            )
+        #
+        self.button_close_att_db = self.create_button(
+            config_style=False,
+            function=self.att_db_close,
+            icon=self.icon_att_db    
+        )
+        
         self.query_button = self.create_button(
             text='Iniciar uma Query',
             function=self.start_query
@@ -264,7 +289,15 @@ class MainWindow(BaseWindow):
     def mycommerce_close(self):
         process = self.os_handler.kill_mycommerce_process()
         self.show_dialog(str(process))
-        
+    
+    def mymonitor_faturamento_close(self):
+        process = self.os_handler.kill_mymonitorfat_process()
+        self.show_dialog(str(process))
+    
+    def att_db_close(self):
+        process = self.os_handler.kill_att_db_process()
+        self.show_dialog(str(process))
+     
     def start_query(self):
         if not self.interface_query_window_is_open:
             self.get_configs()
@@ -309,10 +342,16 @@ class MainWindow(BaseWindow):
         self.label_last_release_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(self.latest_version_handler.latest_release_version_text())
     
     def att_db_open(self):
+        self.open_programs('C:\Visual Software\MyCommerce\AtualizarDB.exe')
+
+    def mymonitor_faturamento_open(self):
+        self.open_programs('C:\Visual Software\MyCommerce\MyMonitorFaturamento.exe')
+ 
+    def open_programs(self, path):
         self.get_configs()
-        os.startfile('C:\Visual Software\MyCommerce\AtualizarDB.exe')
+        os.startfile(path)
         self.reset_layout()
-    
+        
     def download_last_build_version(self):
         self.download_version(
             'Baixando a última Build', is_build=True)
@@ -340,8 +379,7 @@ class MainWindow(BaseWindow):
         self.download_last_build_version_button.setEnabled(False)  
             
     def download_finished(self):
-
-        self.progress_dialog.close()
+        self.progress_dialog.cancel()
         if self.latest_version_handler.latest_build_version_text() != 'SemBuild':
             self.show_dialog('Arquivo enviado para a pasta de downloads')
         else:   

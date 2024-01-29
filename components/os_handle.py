@@ -21,6 +21,16 @@ class OsHandler():
         result = self.process_killer(process_name)
         return result
 
+    def kill_mymonitorfat_process(self):
+        process_name = "MyMonitorFaturamento.exe"
+        result = self.process_killer(process_name)
+        return result
+    
+    def kill_att_db_process(self):
+        process_name = "AtualizarDB.exe"
+        result = self.process_killer(process_name)
+        return result
+   
     def process_killer(self, nome_processo):
         command = f"taskkill /F /IM {nome_processo}"
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

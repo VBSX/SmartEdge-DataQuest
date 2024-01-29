@@ -44,9 +44,9 @@ class DownloadThread(QThread):
                 final_version=self.is_final_version,
                 topic_name_of_final_version=self.topic_name_of_final_version
                 )   
-            print('thread finished')     
         else:
             self.download.download_latest_release()
+        print('thread finished')
         if not self.canceled:
             self.download_finished.emit()
     
