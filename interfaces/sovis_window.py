@@ -125,7 +125,7 @@ class SovisWindow(BaseWindow):
             db_return, order_return = self.db.get_sovis_order(order_number)
             if db_return == 'sucess' and order_return:
                 self.db.update_type_id_order_sovis(order_number, id_type_order)
-                for index in range(1,8):
+                for index in range(1,10):
                     if id_type_order == index:
                         self.db.update_type_id_itens_order_sovis(order_number, index)
                         self.show_dialog('IDTIPOPEDIDO alterado com sucesso')
@@ -143,7 +143,9 @@ class SovisWindow(BaseWindow):
         if order_number:
             db_return, id_type_order_db = self.db.get_type_id_order_sovis(order_number)
             if db_return == 'sucess' and id_type_order_db:
-                self.combobox_ids_order.setCurrentIndex(int(id_type_order_db[0][0]))
+                index = int(id_type_order_db[0][0])
+                self.combobox_ids_order.setCurrentIndex(index-1)
+
                 
         self.combobox_id_order_set_description()
         self.combobox_ids_order.currentIndexChanged.connect(self.combobox_id_order_set_description)
