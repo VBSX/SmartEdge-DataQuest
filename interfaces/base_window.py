@@ -13,19 +13,21 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QMessageBox,
     QDialog
+    
     )
 import os
 import sys
 path = os.path.abspath('./')
 sys.path.append(path)
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QTextOption
+from PySide6.QtGui import QTextOption, QIntValidator
 from interfaces.window_input_label import WindowInput
 import pyperclip
 from components.filehandle import File
 from components.dbhandle import Database
 from components.cript_handle import Cripter
 from webbrowser import open_new_tab 
+
 
 class BaseWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -96,8 +98,10 @@ class BaseWindow(QMainWindow):
         checkbox.setText(text)
         return checkbox
 
-    def create_label(self, text):
+    def create_label(self, text, is_hidden = False):
         label = QLabel(text)
+        if is_hidden:
+            label.hide()
         return label
     
     def create_line_edit(
@@ -106,7 +110,8 @@ class BaseWindow(QMainWindow):
         fixed_size =True,
         password_hider = False,
         set_text =None,
-        limit_char = None
+        limit_char = None,
+        only_number = False
         ):
         line_edit = QLineEdit()
         line_edit.setPlaceholderText(placeholder)
@@ -126,6 +131,9 @@ class BaseWindow(QMainWindow):
         
         if limit_char:
             line_edit.setMaxLength(limit_char)
+        
+        if only_number:
+            line_edit.setValidator(QIntValidator())
         
         return line_edit
     

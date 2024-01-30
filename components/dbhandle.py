@@ -187,6 +187,42 @@ class Database():
     def get_file_config(self):
         self.config = self.file.read_json(database=True)
 
+    def import_sovis_order(self, idpedido):
+        query = f"""
+            UPDATE PEDIDOSOVIS SET STATUSPEDIDO = 0 WHERE IDPEDIDO = {idpedido}
+        """
+        return self.execute_query_return(query)
+    
+    def get_sovis_order(self, idpedido):
+        query = f"""
+            SELECT IDPEDIDO FROM PEDIDOSOVIS WHERE IDPEDIDO = {idpedido}
+        """
+        return self.execute_query_return(query)
+    
+    def get_type_id_order_sovis (self, order_number):
+        query = f"""
+            SELECT IDTIPOPEDIDO FROM PEDIDOSOVIS WHERE IDPEDIDO = {order_number}
+        """
+        return self.execute_query_return(query)
+    
+    def update_type_id_order_sovis (self, order_number, type_id):
+        query = f"""
+            UPDATE PEDIDOSOVIS SET IDTIPOPEDIDO = {type_id} WHERE IDPEDIDO = {order_number}
+        """
+        return self.execute_query_return(query)
+    
+    def get_type_id_itens_order_sovis (self, order_number):
+        query = f"""
+            SELECT TIPO FROM ITEMPEDIDOSOVIS WHERE IDPEDIDO = {order_number}
+        """
+        return self.execute_query_return(query)
+    
+    def update_type_id_itens_order_sovis (self, order_number, type_id):
+        query = f"""
+            UPDATE ITEMPEDIDOSOVIS SET TIPO = {type_id} WHERE IDPEDIDO = {order_number}
+        """
+        return self.execute_query_return(query)
+    
 if __name__ == "__main__":
     
     db = Database()
