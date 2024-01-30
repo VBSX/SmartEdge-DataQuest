@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QComboBox
     )
 
-from base_window import BaseWindow
+from interfaces.base_window import BaseWindow
 
 class SovisWindow(BaseWindow):
     def __init__(self, parent=None):
