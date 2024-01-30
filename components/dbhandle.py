@@ -36,15 +36,21 @@ class Database():
                     update
                         clientes
                     set
-                        email = '2teste.mais@gmail.com',
-                        emailfinanceiro = '2teste.mais@gmail.com',
-                        emailcte = '2teste.mais@gmail.com',
-                        emailnfe = '2teste.mais@gmail.com',
                         TELEFONE1 = '999999999',
                         TELEFONE2 = '999999999',
                         FAX = '999999999',
                         ENT_FAX = '999999999';
-
+                        email = '2teste.mais@gmail.com',
+                        EMAILCONTATO,
+                        EMAILCOMPRADOR,
+                        emailfinanceiro = '2teste.mais@gmail.com',
+                        emailcte = '2teste.mais@gmail.com',
+                        emailnfe = '2teste.mais@gmail.com',
+                        EMAILSOCIO1,
+                        EMAILSOCIO2,
+                        EMAILSOCIO3,
+                        EMAILSOCIO4,
+                        ENT_EMAIL 
                     UPDATE empresas
                     SET email = '2teste.mais@gmail.com';
 
@@ -178,9 +184,9 @@ class Database():
             sequence.append(int(item))
            
         for index, row in enumerate(sequence_raw):
-            
-            password_value = index + 1
-            query = f"UPDATE USUARIOS_SUPERVISORES SET Password = '{password_value}' WHERE Sequencia = {row[0]};"
+            row = row[0]
+            password_value = row*4
+            query = f"UPDATE USUARIOS_SUPERVISORES SET Password = '{password_value}' WHERE Sequencia = {row};"
             list_query.append(query)
         return self.execute_query_for_multiple_querys(list_query)
     
