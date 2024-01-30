@@ -31,6 +31,7 @@ class MainWindow(BaseWindow):
         self.config_window = None
         self.interface_version_releaser_is_open = False
         self.interface_query_window_is_open = False
+        self.interface_sovis_is_open = False
         self.latest_version_handler = LatestVersion()
         self.img_mycommerce_path = r'images/mycommerce.png'
         self.img_config_path = r'images/config.png'
@@ -414,9 +415,13 @@ class MainWindow(BaseWindow):
             self.interface_version_releaser.show()
    
     def open_sovis_window(self):
-        self.sovis_window = SovisWindow(self)
-        self.sovis_window.show()
-        
+        if not self.interface_sovis_is_open:
+            self.sovis_window = SovisWindow(self)
+            self.sovis_window.show()
+            self.interface_sovis_is_open = True
+        else:
+            self.sovis_window.show()
+
 if __name__ == '__main__': 
 
     app = QApplication(sys.argv)

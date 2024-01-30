@@ -14,15 +14,14 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QDialog
     )
-
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QTextOption
-from interfaces.window_input_label import WindowInput
-import pyperclip
 import os
 import sys
 path = os.path.abspath('./')
 sys.path.append(path)
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QTextOption
+from interfaces.window_input_label import WindowInput
+import pyperclip
 from components.filehandle import File
 from components.dbhandle import Database
 from components.cript_handle import Cripter
@@ -167,7 +166,6 @@ class BaseWindow(QMainWindow):
         self.central_widget.setLayout(self.layout_principal)     
     
     def show_confirmation_dialog(self):
-
         # Cria uma caixa de diálogo de confirmação
         reply = QMessageBox.question(None, 'Confirmação', 'Você tem certeza que deseja continuar?',
                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)

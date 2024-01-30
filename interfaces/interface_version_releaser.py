@@ -252,21 +252,7 @@ class VersionReleaseInterface(BaseWindow):
         formatted_text = '.'.join(formatted_parts)
         return formatted_text
         
-    def create_layouts(self, widget_list):
-        self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
-        self.layout_principal = QVBoxLayout()
-        
-        for item in widget_list:
-            if type(item) == QHBoxLayout:
-                self.layout_principal.addLayout(item)
-            elif type(item) == QSpacerItem:
-                self.layout_principal.addItem(item)
-            else:
-                self.layout_principal.addWidget(item)
-                
-        self.central_widget.setLayout(self.layout_principal)     
-    
+
     def release_version(self):
         pass
     

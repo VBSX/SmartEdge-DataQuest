@@ -9,6 +9,7 @@ import win32net
 import win32file
 from multiprocessing import freeze_support
 from datetime import datetime
+
 class File():
     def __init__(self):
         self.ini_config = IniConfig()
@@ -92,8 +93,7 @@ class File():
                 self.write_to_file(self.remote_path_log, text) 
         else:
             self.create_log_txt()
-
-                
+   
     def write_to_file(self, filename, text):
         actual_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         # Open the file or create it if it doesn't exist
