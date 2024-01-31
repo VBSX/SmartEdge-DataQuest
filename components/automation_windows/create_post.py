@@ -172,7 +172,6 @@ class BrowserController():
     def bitrix_post1 (self):
         path_post_body = '/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td/div/div[2]/div/div[1]/div/div/div[2]/div'
         path_button_send = '/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td/div/div[2]/div/div[1]/div/div/div[3]/form/div[4]/span[1]'
-        
         self.click_base(path_post_body)
         sleep(0.5)
         # envia para o navegador, lembrar de verificar onde esta o foco antes de mandar o comando
@@ -203,10 +202,11 @@ class BrowserController():
             sleep(10)
     
     def bitrix_post_2(self):
-        path_open_chat = r'/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[1]/div[1]/div[2]/div[1]/ul/li[3]/ul/li[2]/a/span[2]'
-        self.click_base(path_open_chat)
+        # path_open_chat = r'/html/body/table/tbody/tr[2]/td/table/tbody/tr[1]/td[1]/div[1]/div[2]/div[1]/ul/li[3]/ul/li[2]/a/span[2]'
+        # self.click_base(path_open_chat)
+        self.navegador.get('https://visualsoftware.bitrix24.com.br/online/')
         text_find_chat = 'canais - avisos'
-        sleep(7)
+        sleep(6)
         for element in range(0,100):
             try:
                 element = self.navegador.find_element(By.XPATH, f'/html/body/div[{element}]/div/div[1]/div/div[1]/div[2]/div/div[1]/div/div[1]/div[2]/div/input')  
@@ -223,7 +223,7 @@ class BrowserController():
                 if not self.test_mode:
                     actions.key_down(Keys.ENTER).perform()
                     actions.key_up(Keys.ENTER).perform()
-                    sleep(7)
+                    sleep(10)
                 else:
                     print('modo de teste')
                     sleep(60)
@@ -235,7 +235,7 @@ class BrowserController():
 if __name__ == '__main__':
     navegador = BrowserController(
         message_version="""
-            Olá! Versão [b]9.12.04.0000[/b] do [b]MyCommerce[/b] disponível para atualizações. 
+            Olá! Versão [b]9.13.15.0000[/b] do [b]MyCommerce[/b] disponível para atualizações. 
         """,
         bitrix_username='',
         bitrix_passwd='',
