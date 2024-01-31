@@ -186,3 +186,9 @@ class BaseWindow(QMainWindow):
         if window_input.exec() == QDialog.Accepted:
             return window_input.input_result
         else: return None
+        
+    def get_configs(self):
+        json_file = self.file_handler.read_json()
+        self.host = json_file['host']
+        self.port = json_file['port']
+        self.database = json_file['database']

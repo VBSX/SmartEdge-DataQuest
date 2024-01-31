@@ -1,6 +1,7 @@
 import os
 import sys
 path = os.path.abspath('./')
+sys.path.append(path)
 
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -21,7 +22,7 @@ class SovisWindow(BaseWindow):
         width = 600
         height = 300
         self.setFixedSize(width, height)
-    
+        self.get_configs()
         self.horizontal_layout_import_order = QHBoxLayout()
         self.list_of_layouts.append(self.horizontal_layout_import_order)
         #
@@ -46,6 +47,7 @@ class SovisWindow(BaseWindow):
             only_number=True,
             fixed_size=True
         )
+        self.line_edit_order_number.textChanged.connect(self.update_type_id_combo)
         self.horizontal_layout_import_order.addWidget(self.line_edit_order_number)
         
     def create_all_labels(self):
@@ -82,8 +84,9 @@ class SovisWindow(BaseWindow):
         self.combobox_ids_order = QComboBox()
         for item in range(1,10):
             self.combobox_ids_order.addItems(str(item))
-        self.line_edit_order_number.textChanged.connect(self.update_type_id_combo)
+        
         self.update_type_id_combo()
+        self.combobox_ids_order.currentIndexChanged.connect(self.combobox_id_order_set_description)
         self.horizontal_layout_change_id_order.addWidget(self.combobox_ids_order)
 
     def combobox_id_order_set_description(self):
@@ -99,12 +102,13 @@ class SovisWindow(BaseWindow):
             'PRÉ-VENDA (Monitor Faturamento) '
             ]
         # usa o range para preencher a lista de ids com os números de 1 a 9
-        list_of_ids = list(range(1,10))
+        list_of_ids = list(range(0,9))
 
         for index in list_of_ids:
             if self.combobox_ids_order.currentIndex() == index:
                 self.label_id_changed_description.setText(list_of_descriptions[index])
                 self.label_id_changed_description.show()
+                break
     
     def import_order(self):
         order_number = self.line_edit_order_number.text()
@@ -145,10 +149,8 @@ class SovisWindow(BaseWindow):
             if db_return == 'sucess' and id_type_order_db:
                 index = int(id_type_order_db[0][0])
                 self.combobox_ids_order.setCurrentIndex(index-1)
-
-                
         self.combobox_id_order_set_description()
-        self.combobox_ids_order.currentIndexChanged.connect(self.combobox_id_order_set_description)
+        
 
 if __name__=='__main__':
     app = QApplication(sys.argv)

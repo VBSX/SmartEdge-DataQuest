@@ -63,8 +63,9 @@ class Database():
                 """
                 query_return2 = self.update_password_supervisor()
                 query_return = self.execute_query(query)
+                query_return3 = self.update_nfce_config_env_to_hml()
                 
-                if query_return and query_return2 == 'sucess':
+                if query_return and query_return2 and query_return3 == 'sucess':
                     return 'sucess'
                 else:
                     return query_return
@@ -227,21 +228,25 @@ class Database():
         query = f"""
             UPDATE ITEMPEDIDOSOVIS SET TIPO = {type_id} WHERE IDPEDIDO = {order_number}
         """
+        return self.execute_query(query)
+    
+    def get_nfce_config_env(self):
+        query = """
+        SELECT AMBIENTE FROM NFCE_CONFIG
+        """
         return self.execute_query_return(query)
+    
+    def update_nfce_config_env_to_hml(self):
+        query = """
+        UPDATE NFCE_CONFIG SET AMBIENTE = 2
+        """
+        return self.execute_query(query)
     
 if __name__ == "__main__":
     
     db = Database()
-    # print(db.db_default_config())
-    # query = """
-    #     UPDATE USUARIOS_SUPERVISORES set Password = '12231132'
-        
-    # """
-    # print(db.execute_query(query))
-    print(db.update_password_supervisor())
-    
-    # import re
-    # pattern = re.compile(r'select', re.IGNORECASE)
-    # match = pattern.search(query)
-    # if match:
-    #     print(db.execute_query_return(query))
+    print(db.db_default_config())
+
+    # print(db.update_password_supervisor())
+    # print(db.update_nfce_config_env_to_hml())
+
