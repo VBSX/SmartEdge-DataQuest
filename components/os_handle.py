@@ -1,6 +1,7 @@
 import os
 import sys
 import threading
+import shutil
 path = os.path.abspath('./')
 sys.path.append(path)
 import subprocess
@@ -145,18 +146,61 @@ class OsHandler():
         
     def stop_loop_delete_atalho(self):
         self.loop = False     
-        
+    
+    def get_default_browser_path(self):
+        browser_path = shutil.which('open')
+
+        osPlatform = platform.system()
+
+        if osPlatform == 'Windows':
+            # Find the default browser by interrogating the registry
+            try:
+                from winreg import HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, OpenKey, QueryValueEx
+
+                with OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice') as regkey:
+                    # Get the user choice
+                    browser_choice = QueryValueEx(regkey, 'ProgId')[0]
+
+                with OpenKey(HKEY_CLASSES_ROOT, r'{}\shell\open\command'.format(browser_choice)) as regkey:
+                    # Get the application the user's choice refers to in the application registrations
+                    browser_path_tuple = QueryValueEx(regkey, None)
+
+                    # This is a bit sketchy and assumes that the path will always be in double quotes
+                    browser_path = browser_path_tuple[0].split('"')[1]
+                    browser_path = rf'{browser_path}'
+                    return browser_path
+
+            except Exception:
+                return 'Não foi possível encontrar o navegador padrão.'
+
+    def is_chrome_installed():
+        # Verifica se o Google Chrome está instalado na pasta padrão no Windows
+        if os.path.exists("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"):
+            return True
+        # Verifica se o Google Chrome está instalado na pasta padrão em sistemas Linux
+        elif os.path.exists("/usr/bin/google-chrome"):
+            return True
+        else:
+            return False
+    
+    def get_name_of_default_browser(self):
+        path_default_browser = self.get_default_browser_path()
+        if path_default_browser:
+            brs = os.path.basename(path_default_browser)
+            brs = brs.split('.')[0]
+            return brs
+      
 if __name__ == "__main__":
     # freeze_support()
     os_handler = OsHandler() 
 
-    os_handler.download_version(
-        r'\\10.1.1.110\Arquivos\Atualizacoes\MyCommerce', 'MyCommerce_Atu 9.13.10.0.exe')
-    print('mudar status')
-    os_handler.download_process_stop()
+    # os_handler.download_version(
+    #     r'\\10.1.1.110\Arquivos\Atualizacoes\MyCommerce', 'MyCommerce_Atu 9.13.10.0.exe')
+    # print('mudar status')
+    # os_handler.download_process_stop()
     # os_handler.verify_if_has_connection(log_path=True),
     # os_handler.get_machine_name()
     # os_handler.init_data_user()
 
-    # os_handler.stop_loop_delete_atalho()
+    print(os_handler.get_name_of_default_browser())
 

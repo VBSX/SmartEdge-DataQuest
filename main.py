@@ -327,8 +327,6 @@ class MainWindow(BaseWindow):
         self.config_window = ConfigWindow(self)
         self.config_window.show()
     
-
-    
     def about_program_window(self):
         self.about_window = AboutProgramWindow(self)
         self.about_window.show()

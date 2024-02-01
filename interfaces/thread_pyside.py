@@ -5,6 +5,7 @@ from components.automation_windows.create_post import BrowserController
 class DownloadThread(QThread):
     download_finished = Signal()
     download_cancelled = Signal(bool)
+    error = Signal(bool)
     def __init__(
         self,
         is_build= None,
@@ -30,12 +31,13 @@ class DownloadThread(QThread):
         self.topic_name_of_final_version = topic_name_of_final_version
         self.download = LatestVersion()
         self.canceled = False
+        self.msg_error = None
 
     def run(self):
         if self.is_build:
             self.download.download_latest_build()
         elif self.thread_create_post:
-            BrowserController(
+            browser_return = BrowserController(
                 message_version=self.message,
                 bitrix_username=self.bitrix_username,
                 bitrix_passwd=self.bitrix_password,
@@ -43,12 +45,17 @@ class DownloadThread(QThread):
                 forum_passwd=self.forum_password,
                 final_version=self.is_final_version,
                 topic_name_of_final_version=self.topic_name_of_final_version
-                )   
+            )
+            if browser_return[0] == 'Error':
+                self.msg_error = browser_return[1]
         else:
             self.download.download_latest_release()
         print('thread finished')
         if not self.canceled:
-            self.download_finished.emit()
+            if not self.msg_error:
+                self.download_finished.emit()
+            else:
+                self.error.emit(True)
     
     def cancel(self):
         self.canceled = True
@@ -57,3 +64,5 @@ class DownloadThread(QThread):
         self.wait()
         print('thread canceled')
         self.download_cancelled.emit(True)
+    
+    

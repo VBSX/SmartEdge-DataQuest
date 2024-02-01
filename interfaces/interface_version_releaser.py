@@ -310,8 +310,13 @@ class VersionReleaseInterface(BaseWindow):
                 topic_name_of_final_version=topic_name
                 )
             self.thread_create_post.download_finished.connect(self.thread_finished)
+            self.thread_create_post.error.connect(self.error_creating_post)
             self.thread_create_post.start()
-            
+    
+    def error_creating_post(self):
+        self.progress_dialog.cancel()
+        self.show_dialog(f'Erro ao criar o post: \n {self.thread_create_post.msg_error}')
+        
     def config_window_progress(self):
         self.progress_dialog.setWindowModality(Qt.WindowModal)
         self.progress_dialog.setWindowTitle('Criando Posts')

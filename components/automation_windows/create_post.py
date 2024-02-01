@@ -1,15 +1,22 @@
 from time import sleep
-from selenium import webdriver
+
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import SessionNotCreatedException
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver import Chrome
+from selenium.webdriver.firefox import options as FirefoxOptions
 
 import os
+import sys
+path = os.path.abspath('./')
+sys.path.append(path)
+from components.os_handle import OsHandler
 
 class BrowserController():
     def __init__(
@@ -23,25 +30,41 @@ class BrowserController():
         final_version = False,
         topic_name_of_final_version =None
         ):
-        
+        self.os_handler = OsHandler()
         self.path_user = os.getenv('APPDATA')
-        self.navegador = self.browser()
-        self.wait = WebDriverWait(self.navegador, 10)
-        self.message_version = message_version
-        self.forum_username = forum_username
-        self.forum_passwd = forum_passwd
-        self.bitrix_username = bitrix_username
-        self.bitrix_passwd = bitrix_passwd
-        self.test_mode = test_mode
-        self.final_version = final_version
-        self.topic_name_of_final_version = topic_name_of_final_version
-        self.forum_post()
-        sleep(6)
-        self.create_posts_on_bitrix()
+        try:
+            self.navegador = self.browser()
+            self.wait = WebDriverWait(self.navegador, 10)
+            self.message_version = message_version
+            self.forum_username = forum_username
+            self.forum_passwd = forum_passwd
+            self.bitrix_username = bitrix_username
+            self.bitrix_passwd = bitrix_passwd
+            self.test_mode = test_mode
+            self.final_version = final_version
+            self.topic_name_of_final_version = topic_name_of_final_version
+            self.forum_post()
+            sleep(6)
+            self.create_posts_on_bitrix()
+        except SessionNotCreatedException as err:
+            mgs = f"Erro: {err}"
+            print(mgs)
+            return 'Error',mgs
       
     def browser(self):
+        self.default_browser_name = self.os_handler.get_name_of_default_browser()
+        # if self.default_browser_name == 'brave' or self.default_browser_name == 'chrome':
         service = Service(executable_path=ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service, options=self.set_chrome_options())
+        driver = Chrome(service=service, options=self.set_chrome_options())
+        # elif self.default_browser_name == 'firefox':
+        #     driver_used = 'firefox'
+        #     return driver_used
+        # elif self.default_browser_name == 'edge':
+        #     driver_used = 'edge'
+        #     return driver_used
+        # elif self.default_browser_name == 'opera':
+        #     driver_used = 'opera'
+        #     return driver_used
         return driver
     
     def forum_post(self):
@@ -53,15 +76,43 @@ class BrowserController():
             self.add_new_response()
         
     def set_chrome_options(self):
-        options = webdriver.ChromeOptions()
-        options.add_argument("--log-level=3") # Silences error messages from Selenium console
-        options.binary_location = 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe'
-        # options.add_experimental_option("detach", True)
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
-        options.add_argument("--profile-directory=Default")
-        options.add_argument(f'--user-data-dir={self.path_user}\cache')
-        
+        options = ChromeOptions()
+        options = self.set_options(options)
         return options
+    
+    def set_firefox_options(self):
+        options = FirefoxOptions()
+        options = self.set_options(options)
+        return options
+    
+    def set_opera_options(self):
+        # terminar o da opera
+        options = ChromeOptions()
+        options = self.set_options(options)
+        return options
+    
+    def set_edge_options(self):
+        # terminar o da edge
+        options = ChromeOptions()
+        options = self.set_options(options)
+        return options
+    
+    def set_options(self, options):
+        options.add_argument("--log-level=3") # Silences error messages from Selenium console
+        # options.binary_location = 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe'
+        if self.default_browser_name == 'brave' and 'chrome':
+            options.binary_location = self.os_handler.get_default_browser_path()
+        else:
+            is_chrome_installed = self.os_handler.is_chrome_installed()
+            if is_chrome_installed:
+                options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        
+                # options.add_experimental_option("detach", True)
+                options.add_experimental_option("excludeSwitches", ["enable-logging"])
+                options.add_argument("--profile-directory=Default")
+                options.add_argument(f'--user-data-dir={self.path_user}\cache')
+        
+        return options  
     
     def open_browser(self, url):
         self.navegador.get(url)
@@ -106,7 +157,6 @@ class BrowserController():
         click_new_topic_path = '/html/body/div/div[2]/div/div[3]/a/span'
         self.click_base(click_new_topic_path)
         self.add_new_response()
- 
       
     def click_base(self, path, xpath = True):
         if xpath:

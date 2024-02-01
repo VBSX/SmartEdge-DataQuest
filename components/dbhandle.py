@@ -30,76 +30,97 @@ class Database():
             return False
   
     def db_default_config(self):
-        if self.verify_connection():
-            if not self.connection_error:
-                query = """
-                    update
-                        clientes
-                    set
-                        TELEFONE1 = '999999999',
-                        TELEFONE2 = '999999999',
-                        FAX = '999999999',
-                        ENT_FAX = '999999999';
-                        email = '2teste.mais@gmail.com',
-                        EMAILCONTATO,
-                        EMAILCOMPRADOR,
-                        emailfinanceiro = '2teste.mais@gmail.com',
-                        emailcte = '2teste.mais@gmail.com',
-                        emailnfe = '2teste.mais@gmail.com',
-                        EMAILSOCIO1,
-                        EMAILSOCIO2,
-                        EMAILSOCIO3,
-                        EMAILSOCIO4,
-                        ENT_EMAIL 
-                    UPDATE empresas
-                    SET email = '2teste.mais@gmail.com';
+            query_return = self.update_users_password_to_default()
+            query_return2 = self.update_password_supervisor()
+            query_return3 = self.update_nfce_config_env_to_hml()
+            query_return4 = self.update_phone_customer()
+            query_return5 = self.update_emails_accountant()
+            query_return6 = self.update_emails_customer()
+            query_return7 =self.update_email_org()
+            
+            list_query = [query_return, query_return2, query_return3, query_return4, query_return5, query_return6, query_return7]
+            for query in list_query:
+                if query != 'sucess':
+                    return query
+            return 'sucess'  
+    
+    def update_users_password_to_default(self):
+        query = """
+            UPDATE 
+                USUARIOS
+            set
+                Password = 'W';
+        """
+        return self.execute_query(query)
+    
+    def update_phone_customer(self):
+        query = """
+            update
+                clientes
+            set
+                TELEFONE1 = '999999999',
+                TELEFONE2 = '999999999',
+                FAX = '999999999',
+                ENT_FAX = '999999999';
+        """
+        return self.execute_query(query)
 
-                    UPDATE contabilista
-                    SET Email = '2teste.mais@gmail.com',
-                        EmailXmlEnvio = '2teste.mais@gmail.com';
-
-                    UPDATE USUARIOS set Password = 'W';
-                    
-                """
-                query_return2 = self.update_password_supervisor()
-                query_return = self.execute_query(query)
-                query_return3 = self.update_nfce_config_env_to_hml()
-                
-                if query_return and query_return2 and query_return3 == 'sucess':
-                    return 'sucess'
-                else:
-                    return query_return
-                
-            else:
-                self.connected = False
-                return self.message_connection_error
-        else:
-            return 'banco de dados desconectado'
+    def update_emails_accountant(self):
+        query = """
+            update
+                contabilista
+            set
+                Email = '2teste.mais@gmail.com';
+                EmailXmlEnvio = '2teste.mais@gmail.com';
+        """
+        return self.execute_query(query)
+    
+    def update_emails_customer(self):
+        query = """
+            update
+                clientes
+            set
+                email = '2teste.mais@gmail.com',
+                EMAILCONTATO = '2teste.mais@gmail.com',
+                EMAILCOMPRADOR = '2teste.mais@gmail.com',
+                emailfinanceiro = '2teste.mais@gmail.com',
+                emailcte = '2teste.mais@gmail.com',
+                emailnfe = '2teste.mais@gmail.com',
+                EMAILSOCIO1 = '2teste.mais@gmail.com',
+                EMAILSOCIO2 = '2teste.mais@gmail.com',
+                EMAILSOCIO3 = '2teste.mais@gmail.com',
+                EMAILSOCIO4 = '2teste.mais@gmail.com',
+                ENT_EMAIL = '2teste.mais@gmail.com'
+        """
+        return self.execute_query(query) 
+    
+    def update_email_org(self):
+        query = """
+            update
+                empresas
+            set
+                email = '2teste.mais@gmail.com';
+        """
+        return self.execute_query(query)
     
     def reset_users_password(self):
-        if self.verify_connection():
-            if not self.connection_error:
-                query = """
-                    UPDATE USUARIOS set Password = 'W';
-                """
-                query_return = self.execute_query(query)
-                query_return_supervisor = self.update_password_supervisor() 
-                query2 = """
-                    UPDATE USUARIOS_SUPERVISORES 
-                    SET 
-                    Lib_Desconto = '1',
-                    Lib_Credito = '1';
-                """
-                query_return2 = self.execute_query(query2)
-                if query_return and query_return_supervisor and query_return2 == 'sucess':
-                    return 'sucess'
-                else:
-                    return query_return +f'\n{query_return_supervisor}'
-            else:
-                return self.message_connection_error
-        else:
-            self.connected = False
-            return 'banco de dados desconectado'
+            query_return = self.update_users_password_to_default()
+            query_return_supervisor = self.update_password_supervisor() 
+            query_return2 = self.update_permission_supervisor()
+            list_of_query = [query_return, query_return_supervisor, query_return2]
+            for query in list_of_query:
+                if query != 'sucess':
+                    return query
+            return 'sucess'
+
+    def update_permission_supervisor(self):
+        query = """
+            UPDATE USUARIOS_SUPERVISORES 
+            SET 
+                Lib_Desconto = '1',
+                Lib_Credito = '1';
+        """
+        return self.execute_query(query)
         
     def execute_query(self, query):
         has_connection = self.verify_connection()
@@ -154,7 +175,6 @@ class Database():
                     return False
     
     def execute_query_for_multiple_querys(self,query_list):
-        
         has_connection = self.verify_connection()
         if has_connection:
             try:
@@ -176,21 +196,23 @@ class Database():
         query_sequence = "SELECT Sequencia FROM USUARIOS_SUPERVISORES;"
         sequence = self.execute_query_return(query_sequence)
         sequence_raw = sequence[1]
-        sequence = []
-        list_query = []
         
-        for item in sequence_raw:
-            item = str(item)
-            item = item.replace(',', '').replace('(', '').replace(')', '')
-            sequence.append(int(item))
-           
-        for index, row in enumerate(sequence_raw):
-            row = row[0]
-            password_value = row*4
-            query = f"UPDATE USUARIOS_SUPERVISORES SET Password = '{password_value}' WHERE Sequencia = {row};"
-            list_query.append(query)
-        return self.execute_query_for_multiple_querys(list_query)
-    
+        list_query = []
+        if sequence[0] != 'error':
+            sequence = []
+            for item in sequence_raw:
+                item = str(item)
+                item = item.replace(',', '').replace('(', '').replace(')', '')
+                sequence.append(int(item))
+            
+            for index, row in enumerate(sequence_raw):
+                row = row[0]
+                password_value = row*4
+                query = f"UPDATE USUARIOS_SUPERVISORES SET Password = '{password_value}' WHERE Sequencia = {row};"
+                list_query.append(query)
+            return self.execute_query_for_multiple_querys(list_query)
+        else: 
+            return sequence[1]
     def get_file_config(self):
         self.config = self.file.read_json(database=True)
 
