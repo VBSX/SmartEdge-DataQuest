@@ -173,7 +173,7 @@ class OsHandler():
             except Exception:
                 return 'Não foi possível encontrar o navegador padrão.'
 
-    def is_chrome_installed():
+    def is_chrome_installed(self):
         # Verifica se o Google Chrome está instalado na pasta padrão no Windows
         if os.path.exists("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"):
             return True

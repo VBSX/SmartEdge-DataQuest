@@ -1,10 +1,15 @@
 from cryptography.fernet import Fernet
 import base64
+import os
+import sys
+path = os.path.abspath('./')
+from components.filehandle import File
+
 
 class Cripter(Fernet):
     def __init__(self):
         self.key = b'nPwQhXeEkt3A7DC4ZqtdVl2xzYQe6IHoq3kmztTIx1M='
-        
+        self.file_handler = File()
     def decrypt(self, password):
         try:
             # Decodifica a string base64
