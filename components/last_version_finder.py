@@ -77,7 +77,7 @@ class LatestVersion():
         if text:
             for item in list_of_text:
                 if item in text:
-                    text = text.replace(item, '').replace('.exe', '')
+                    text = text.replace(item, '').replace('.exe', '').replace(' ', '')
 
         return text
 
@@ -126,7 +126,8 @@ if __name__ == '__main__':
     # print('mypet',LatestVersion().latest_release_version_text_mypet())
     # print('myzap',LatestVersion().latest_release_version_text_myzap())
     # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
-    print(LatestVersion().download_latest_release())
+    print(LatestVersion().latest_release_version_text())
+
     # print(LatestVersion().latest_release_version_text())
     
     
