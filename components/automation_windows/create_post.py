@@ -28,7 +28,9 @@ class BrowserController():
         bitrix_passwd,
         test_mode = False,
         final_version = False,
-        topic_name_of_final_version =None
+        topic_name_of_final_version =None,
+        test_forum = False,
+        test_bitrix = False
         ):
         self.os_handler = OsHandler()
         self.path_user = os.getenv('APPDATA')
@@ -43,9 +45,17 @@ class BrowserController():
             self.test_mode = test_mode
             self.final_version = final_version
             self.topic_name_of_final_version = topic_name_of_final_version
-            self.forum_post()
-            sleep(6)
-            self.create_posts_on_bitrix()
+            if test_mode:
+                print(test_mode)
+                if test_forum:
+                    self.forum_post()
+                elif test_bitrix:
+                    self.create_posts_on_bitrix()
+            else:       
+                self.forum_post()
+                sleep(6)
+                self.create_posts_on_bitrix()
+                
         except SessionNotCreatedException as err:
             mgs = f"Erro: {err}"
             print(mgs)
@@ -230,23 +240,24 @@ class BrowserController():
         actions.send_keys("v")
         actions.key_up(Keys.CONTROL)
         actions.perform()
-        sleep(7)
-        
-        # # clica no botão de formatar texto 
-        # ele está clicando no botão mas por algum motivo ele não está formatando o texto então por 
-        # enquanto vai ter que clicar manualmente
-        # for item in range(0,100):
-        #     try:
-        #         button_format_text = self.navegador.find_element(By.XPATH, f'/html/body/div[{item}]/span[3]/span[2]')       
-        #         button_format_text.click()
-        #         print('achou o elemento')
-        #         break
-        #     except:
-        #         print('Não achou o elemento')
+
+        # clica no botão de formatar texto 
+        for item in range(0,100):
+            try:
+                button_format_text = self.navegador.find_element(By.XPATH, f'/html/body/div[{item}]/span[3]/span[2]')       
+                # hover mouse to element
+                actions.move_to_element(button_format_text).perform()
+                sleep(1)
+                button_format_text.click()
+                print('achou o elemento')
+                break
+            except:
+                print('Não achou o elemento')
         
         if not self.test_mode:
+            self.click_base(path_post_body)
             self.click_base(path_button_send) 
-            sleep(10)
+            sleep(2)
         else:
             print('modo de teste')
             sleep(10)
@@ -292,6 +303,7 @@ if __name__ == '__main__':
         forum_username='',
         forum_passwd='',
         test_mode=True,
+        test_bitrix=True
         # final_version=True,
         # topic_name_of_final_version= '9.12.x'
         )
