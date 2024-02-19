@@ -202,7 +202,7 @@ class DialogCredentialsPosts(BaseWindow):
         return True
     
     def verify_if_is_default(self, input):
-        if input == '******':
+        if input == '******' or input == 'default':
             return True
         return False
     
