@@ -255,8 +255,13 @@ class BrowserController():
                 print('Não achou o elemento')
         
         if not self.test_mode:
-            self.click_base(path_post_body)
-            self.click_base(path_button_send) 
+            # self.click_base(path_button_send) 
+            # como não estava funcionando clicar no botão, mesmo o caminho dele não ter sido alterado
+            # deixar como ctrl + enter
+            actions.key_down(Keys.CONTROL)
+            actions.send_keys(Keys.ENTER)
+            actions.key_up(Keys.CONTROL)
+            actions.perform()
             sleep(2)
         else:
             print('modo de teste')
@@ -307,4 +312,3 @@ if __name__ == '__main__':
         # final_version=True,
         # topic_name_of_final_version= '9.12.x'
         )
-
