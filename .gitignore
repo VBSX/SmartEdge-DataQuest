@@ -10,3 +10,6 @@ log.html
 report.html
 output.xml
 components/log.txt
+components/automation_windows/release_version.py
+components/automation_windows/release.robot
+components/automation_windows/automated_tests/faturar_nota.robot
