@@ -51,10 +51,12 @@ class BrowserController():
                     self.forum_post()
                 elif test_bitrix:
                     self.create_posts_on_bitrix()
+                self.navegador.quit()
             else:       
                 self.forum_post()
                 sleep(6)
                 self.create_posts_on_bitrix()
+                self.navegador.quit()
                 
         except SessionNotCreatedException as err:
             mgs = f"Erro: {err}"
@@ -112,16 +114,17 @@ class BrowserController():
         # options.binary_location = 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe'
         if self.default_browser_name == 'brave' and 'chrome':
             options.binary_location = self.os_handler.get_default_browser_path()
+            options.add_experimental_option("excludeSwitches", ["enable-logging"])
+            options.add_argument("--profile-directory=Default")
+            options.add_argument(f'--user-data-dir={self.path_user}\cache')
         else:
             is_chrome_installed = self.os_handler.is_chrome_installed()
             if is_chrome_installed:
                 options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-        
                 # options.add_experimental_option("detach", True)
                 options.add_experimental_option("excludeSwitches", ["enable-logging"])
                 options.add_argument("--profile-directory=Default")
-                options.add_argument(f'--user-data-dir={self.path_user}\cache')
-        
+                options.add_argument(f'--user-data-dir={self.path_user}\cache')      
         return options  
     
     def open_browser(self, url):
@@ -146,8 +149,7 @@ class BrowserController():
             path_topic_name_label = '/html/body/div/div[2]/div/form/table[1]/tbody/tr[3]/td[2]/input'
             self.click_base(path_topic_name_label).send_keys(self.topic_name_of_final_version)
         else:    
-            self.click_base(path)    
-            
+            self.click_base(path)
         self.click_base(path_body_message).send_keys(self.message_version)
             
         active_element = self.navegador.execute_script(f"""return document.querySelector("{path_js_body}")""")
@@ -294,7 +296,6 @@ class BrowserController():
                     print('modo de teste')
                     sleep(60)
                 break
-            
             except:
                 print('erro', element)
 
