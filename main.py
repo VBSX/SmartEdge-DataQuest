@@ -40,6 +40,7 @@ class MainWindow(BaseWindow):
         self.img_pin_path = r'images/pin.png'
         self.img_att_path = r'images/att_db.png'
         self.img_mymonitorfat_path = r'images/mymonitorfat.png'
+        self.img_close_path = r'images/x.png'
         self.is_the_window_fixed = False
         self.os_handler = OsHandler()
         self.setup_ui()
@@ -96,11 +97,15 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_close_programs.addWidget(self.button_close_att_db)
         
         self.spacer = QSpacerItem(20,50)
-
+    
+        self.layout_database_info = QHBoxLayout()
+        self.layout_database_info.addWidget(self.database_label) 
+        self.layout_database_info.addWidget(self.button_remove_database)
+                
         self.layout_horizontal_database_info = QHBoxLayout()
         self.layout_horizontal_database_info.addWidget(self.host_label)
         self.layout_horizontal_database_info.addWidget(self.port_label)
-        self.layout_horizontal_database_info.addWidget(self.database_label) 
+        self.layout_horizontal_database_info.addItem(self.layout_database_info) 
         
         self.layout_horizontal_downloads = QHBoxLayout()
         self.layout_horizontal_downloads.addWidget(self.label_last_build_version)
@@ -122,6 +127,7 @@ class MainWindow(BaseWindow):
             self.icon_pin = QIcon(self.resource_path(self.img_pin_path))
             self.icon_att_db = QIcon(self.resource_path(self.img_att_path))
             self.icon_mymonitorfat = QIcon(self.resource_path(self.img_mymonitorfat_path))
+            self.icon_close = QIcon(self.resource_path(self.img_close_path))
             self.setWindowIcon(QIcon(self.resource_path(self.img_smartedge_path)))
         else:
             self.icon_close_mycommerce = QIcon(self.img_mycommerce_path)
@@ -130,6 +136,7 @@ class MainWindow(BaseWindow):
             self.icon_pin = QIcon(self.img_pin_path)
             self.icon_att_db = QIcon(self.img_att_path)
             self.icon_mymonitorfat = QIcon(self.img_mymonitorfat_path)
+            self.icon_close = QIcon(self.img_close_path)
             self.setWindowIcon(QIcon(self.img_smartedge_path))
 
     def layout_config(self):
@@ -276,7 +283,14 @@ class MainWindow(BaseWindow):
             text='Liberar a versão',
             function=self.release_the_version
         )
-             
+    
+        self.button_remove_database = self.create_button(
+            config_style=False,
+            function=self.remove_database,
+            icon=self.icon_close,
+            icon_size = 32
+        )
+           
     def update_db(self):
         self.get_configs()
         if self.file_handler.verify_if_path_exists(path=self.file_handler.path_json):
@@ -415,6 +429,11 @@ class MainWindow(BaseWindow):
             self.interface_sovis_is_open = True
         else:
             self.sovis_window.show()
+
+    def remove_database(self):
+        self.file_handler.set_database('')
+        self.reset_layout()
+
 
 if __name__ == '__main__': 
 
