@@ -71,7 +71,7 @@ class BaseWindow(QMainWindow):
         if function:
             button.clicked.connect(function) 
         if config_style:
-            button.setStyleSheet("background-color: #FFFFFF;color: #000000;border-radius: 10px;")
+            button.setStyleSheet("background-color: #FFFFFF;color: #000000;border-radius: 25px;")
         if icon:
             button.setIcon(icon)
             if icon_size:
