@@ -425,7 +425,14 @@ class VersionReleaseInterface(BaseWindow):
     def cook_message(self, is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy):
         if message_compatibilities:   
             message_forum = self.make_text_for_forum(initial_message)
-            text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
+            self.get_configs_forums()
+            user_releaser = self.user_releaser
+            user_releaser = str(user_releaser)
+            if user_releaser != 'default':
+                user_releaser = user_releaser.capitalize()
+                text_obs = f'\n\nAtenciosamente, {user_releaser}.'
+            else:
+                text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
             if not is_final_version:
                 text_greetings = f'Olá! Versão [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
                 final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
