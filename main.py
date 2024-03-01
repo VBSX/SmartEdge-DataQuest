@@ -351,14 +351,21 @@ class MainWindow(BaseWindow):
         self.port_label = self.create_label(f'Porta: {self.port}')
         
         self.database_label = self.create_label(f'Database: {self.database}')
+        self.database_label.mouseDoubleClickEvent = lambda event: self.update_database_label()
         
         self.label_close_programs = self.create_label('Fechar programas')
         
-        self.label_last_build_version = self.create_label(f'Última Build: {self.latest_version_handler.latest_build_version_text()}')
-        self.label_last_build_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(self.latest_version_handler.latest_build_version_text())
+        text_latest_build_version = self.latest_version_handler.latest_build_version_text()
+        text_latest_release_version = self.latest_version_handler.latest_release_version_text()
+        text_latest_build_version = self.process_input(text_latest_build_version, raw_text=True)
+        text_latest_release_version = self.process_input(text_latest_release_version, raw_text=True)
         
-        self.label_last_release_version = self.create_label(f'Última Release: {self.latest_version_handler.latest_release_version_text()}')
-        self.label_last_release_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(self.latest_version_handler.latest_release_version_text())
+        self.label_last_build_version = self.create_label(f'Última Build: {text_latest_build_version}')
+        self.label_last_build_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(text_latest_build_version)
+        
+        self.label_last_release_version = self.create_label(f'Última Release: {text_latest_release_version}')
+        
+        self.label_last_release_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(text_latest_release_version)
     
     def att_db_open(self):
         self.open_programs('C:\Visual Software\MyCommerce\AtualizarDB.exe')
@@ -431,10 +438,15 @@ class MainWindow(BaseWindow):
             self.sovis_window.show()
 
     def remove_database(self):
-        self.copy_to_clipboard(self.file_handler.get_database())
+        self.get_configs()
+        self.copy_to_clipboard(self.database)
         self.file_handler.set_database('')
         self.reset_layout()
 
+    def update_database_label(self):
+        self.file_handler.set_database(self.get_clipboard())
+        self.reset_layout()
+    
 if __name__ == '__main__': 
 
     app = QApplication(sys.argv)

@@ -192,3 +192,37 @@ class BaseWindow(QMainWindow):
         self.host = json_file['host']
         self.port = json_file['port']
         self.database = json_file['database']
+        
+    def get_clipboard(self):
+        return pyperclip.paste()
+    
+    def process_input(self,line_edit, raw_text = False):
+        
+        if not raw_text:
+            current_text = line_edit.text()
+        else:
+            current_text = line_edit
+        if current_text != '...':
+            parts = current_text.split('.')
+            formatted_text = self.add_zero_to_left(parts)
+            if not raw_text:
+                line_edit.setText(formatted_text)
+            else:
+                return formatted_text
+
+    def add_zero_to_left(self, parts_of_text):
+        # Adicionando zeros à esquerda conforme necessário
+        # Exemplo: 9.1.3.4 -> 09.01.03.0004
+        
+        formatted_parts = []
+        index_of_parts = 1
+        for part in parts_of_text:
+            if index_of_parts < 4:
+                part = part.zfill(2)  
+            elif index_of_parts == 4:
+                part = part.zfill(4)
+            formatted_parts.append(part)
+            index_of_parts += 1
+
+        formatted_text = '.'.join(formatted_parts)
+        return formatted_text

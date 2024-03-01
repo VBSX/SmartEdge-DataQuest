@@ -227,32 +227,7 @@ class VersionReleaseInterface(BaseWindow):
     def line_edit_return_pressed(self, line_edit, next_focus):
         line_edit.returnPressed.connect(lambda: self.process_input(line_edit))
         line_edit.returnPressed.connect(lambda:next_focus.setFocus())
-     
-    def process_input(self,line_edit):
-        current_text = line_edit.text()
-        if current_text != '...':
-            parts = current_text.split('.')
-            formatted_text = self.add_zero_to_left(parts)
-            line_edit.setText(formatted_text)
-
-    def add_zero_to_left(self, parts_of_text):
-        # Adicionando zeros à esquerda conforme necessário
-        # Exemplo: 9.1.3.4 -> 09.01.03.0004
         
-        formatted_parts = []
-        index_of_parts = 1
-        for part in parts_of_text:
-            if index_of_parts < 4:
-                part = part.zfill(2)  
-            elif index_of_parts == 4:
-                part = part.zfill(4)
-            formatted_parts.append(part)
-            index_of_parts += 1
-
-        formatted_text = '.'.join(formatted_parts)
-        return formatted_text
-        
-
     def release_version(self):
         pass
     
