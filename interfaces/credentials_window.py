@@ -188,6 +188,7 @@ class DialogCredentialsPosts(BaseWindow):
                 return_file = self.file_handler.write_json()
                 if return_file == 'sucess':
                     self.close()
+                    self.parent().show_dialog("Credenciais salvas com sucesso!")
                    
     def verify_if_is_empty(self, list_user_input):
         for item in list_user_input:
