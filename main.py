@@ -431,9 +431,9 @@ class MainWindow(BaseWindow):
             self.sovis_window.show()
 
     def remove_database(self):
+        self.copy_to_clipboard(self.file_handler.get_database())
         self.file_handler.set_database('')
         self.reset_layout()
-
 
 if __name__ == '__main__': 
 
