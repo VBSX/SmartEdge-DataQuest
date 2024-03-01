@@ -39,7 +39,7 @@ class AboutProgramWindow(BaseWindow):
         self.layout_principal = QVBoxLayout()
 
         self.layout_vertical_version = QHBoxLayout()
-        self.label_version = QLabel('Versão 1.5')
+        self.label_version = QLabel('Versão 1.6')
         self.layout_vertical_version.addWidget(self.label_version, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.layout_principal.addWidget(self.visit_websites_button, alignment=Qt.AlignCenter)
