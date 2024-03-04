@@ -37,8 +37,9 @@ class Database():
             query_return5 = self.update_emails_accountant()
             query_return6 = self.update_emails_customer()
             query_return7 =self.update_email_org()
+            query_return8 = self.update_nfe_config_env_to_hml()
             
-            list_query = [query_return, query_return2, query_return3, query_return4, query_return5, query_return6, query_return7]
+            list_query = [query_return, query_return2, query_return3, query_return4, query_return5, query_return6, query_return7, query_return8]
             for query in list_query:
                 if query != 'sucess':
                     return query
@@ -70,7 +71,7 @@ class Database():
             update
                 contabilista
             set
-                Email = '2teste.mais@gmail.com';
+                Email = '2teste.mais@gmail.com',
                 EmailXmlEnvio = '2teste.mais@gmail.com';
         """
         return self.execute_query(query)
@@ -90,7 +91,7 @@ class Database():
                 EMAILSOCIO2 = '2teste.mais@gmail.com',
                 EMAILSOCIO3 = '2teste.mais@gmail.com',
                 EMAILSOCIO4 = '2teste.mais@gmail.com',
-                ENT_EMAIL = '2teste.mais@gmail.com'
+                ENT_EMAIL = '2teste.mais@gmail.com';
         """
         return self.execute_query(query) 
     
@@ -102,6 +103,8 @@ class Database():
                 email = '2teste.mais@gmail.com';
         """
         return self.execute_query(query)
+    
+    
     
     def reset_users_password(self):
             query_return = self.update_users_password_to_default()
@@ -260,10 +263,22 @@ class Database():
     
     def update_nfce_config_env_to_hml(self):
         query = """
-        UPDATE NFCE_CONFIG SET AMBIENTE = 2
+        UPDATE 
+            NFCE_CONFIG 
+        SET 
+            AMBIENTE = 2
         """
         return self.execute_query(query)
     
+    def update_nfe_config_env_to_hml(self):
+        query = """
+            update
+                NOTA_TAMANHO
+            set
+                NFE_AMBIENTE = 2
+        """
+        return self.execute_query(query)
+        
 if __name__ == "__main__":
     
     db = Database()
