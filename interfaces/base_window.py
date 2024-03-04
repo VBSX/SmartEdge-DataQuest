@@ -7,27 +7,25 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QTextEdit,
     QVBoxLayout,
-    QVBoxLayout,
     QWidget,
     QHBoxLayout,
     QSpacerItem,
     QMessageBox,
     QDialog
-    
     )
-import os
+from os.path import (abspath as path_os, dirname, join)
 import sys
-path = os.path.abspath('./')
+path = path_os('./')
 sys.path.append(path)
+
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QTextOption, QIntValidator
 from interfaces.window_input_label import WindowInput
-import pyperclip
+from pyperclip import (copy, paste)
 from components.filehandle import File
 from components.dbhandle import Database
 from components.cript_handle import Cripter
 from webbrowser import open_new_tab 
-
 
 class BaseWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -45,8 +43,9 @@ class BaseWindow(QMainWindow):
         
     def resource_path(self, relative_path):
         """ Get absolute path to resource, works for dev and for PyInstaller """
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        return os.path.join(base_path, relative_path)  
+        base_path = getattr( sys, '_MEIPASS', dirname(path_os(__file__)))
+        print(base_path, '\n', relative_path)
+        return join(base_path, relative_path)  
 
     def clearLayout(self, layout):
         while layout.count():
@@ -144,8 +143,7 @@ class BaseWindow(QMainWindow):
         return text_edit
     
     def copy_to_clipboard(self, text):
-        pyperclip.copy(text)
-        # spam = pyperclip.paste()
+        copy(text)
 
     def get_configs_forums(self):
         self.file_handler.__init__()
@@ -194,7 +192,7 @@ class BaseWindow(QMainWindow):
         self.database = json_file['database']
         
     def get_clipboard(self):
-        return pyperclip.paste()
+        return paste()
     
     def process_input(self,line_edit, raw_text = False):
         

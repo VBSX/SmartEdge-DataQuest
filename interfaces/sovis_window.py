@@ -1,7 +1,7 @@
-import os
-import sys
-path = os.path.abspath('./')
-sys.path.append(path)
+from os.path import abspath as path_os
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
 
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -153,7 +153,8 @@ class SovisWindow(BaseWindow):
         
 
 if __name__=='__main__':
-    app = QApplication(sys.argv)
+    from sys import argv
+    app = QApplication(argv)
     sovis = SovisWindow()
     sovis.show()
     app.exec()

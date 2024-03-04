@@ -1,13 +1,22 @@
-import os
-import sys
-path = os.path.abspath('./')
-sys.path.append(path)
-import json
+from os.path import (abspath as path_os, exists) 
+from os import mkdir
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
+from json import (load as read_json, dump as write_json)
 from components.ini_handle import IniConfig
 from components.os_handle import OsHandler
-import win32net
-import win32file
-from multiprocessing import freeze_support
+from win32net import NetUseAdd
+from win32file import (
+    CreateFile,
+    WriteFile,
+    CloseHandle,
+    GENERIC_WRITE,
+    FILE_END,
+    SetFilePointer,
+    OPEN_ALWAYS)
+
+# from multiprocessing import freeze_support
 from datetime import datetime
 
 class File():
@@ -32,7 +41,7 @@ class File():
         }
         self.local_machine = False
         try:
-            win32net.NetUseAdd(None, 2, data)
+            NetUseAdd(None, 2, data)
         except:
             self.local_machine = True
             print('maquinaLocal')
@@ -97,12 +106,12 @@ class File():
     def write_to_file(self, filename, text):
         actual_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         # Open the file or create it if it doesn't exist
-        handle = win32file.CreateFile(
+        handle = CreateFile(
             filename,  # File name
-            win32file.GENERIC_WRITE,  # Access type
+            GENERIC_WRITE,  # Access type
             0,  # Share mode
             None,  # Security
-            win32file.OPEN_ALWAYS,  # Disposition (create if it doesn't exist, open otherwise)
+            OPEN_ALWAYS,  # Disposition (create if it doesn't exist, open otherwise)
             0,  # File attributes
             None  # Template file
         )
@@ -112,13 +121,13 @@ class File():
         text = text.encode()
 
         # Set the file pointer to the end of the file to append content
-        win32file.SetFilePointer(handle, 0, win32file.FILE_END)
+        SetFilePointer(handle, 0, FILE_END)
 
         # Write to the file
-        win32file.WriteFile(handle, text)
+        WriteFile(handle, text)
 
         # Close the file
-        win32file.CloseHandle(handle)
+        CloseHandle(handle)
     
     def create_json(self):
         if self.verify_if_path_exists(self.path_json):
@@ -132,7 +141,7 @@ class File():
             return True
         
     def verify_if_path_exists(self, path):
-        if os.path.exists(path):
+        if exists(path):
             return True
         else:
             return False
@@ -140,7 +149,7 @@ class File():
     def read_json(self, database = False):
         if self.verify_if_path_exists(self.path_json):
                 with open(self.path_json, 'r') as f:
-                    content = json.load(f)
+                    content = read_json(f)
                 if not database:
                     return content   
                 else:
@@ -159,7 +168,7 @@ class File():
         else:
             self.create_json()
             with open(self.path_json, 'r') as f:
-                content = json.load(f)
+                content = read_json(f)
                 return content
     
     def init_json_config_align_with_dotini(self):
@@ -327,18 +336,18 @@ class File():
 
     def write_json(self):
         with open(self.path_json, 'w') as f:
-            json.dump(self.json_file, f)
+            write_json(self.json_file, f)
         return 'sucess'
     
     def verify_if_path_components_exist(self):
-        if os.path.exists(r'components'):
+        if exists(r'components'):
             return True
         else:
             return False
 
     def create_components_path(self):
         if not self.verify_if_path_components_exist():
-            os.mkdir(r'components')
+            mkdir(r'components')
         return 'sucess'
 
     def create_defaut_json(self):
@@ -360,13 +369,12 @@ class File():
         return 'sucess'
     
     def verify_if_images_path_exists(self):
-        if os.path.exists(r'images'):
+        if exists(r'images'):
             return True
         else:
             return False
         
 if __name__ == '__main__':
-
     f = File()
     # print(f.create_log_txt())
     f.add_new_logs('teste')

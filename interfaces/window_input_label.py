@@ -7,7 +7,6 @@ from PySide6.QtWidgets import (
     QLabel
 )
 from PySide6.QtCore import Signal
-import sys
 
 class WindowInput(QDialog):
     input_completed = Signal(str)
@@ -42,6 +41,7 @@ class WindowInput(QDialog):
             self.accept()
 
 if __name__ == "__main__":
+    import sys
     app = QApplication(sys.argv)
     window = WindowInput()
     if window.exec() == QDialog.Accepted:

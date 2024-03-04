@@ -1,3 +1,9 @@
+from os import getenv
+from os.path import abspath as path_os
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
+
 from time import sleep
 
 from selenium.webdriver.chrome.service import Service
@@ -11,11 +17,6 @@ from selenium.common.exceptions import SessionNotCreatedException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver import Chrome
 from selenium.webdriver.firefox import options as FirefoxOptions
-
-import os
-import sys
-path = os.path.abspath('./')
-sys.path.append(path)
 from components.os_handle import OsHandler
 
 class BrowserController():
@@ -33,7 +34,7 @@ class BrowserController():
         test_bitrix = False
         ):
         self.os_handler = OsHandler()
-        self.path_user = os.getenv('APPDATA')
+        self.path_user = getenv('APPDATA')
         try:
             self.navegador = self.browser()
             self.wait = WebDriverWait(self.navegador, 10)

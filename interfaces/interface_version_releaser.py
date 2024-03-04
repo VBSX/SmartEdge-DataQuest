@@ -1,7 +1,7 @@
-import os
-import sys
-path = os.path.abspath('./')
-sys.path.append(path)
+from os.path import abspath as path_os
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
 
 from interfaces.base_window import BaseWindow
 from interfaces.credentials_window import DialogCredentialsPosts
@@ -236,6 +236,7 @@ class VersionReleaseInterface(BaseWindow):
     
     def create_post(self):
         is_final_version = self.checkbox_final_version.isChecked()
+        version_mycommerce_release = self.line_edit_version_mycommerce_release.text()
         self.get_configs_forums()
         list_credentials = [
             self.bitrix_username,
@@ -256,8 +257,10 @@ class VersionReleaseInterface(BaseWindow):
                     if is_final_version:
                         topic_name = self.dialog_input('Coloque a mensagem de tópico do fórum, exemplo: 9.12.x'
                                     )
+                    self.file_handler.add_new_logs(f'Criando posts da versão: {version_mycommerce_release}')
                     self.start_automation_create_post(topic_name, is_final_version, message)
             else:
+                self.file_handler.add_new_logs('Não há mensagem para publicar')
                 self.show_dialog('Não há mensagem para publicar') 
             
     def verify_if_has_login_configs(self, list_credentials):
@@ -301,6 +304,7 @@ class VersionReleaseInterface(BaseWindow):
     def thread_finished(self):
         self.progress_dialog.cancel()
         self.show_dialog('Posts criados com sucesso')
+        self.file_handler.add_new_logs('Posts criados com sucesso')
         
     def copy_post_compatibilities(self, show_dialog = True):
         mycommerce_pdv = self.line_edit_mycommerce_pdv_version.text()
@@ -474,7 +478,8 @@ class VersionReleaseInterface(BaseWindow):
         del self
                                 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    from sys import argv
+    app = QApplication(argv)
     window = VersionReleaseInterface()
     window.show()
     app.exec()

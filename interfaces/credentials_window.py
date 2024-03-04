@@ -1,7 +1,8 @@
-import sys
-import os
-path = os.path.abspath('./')
-sys.path.append(path)
+from os.path import abspath as path_os
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
+
 from interfaces.base_window import BaseWindow
 from PySide6.QtWidgets import (
     QApplication,
@@ -208,6 +209,7 @@ class DialogCredentialsPosts(BaseWindow):
         return False
     
 if __name__ == "__main__":
+    import sys
     app = QApplication(sys.argv)
     window = DialogCredentialsPosts()
     window.show()

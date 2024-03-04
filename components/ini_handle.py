@@ -1,9 +1,9 @@
-import configparser
+from configparser import ConfigParser
 
 class IniConfig:
     def __init__(self, config_path=None):
         self.config_path = config_path or r'C:\Visual Software\MyCommerce\Config.ini'
-        self.config = configparser.ConfigParser()
+        self.config = ConfigParser()
         self.config.read(self.config_path)
 
         self.host_ini = self.read_config('IPServidor')

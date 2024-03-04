@@ -1,7 +1,8 @@
-import os
-import sys
-path = os.path.abspath('./')
-sys.path.append(path)
+from os.path import abspath as path_os
+from os import listdir
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
 from components.os_handle import OsHandler
 
 class LatestVersion():
@@ -18,7 +19,7 @@ class LatestVersion():
         
     def latest_release_version(self, path, software_name):
         if self.has_connection:
-            all_archives = os.listdir(path)
+            all_archives = listdir(path)
             archives = []
             # find by .exe files
             if software_name =='Mycommerce':
@@ -51,7 +52,7 @@ class LatestVersion():
     
     def latest_build_version(self):
         if self.has_connection:
-            all_archives = os.listdir(self.path_mycommerce_att)
+            all_archives = listdir(self.path_mycommerce_att)
             # find by .exe files
             archives = [archive for archive in all_archives if archive.endswith('.exe') if not archive.endswith('MyCommerce_Full.exe') if not archive.endswith('0.exe')]
             if archives:

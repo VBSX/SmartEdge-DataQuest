@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QLabel,QWidget, QVBoxLayout, QPushButton, QLineEdit, QTableWidget, QTableWidgetItem
 from components.dbhandle import Database
 import re
+from re import (compile, IGNORECASE)
 from interfaces.base_window import BaseWindow
 
 class QueryWindow(BaseWindow):
@@ -37,7 +38,7 @@ class QueryWindow(BaseWindow):
     def start_query(self):
         db = Database()
         query = self.line_edit_query.text()
-        pattern = re.compile(r'select', re.IGNORECASE)
+        pattern = compile(r'select', IGNORECASE)
         match = pattern.search(query)
         if match:
             return_db = db.execute_query_return(query)

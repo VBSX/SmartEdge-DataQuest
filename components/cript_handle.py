@@ -1,10 +1,10 @@
+from os.path import abspath as path_os
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
 from cryptography.fernet import Fernet
-import base64
-import os
-import sys
-path = os.path.abspath('./')
+from base64 import urlsafe_b64decode, urlsafe_b64encode
 from components.filehandle import File
-
 
 class Cripter(Fernet):
     def __init__(self):
@@ -13,7 +13,7 @@ class Cripter(Fernet):
     def decrypt(self, password):
         try:
             # Decodifica a string base64
-            encrypted_bytes = base64.urlsafe_b64decode(password)
+            encrypted_bytes = urlsafe_b64decode(password)
 
             # Cria um objeto Fernet com a chave e descriptografa
             cipher = Fernet(self.key)
@@ -30,5 +30,5 @@ class Cripter(Fernet):
 
         # Criptografa o texto e codifica para base64
         encrypted_bytes = cipher.encrypt(password.encode('utf-8'))
-        encrypted_text = base64.urlsafe_b64encode(encrypted_bytes).decode('utf-8')
+        encrypted_text = urlsafe_b64encode(encrypted_bytes).decode('utf-8')
         return encrypted_text

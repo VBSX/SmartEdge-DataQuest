@@ -1,7 +1,8 @@
-import os
-import sys
-path = os.path.abspath('./')
-sys.path.append(path)
+from os.path import abspath as path_os
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
+
 from PySide6.QtWidgets import (
     QLabel,
     QWidget,
@@ -158,8 +159,8 @@ class ConfigWindow(BaseWindow):
                 self.parent().show_dialog("Configuração realizada com sucesso")
                        
 if __name__ == "__main__":
-    import sys
     from PySide6.QtWidgets import QApplication
-    app = QApplication(sys.argv)
+    from sys import argv, exit
+    app = QApplication(argv)
     window = ConfigWindow()
-    sys.exit(app.exec())
+    exit(app.exec())

@@ -1,7 +1,8 @@
-import os
-import sys
-path = os.path.abspath('./')
-sys.path.append(path)
+from os.path import abspath as path_os
+from os import startfile
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
 from PySide6.QtWidgets import (
     QApplication,
     QVBoxLayout,
@@ -10,7 +11,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QProgressDialog
 )
-import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from interfaces.query_run_window import QueryWindow
@@ -33,14 +33,14 @@ class MainWindow(BaseWindow):
         self.interface_query_window_is_open = False
         self.interface_sovis_is_open = False
         self.latest_version_handler = LatestVersion()
-        self.img_mycommerce_path = r'images/mycommerce.png'
-        self.img_config_path = r'images/config.png'
-        self.img_about_path = r'images/about.png'
-        self.img_smartedge_path = r'images/smartedge.png'
-        self.img_pin_path = r'images/pin.png'
-        self.img_att_path = r'images/att_db.png'
-        self.img_mymonitorfat_path = r'images/mymonitorfat.png'
-        self.img_close_path = r'images/x.png'
+        self.img_mycommerce_path = r'images\mycommerce.png'
+        self.img_config_path = r'images\config.png'
+        self.img_about_path = r'images\about.png'
+        self.img_smartedge_path = r'images\smartedge.png'
+        self.img_pin_path = r'images\pin.png'
+        self.img_att_path = r'images\att_db.png'
+        self.img_mymonitorfat_path = r'images\mymonitorfat.png'
+        self.img_close_path = r'images\x.png'
         self.is_the_window_fixed = False
         self.os_handler = OsHandler()
         self.setup_ui()
@@ -375,7 +375,7 @@ class MainWindow(BaseWindow):
  
     def open_programs(self, path):
         self.get_configs()
-        os.startfile(path)
+        startfile(path)
         self.reset_layout()
         
     def download_last_build_version(self):
@@ -448,8 +448,8 @@ class MainWindow(BaseWindow):
         self.reset_layout()
     
 if __name__ == '__main__': 
-
-    app = QApplication(sys.argv)
+    from sys import argv
+    app = QApplication(argv)
     window = MainWindow()
     window.show()
     app.exec()

@@ -1,5 +1,8 @@
-import os
-import sys
+from os.path import abspath as path_os
+from sys import path as syspath
+path = path_os('./')
+syspath.append(path)
+
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget, QHBoxLayout, QApplication
@@ -58,6 +61,7 @@ class AboutProgramWindow(BaseWindow):
             self.oakbox_icon = QIcon(self.oakbox_icon_path)
 
 if __name__ == '__main__':
+    import sys
     app = QApplication(sys.argv)
     about_program_window = AboutProgramWindow()
     about_program_window.show()
