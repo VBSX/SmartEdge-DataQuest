@@ -47,13 +47,13 @@ class BrowserController():
             self.final_version = final_version
             self.topic_name_of_final_version = topic_name_of_final_version
             if test_mode:
-                print(test_mode)
-                if test_forum:
+                 print(test_mode)
+                 if test_forum:
                     self.forum_post()
-                elif test_bitrix:
+                 elif test_bitrix:
                     self.create_posts_on_bitrix()
-                self.navegador.quit()
-            else:       
+                 self.navegador.quit()
+            else:
                 self.forum_post()
                 sleep(6)
                 self.create_posts_on_bitrix()
@@ -220,10 +220,10 @@ class BrowserController():
         except:
             is_logged = False
         if not is_logged:
-            path_email = '/html/body/div[1]/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[1]/div/input'
-            path_passwd = '/html/body/div[1]/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[2]/div/div[1]/div/input'
-            path_next_login = '/html/body/div[1]/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[5]/button[1]'
-            path_next_login2 = '/html/body/div[1]/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[3]/button[1]'
+            path_email = '/html/body/div/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[1]/div/input'
+            path_passwd = '/html/body/div/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[2]/div/div[1]/div/input'
+            path_next_login = '/html/body/div/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[5]/button[1]'
+            path_next_login2 = '/html/body/div/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[3]/button[1]'
             
             self.send_keys_base(path_email, self.bitrix_username)
             sleep(2)
