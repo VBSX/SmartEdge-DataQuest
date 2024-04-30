@@ -27,11 +27,12 @@ class BrowserController():
         forum_passwd,
         bitrix_username,
         bitrix_passwd,
+        name_of_program,
         test_mode = False,
         final_version = False,
         topic_name_of_final_version =None,
         test_forum = False,
-        test_bitrix = False
+        test_bitrix = False,
         ):
         self.os_handler = OsHandler()
         self.path_user = getenv('APPDATA')
@@ -46,13 +47,14 @@ class BrowserController():
             self.test_mode = test_mode
             self.final_version = final_version
             self.topic_name_of_final_version = topic_name_of_final_version
+            self.name_of_program = name_of_program
             if test_mode:
-                 print(test_mode)
-                 if test_forum:
+                print(test_mode)
+                if test_forum:
                     self.forum_post()
-                 elif test_bitrix:
+                elif test_bitrix:
                     self.create_posts_on_bitrix()
-                 self.navegador.quit()
+                self.navegador.quit()
             else:
                 self.forum_post()
                 sleep(6)
@@ -81,7 +83,12 @@ class BrowserController():
         return driver
     
     def forum_post(self):
-        self.open_browser('https://forum.visualsoftware.inf.br/forumdisplay.php?fid=30')
+        if self.name_of_program == 'Mycommerce':
+            self.open_browser('https://forum.visualsoftware.inf.br/forumdisplay.php?fid=30')
+        elif self.name_of_program == 'MyFrota':
+            self.open_browser('https://forum.visualsoftware.inf.br/forumdisplay.php?fid=85')
+        elif self.name_of_program == 'MyPet':
+            self.open_browser('https://forum.visualsoftware.inf.br/forumdisplay.php?fid=82')
         if self.final_version:
             self.insert_new_topic_for_final_version()
         else:
@@ -135,8 +142,12 @@ class BrowserController():
         self.wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div/div[2]/div/div[3]/a/span')))
 
     def open_last_version_forum(self):
-        click_last_post = self.wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div/div[2]/div/table[2]/tbody/tr[3]/td[3]/div/span/span/a')))
-        click_last_post.click()
+        if self.name_of_program == 'MyPet' or self.name_of_program == 'MyFrota': 
+            click_last_post = self.wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div/div[2]/div/table/tbody/tr[3]/td[3]/div/span/span/a')))
+            click_last_post.click()
+        elif self.name_of_program == 'Mycommerce': 
+            click_last_post = self.wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div/div[2]/div/table[2]/tbody/tr[3]/td[3]/div/span/span/a')))
+            click_last_post.click()  
             
     def add_new_response(self):
         path_body_message = '/html/body/div/div[2]/div/form/table[1]/tbody/tr[6]/td[2]/div/iframe'
@@ -307,10 +318,11 @@ if __name__ == '__main__':
         """,
         bitrix_username='',
         bitrix_passwd='',
-        forum_username='',
-        forum_passwd='',
+        forum_username='vitorhugo',
+        forum_passwd='n4m8MN4J',
         test_mode=True,
-        test_bitrix=True
+        test_forum=True,
+        name_of_program='MyPet'
         # final_version=True,
         # topic_name_of_final_version= '9.12.x'
         )

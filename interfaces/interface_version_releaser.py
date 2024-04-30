@@ -10,6 +10,7 @@ from interfaces.thread_pyside import DownloadThread
 from interfaces.widget_release_myfrota import WidgetReleaseMyfrota
 from interfaces.credentials_window import DialogCredentialsPosts
 from interfaces.widget_release_mycommerce import WidgetReleaseMycommerce
+from interfaces.widget_release_mypet import WidgetReleaseMypet
 
 from PySide6.QtCore import Qt 
 from PySide6.QtWidgets import (
@@ -35,10 +36,14 @@ class VersionReleaseInterface(BaseWindow):
             self.widget_mycommerce = WidgetReleaseMycommerce()
             final_list = [self.widget_mycommerce]
             self.create_layouts(final_list)
-        elif 'MyFrota':
+        elif self.name_of_program == 'MyFrota':
             height = 650
             self.widget_myfrota = WidgetReleaseMyfrota()
             final_list = [self.widget_myfrota]
+        elif self.name_of_program == 'MyPet':
+            height = 650
+            self.widget_mypet = WidgetReleaseMypet()
+            final_list = [self.widget_mypet]
             
         self.setFixedSize(width, height)
         
@@ -102,7 +107,7 @@ class VersionReleaseInterface(BaseWindow):
         )
         
         # ajusta a altura e largura do line edit conforme for inserido o texto
-        self.line_edit_messages_fixes.setMinimumHeight(200)
+        self.line_edit_messages_fixes.setMinimumHeight(300)
         self.line_edit_messages_fixes.textChanged.connect(lambda:self.resize_text_edit(self.line_edit_messages_fixes))
         self.horizontal_layout_messages.addWidget(self.line_edit_messages_fixes)
         
@@ -120,6 +125,9 @@ class VersionReleaseInterface(BaseWindow):
             version_software_release = self.widget_mycommerce.line_edit_version_mycommerce_release.text()
         elif self.name_of_program == 'MyFrota':
             version_software_release = self.widget_myfrota.line_edit_version_myfrota_release.text()
+        elif self.name_of_program == 'MyPet':
+            version_software_release = self.widget_mypet.line_edit_version_mypet_release.text()
+        
         self.get_configs_forums()
         list_credentials = [
             self.bitrix_username,
@@ -160,6 +168,7 @@ class VersionReleaseInterface(BaseWindow):
             bitrix_passwd = self.cripter.decrypt(self.bitrix_password)
             forum_username = self.cripter.decrypt(self.forum_username)
             forum_password= self.cripter.decrypt(self.forum_password)
+            print(is_final_version)
             self.thread_create_post = DownloadThread(
                 thread_create_post=True,
                 message=message,
@@ -168,7 +177,8 @@ class VersionReleaseInterface(BaseWindow):
                 forum_username= forum_username,
                 forum_password=forum_password,
                 final_version=is_final_version,
-                topic_name_of_final_version=topic_name
+                topic_name_of_final_version=topic_name,
+                name_of_program=self.name_of_program
                 )
             self.thread_create_post.download_finished.connect(self.thread_finished)
             self.thread_create_post.error.connect(self.error_creating_post)
@@ -214,6 +224,7 @@ class VersionReleaseInterface(BaseWindow):
             message_mycommerce_pdv = ''
             message_mycomanda = ''
             list_messages_raw = [message_mycommerce_pdv, message_mylocacao, message_mypet,message_myzap, message_vsintegracao, message_mycomanda  ]
+        
         elif self.name_of_program == 'MyFrota':
             mycommerce_version = self.widget_myfrota.line_edit_mycommerce_version.text()
             list_of_compatibilities = ['Mycommerce']
@@ -224,6 +235,16 @@ class VersionReleaseInterface(BaseWindow):
             message_myfrota = ''
             list_messages_raw = [message_myfrota]
             
+        elif self.name_of_program == 'MyPet':
+            mycommerce_version = self.widget_mypet.line_edit_mycommerce_version.text()
+            list_of_compatibilities = ['Mycommerce']
+            list_of_versions = [mycommerce_version]
+            list_of_is_compatible = [
+                self.widget_mypet.checkbox_compativel_mycommerce.isChecked()
+                ]
+            message_mypet = ''
+            list_messages_raw = [message_mypet]
+  
         list_messages = []
         for index, version in enumerate(list_of_versions):
             name_of_program = list_of_compatibilities[index]
@@ -270,9 +291,12 @@ class VersionReleaseInterface(BaseWindow):
 
     def copy_all_text_to_clipboard(self, notcopy = False):
         if self.name_of_program == 'Mycommerce':
-            mycommerce_version = self.widget_mycommerce.line_edit_version_mycommerce_release.text()
+            software_version = self.widget_mycommerce.line_edit_version_mycommerce_release.text()
         elif self.name_of_program == 'MyFrota':
-            mycommerce_version = self.widget_myfrota.line_edit_version_myfrota_release.text()
+            software_version = self.widget_myfrota.line_edit_version_myfrota_release.text()
+        elif self.name_of_program == 'MyPet':
+            software_version = self.widget_mypet.line_edit_version_mypet_release.text()
+            
         initial_message = self.line_edit_messages_fixes.toPlainText()
         is_final_version = self.checkbox_final_version.isChecked()
         
@@ -293,13 +317,15 @@ class VersionReleaseInterface(BaseWindow):
                         self.show_dialog('Mensagem copiada para a área de transferência')
         else:
             if initial_message:
-                return self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
+                return self.cook_message(is_final_version, software_version, message_compatibilities, notcopy, initial_message)
             else:
-                return self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
+                return self.cook_message(is_final_version, software_version, message_compatibilities, notcopy)
     
-    def cook_message(self, is_final_version, initial_message, software_version, message_compatibilities, notcopy):
+    def cook_message(self, is_final_version, software_version, message_compatibilities, notcopy, initial_message = None):
         if message_compatibilities:   
-            message_forum = self.make_text_for_forum(initial_message)
+            if initial_message:
+                message_forum = self.make_text_for_forum(initial_message)
+                
             self.get_configs_forums()
             user_releaser = self.user_releaser
             user_releaser = str(user_releaser)
@@ -311,7 +337,10 @@ class VersionReleaseInterface(BaseWindow):
                 text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
             if not is_final_version:
                 text_greetings = f'Olá! Versão [b]{software_version}[/b] do [b]{name_of_program}[/b] disponível para atualizações.\n\n'
-                final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
+                if initial_message:
+                    final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
+                else:
+                    final_message = text_greetings + message_compatibilities + text_obs
                 if notcopy:
                     return final_message
                 else:

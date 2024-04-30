@@ -17,6 +17,7 @@ class DownloadThread(QThread):
         forum_password = None,
         final_version = None,
         topic_name_of_final_version = None,
+        name_of_program = None,
         **argumentos_nomeados
         ):
         super().__init__()
@@ -25,6 +26,7 @@ class DownloadThread(QThread):
         self.message = message
         self.bitrix_username = bitrix_username
         self.bitrix_password = bitrix_password
+        self.name_of_program = name_of_program
         self.forum_username = forum_username
         self.forum_password = forum_password
         self.is_final_version = final_version
@@ -39,15 +41,19 @@ class DownloadThread(QThread):
         elif self.thread_create_post:
             browser_return = BrowserController(
                 message_version=self.message,
-                bitrix_username=self.bitrix_username,
-                bitrix_passwd=self.bitrix_password,
                 forum_username=self.forum_username,
                 forum_passwd=self.forum_password,
+                bitrix_username=self.bitrix_username,
+                bitrix_passwd=self.bitrix_password,
+                # test_mode=True,
+                # test_forum=True,
                 final_version=self.is_final_version,
-                topic_name_of_final_version=self.topic_name_of_final_version
+                topic_name_of_final_version=self.topic_name_of_final_version,
+                name_of_program=self.name_of_program,   
             )
-            if browser_return[0] == 'Error':
-                self.msg_error = browser_return[1]
+            
+            # if browser_return[0] == 'Error':
+            #     self.msg_error = browser_return[1]
         else:
             self.download.download_latest_release()
         print('thread finished')

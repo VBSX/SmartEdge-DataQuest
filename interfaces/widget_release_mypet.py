@@ -12,9 +12,9 @@ from PySide6.QtWidgets import (
     QSizePolicy
 )
 
-class WidgetReleaseMyfrota(BaseWindow):
+class WidgetReleaseMypet(BaseWindow):
     def __init__(self, parent=None):
-        super(WidgetReleaseMyfrota, self).__init__(parent)
+        super(WidgetReleaseMypet, self).__init__(parent)
         self.latest_version_handler = LatestVersion()
         self.setup_ui()
     
@@ -48,10 +48,10 @@ class WidgetReleaseMyfrota(BaseWindow):
         self.horizontal_layout_mycommerce.addWidget(self.label_mycommerce)
         
         
-        self.label_version_myfrota = self.create_label(
-            text="Versão do MyFrota: "
+        self.label_version_mypet = self.create_label(
+            text="Versão do MyPet: "
         )
-        self.horizontal_layout_release.addWidget(self.label_version_myfrota)
+        self.horizontal_layout_release.addWidget(self.label_version_mypet)
         
     def create_all_line_edits(self):
         self.line_edit_mycommerce_version = self.create_line_edit(
@@ -60,23 +60,23 @@ class WidgetReleaseMyfrota(BaseWindow):
         )
         self.horizontal_layout_mycommerce.addWidget(self.line_edit_mycommerce_version)
         
-        self.line_edit_version_myfrota_release = self.create_line_edit(
-            placeholder="versão do MyFrota",
-            set_text=self.latest_version_handler.latest_release_version_text_myfrota()
+        self.line_edit_version_mypet_release = self.create_line_edit(
+            placeholder="versão do MyPet",
+            set_text=self.latest_version_handler.latest_release_version_text_mypet()
         )
-        self.horizontal_layout_release.addWidget(self.line_edit_version_myfrota_release)
+        self.horizontal_layout_release.addWidget(self.line_edit_version_mypet_release)
         
-        self.process_input(self.line_edit_version_myfrota_release)
+        self.process_input(self.line_edit_version_mypet_release)
         self.process_input(self.line_edit_mycommerce_version)
         
         # passa para o proximo line_edit quando o usuario pressionar enter
-        self.line_edit_return_pressed(self.line_edit_mycommerce_version, self.line_edit_version_myfrota_release)
-        self.line_edit_return_pressed(self.line_edit_version_myfrota_release, self.line_edit_mycommerce_version)     
+        self.line_edit_return_pressed(self.line_edit_mycommerce_version, self.line_edit_version_mypet_release)
+        self.line_edit_return_pressed(self.line_edit_version_mypet_release, self.line_edit_mycommerce_version)     
 
 if __name__ == "__main__":
     import sys
     from PySide6.QtWidgets import QApplication
     app = QApplication(sys.argv)
-    window = WidgetReleaseMyfrota()
+    window = WidgetReleaseMypet()
     window.show()
     app.exec()

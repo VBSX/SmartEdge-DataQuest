@@ -41,11 +41,16 @@ class LatestVersion():
             for archive in all_archives:
                 if archive.endswith('0.exe') and not archive.startswith(startwith):
                     archives.append(archive)
-                    
-            if len(archives) >1:
-                # aqui ele vai ordernar do menor para o maior, no caso o maoir é o mais recente
-                archives.sort()
-                return archives[-1]
+            
+                 
+            if len(archives) > 1:
+                if software_name == 'MyPet': 
+                    # Ordena a lista usando uma função de chave personalizada para classificar as versões mais recentes
+                    archives.sort(key=lambda x: tuple(map(int, x.split('_')[1].split('.')[:-1])), reverse=True)
+                    return archives[0]  # Retorna o primeiro item (o mais recente) da lista ordenada
+                else:
+                    archives.sort(reverse=True)
+                    return archives[0]
             elif len(archives) == 1:
                 return archives[0]
     
@@ -130,7 +135,7 @@ class LatestVersion():
 if __name__ == '__main__':
     # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())
     print('mypet',LatestVersion().latest_release_version_text_mypet())
-    print('myzap',LatestVersion().latest_release_version_text_myzap())
+    # print('myzap',LatestVersion().latest_release_version_text_myzap())
     # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
     # print(LatestVersion().latest_release_version_text_mypet())
 

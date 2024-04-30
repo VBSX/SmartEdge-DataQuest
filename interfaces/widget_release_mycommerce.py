@@ -40,7 +40,7 @@ class WidgetReleaseMycommerce(BaseWindow):
         self.create_all_checkboxes()
         self.create_all_labels()
         self.create_all_line_edits()
-        self.spacer_horizontal = QSpacerItem(100,100, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.spacer_horizontal = QSpacerItem(100,10, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontal_layout_release.addItem(self.spacer_horizontal)
         self.create_layouts(final_list)
         
