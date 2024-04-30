@@ -14,6 +14,7 @@ class LatestVersion():
         self.path_mypet = base_path+'PetShop'
         self.path_myzap = base_path+'MyZap - Configurador'
         self.path_vsintegracoes = base_path+'vsIntegracoes'
+        self.path_myfrota = base_path+'MyFrota'
         self.os_handler = OsHandler()
         self.has_connection = self.os_handler.verify_if_has_connection()
         
@@ -23,21 +24,22 @@ class LatestVersion():
             archives = []
             # find by .exe files
             if software_name =='Mycommerce':
-                endswith = 'MyCommerce_Full.exe'
+                startwith = 'MyCommerce_Full'
             elif software_name == 'MycommercePDV':
-                endswith = 'MyCommercePDV - Initial_Install - 3.60.42.0.exe'
+                startwith = 'MyCommercePDV - Initial_Install'
             elif software_name == 'MyLocacao':
-                endswith = 'MyLocacao_Full.exe'
+                startwith = 'MyLocacao_Full'
             elif software_name == 'MyPet':
-                endswith = 'PetShop_Full.exe'
+                startwith = 'PetShop_Full'
             elif software_name == 'MyZap':
-                endswith = 'MyZap - Configurador_Full.exe'
+                startwith = 'MyZap - Configurador_Full'
             elif software_name == 'vsIntegracoes':
-                endswith = 'vsIntegracoes_Full.exe'
-            
+                startwith = 'vsIntegracoes_Full'
+            elif software_name == 'MyFrota':
+                startwith = 'MyFrota__Full_'
 
             for archive in all_archives:
-                if archive.endswith('0.exe') and not archive.endswith(endswith):
+                if archive.endswith('0.exe') and not archive.startswith(startwith):
                     archives.append(archive)
                     
             if len(archives) >1:
@@ -73,7 +75,7 @@ class LatestVersion():
                         'MyCommerce_Atu',
                         'PetShopAtu_',
                         'vsIntegracoes_Atu_',
-                        'MyLocacao_', 'Robô MyZap - Atu_'
+                        'MyLocacao_', 'Robô MyZap - Atu_', 'MyFrota__Atu_'
                         ]
         if text:
             for item in list_of_text:
@@ -116,6 +118,9 @@ class LatestVersion():
     def latest_release_version_text_vsintegracoes(self):
         return self.text_strip(self.latest_release_version(self.path_vsintegracoes, 'vsIntegracoes'))
     
+    def latest_release_version_text_myfrota(self):
+        return self.text_strip(self.latest_release_version(self.path_myfrota, 'MyFrota'))
+    
     def close(self):
         self.os_handler.stop_loop_delete_atalho()
     
@@ -124,10 +129,10 @@ class LatestVersion():
     
 if __name__ == '__main__':
     # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())
-    # print('mypet',LatestVersion().latest_release_version_text_mypet())
-    # print('myzap',LatestVersion().latest_release_version_text_myzap())
+    print('mypet',LatestVersion().latest_release_version_text_mypet())
+    print('myzap',LatestVersion().latest_release_version_text_myzap())
     # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
-    print(LatestVersion().latest_release_version_text())
+    # print(LatestVersion().latest_release_version_text_mypet())
 
     # print(LatestVersion().latest_release_version_text())
     

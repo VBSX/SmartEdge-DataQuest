@@ -27,6 +27,7 @@ from components.dbhandle import Database
 from components.cript_handle import Cripter
 from webbrowser import open_new_tab 
 
+
 class BaseWindow(QMainWindow):
     def __init__(self, parent=None):
         super(BaseWindow, self).__init__(parent)
@@ -224,3 +225,7 @@ class BaseWindow(QMainWindow):
 
         formatted_text = '.'.join(formatted_parts)
         return formatted_text
+    
+    def line_edit_return_pressed(self, line_edit, next_focus):
+        line_edit.returnPressed.connect(lambda: self.process_input(line_edit))
+        line_edit.returnPressed.connect(lambda:next_focus.setFocus())

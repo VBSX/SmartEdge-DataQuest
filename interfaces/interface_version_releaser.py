@@ -7,14 +7,14 @@ from interfaces.base_window import BaseWindow
 from interfaces.credentials_window import DialogCredentialsPosts
 from components.last_version_finder import LatestVersion
 from interfaces.thread_pyside import DownloadThread
+from interfaces.widget_release_myfrota import WidgetReleaseMyfrota
+from interfaces.credentials_window import DialogCredentialsPosts
+from interfaces.widget_release_mycommerce import WidgetReleaseMycommerce
 
 from PySide6.QtCore import Qt 
 from PySide6.QtWidgets import (
     QApplication,
-    QVBoxLayout,
-    QWidget,
     QHBoxLayout,
-    QSpacerItem,
     QProgressDialog
 )
 
@@ -28,43 +28,41 @@ class VersionReleaseInterface(BaseWindow):
     def setup_ui(self):
         self.setWindowTitle("Liberar Versão")
         width = 730
-        height = 850
-        self.setFixedSize(width, height)
+        
         self.get_configs_forums()
-        self.horizontal_layout_mycommerce_pdv = QHBoxLayout()
-        self.horizontal_layout_mylocacao = QHBoxLayout()
-        self.horizontal_layout_mypet = QHBoxLayout()
-        self.horizontal_layout_myzap = QHBoxLayout()
-        self.horizontal_layout_vsintegracao = QHBoxLayout()
-        self.horizontal_layout_release = QHBoxLayout()
+        if self.name_of_program =='Mycommerce':
+            height = 850
+            self.widget_mycommerce = WidgetReleaseMycommerce()
+            final_list = [self.widget_mycommerce]
+            self.create_layouts(final_list)
+        elif 'MyFrota':
+            height = 650
+            self.widget_myfrota = WidgetReleaseMyfrota()
+            final_list = [self.widget_myfrota]
+            
+        self.setFixedSize(width, height)
+        
         self.horizontal_layout_manual_release = QHBoxLayout()
         self.horizontal_layout_messages = QHBoxLayout()
         self.horizontal_history_version = QHBoxLayout()
-        self.horizontal_layout_mycomanda = QHBoxLayout()
-        final_list =[
-            self.horizontal_layout_release,self.horizontal_layout_mycommerce_pdv,
-            self.horizontal_layout_mylocacao, 
-            self.horizontal_layout_mypet, self.horizontal_layout_myzap, self.horizontal_layout_vsintegracao,
-            self.horizontal_layout_mycomanda,
-            self.horizontal_history_version,
-            self.horizontal_layout_messages ,self.horizontal_layout_manual_release
-            ]
+        final_list.append(self.horizontal_history_version)
+        final_list.append(self.horizontal_layout_messages)
+        final_list.append(self.horizontal_layout_manual_release)
         
         self.create_all_checkboxes()
-        self.create_all_labels()
-        self.create_all_line_edits()
         self.create_all_buttons()
+        self.create_all_line_edits()
         self.create_layouts(final_list)
-    
+
     def create_all_buttons(self):
         self.button_config = self.create_button(
             text="Configurações", function=self.open_credentials_window
         )
         self.horizontal_history_version.addWidget(self.button_config)
         
-        self.button_release_version = self.create_button(
-            text="Liberar Versão", function=self.release_version)
-        self.horizontal_layout_release.addWidget(self.button_release_version)
+        # self.button_release_version = self.create_button(
+        #     text="Liberar Versão", function=self.release_version)
+        # self.horizontal_layout_release.addWidget(self.button_release_version)
         
         self.button_create_post = self.create_button(
             text="Criar Post", function=self.create_post)
@@ -86,31 +84,7 @@ class VersionReleaseInterface(BaseWindow):
         self.horizontal_layout_manual_release.addWidget(self.button_cancel)
         
     def create_all_checkboxes(self):
-        self.checkbox_compativel_mycommerce_pdv = self.create_checkbox(
-            text="Compatível"
-        )
-        self.horizontal_layout_mycommerce_pdv.addWidget(self.checkbox_compativel_mycommerce_pdv)
-        
-        self.checkbox_compativel_mylocacao = self.create_checkbox(
-            text="Compatível"
-        )
-        self.horizontal_layout_mylocacao.addWidget(self.checkbox_compativel_mylocacao)
-        
-        self.checkbox_compativel_mypet = self.create_checkbox(
-            text="Compatível"
-        )
-        self.horizontal_layout_mypet.addWidget(self.checkbox_compativel_mypet)
-        
-        self.checkbox_compativel_myzap = self.create_checkbox(
-            text="Compatível"
-        )
-        self.horizontal_layout_myzap.addWidget(self.checkbox_compativel_myzap)
-        
-        self.checkbox_compativel_vsintegracao = self.create_checkbox(
-            text="Compatível"
-        )
-        self.horizontal_layout_vsintegracao.addWidget(self.checkbox_compativel_vsintegracao)
-        
+
         self.checkbox_history_of_version = self.create_checkbox(
             text="Histórico de versão"
         )
@@ -120,92 +94,9 @@ class VersionReleaseInterface(BaseWindow):
             text="Versão final",
             marked=False)
         self.horizontal_history_version.addWidget(self.checkbox_final_version)
+        
 
-        self.checkbox_compativel_mycomanda = self.create_checkbox(text= "Compatível")
-        self.horizontal_layout_mycomanda.addWidget(self.checkbox_compativel_mycomanda)
-        
-    def create_all_labels(self):
-        self.label_mycommerce_pdv = self.create_label(
-            text="MyCommerce PDV: ")
-        self.horizontal_layout_mycommerce_pdv.addWidget(self.label_mycommerce_pdv)
-        
-        self.label_mylocacao_version = self.create_label(
-            text="MyLocação: ")
-        self.horizontal_layout_mylocacao.addWidget(self.label_mylocacao_version)
-        
-        self.label_mypet =self.create_label(
-            text="MyPet: "
-        )
-        self.horizontal_layout_mypet.addWidget(self.label_mypet)
-        
-        self.label_myzap = self.create_label(
-            text="MyZap: "  
-        )
-        self.horizontal_layout_myzap.addWidget(self.label_myzap)
-        
-        self.label_vsintegracao = self.create_label(
-            text="VsIntegracao: "
-        )
-        self.horizontal_layout_vsintegracao.addWidget(self.label_vsintegracao)
-        
-        self.label_version_mycommerce_release = self.create_label(
-            text="Versão do MyCommerce: "
-        )
-        self.horizontal_layout_release.addWidget(self.label_version_mycommerce_release)
-        
-        self.label_mycomanda = self.create_label(
-            text="MyComanda: "
-        )
-        self.horizontal_layout_mycomanda.addWidget(self.label_mycomanda)
-        
     def create_all_line_edits(self):
-        self.line_edit_mycommerce_pdv_version = self.create_line_edit(
-            placeholder="versão do MyCommerce PDV",
-            set_text=self.latest_version_handler.latest_release_version_text_pdv()
-        )
-        self.horizontal_layout_mycommerce_pdv.addWidget(self.line_edit_mycommerce_pdv_version)
-        
-        self.line_edit_mylocacao_version = self.create_line_edit(
-            placeholder="versão do MyLocação",
-            set_text=self.latest_version_handler.latest_release_version_text_mylocacao()
-        )
-        self.horizontal_layout_mylocacao.addWidget(self.line_edit_mylocacao_version)
-
-        self.line_edit_mypet = self.create_line_edit(
-            placeholder="versão do MyPet",
-            set_text=self.latest_version_handler.latest_release_version_text_mypet()
-        )
-        self.horizontal_layout_mypet.addWidget(self.line_edit_mypet)
-        
-        self.line_edit_myzap = self.create_line_edit(
-            placeholder="versão do MyZap",
-            set_text=self.latest_version_handler.latest_release_version_text_myzap()
-        )
-        self.horizontal_layout_myzap.addWidget(self.line_edit_myzap)
-        
-        self.line_edit_vsintegracao = self.create_line_edit(
-            placeholder="versão do VsIntegracao",
-            set_text=self.latest_version_handler.latest_release_version_text_vsintegracoes()
-        )
-        self.horizontal_layout_vsintegracao.addWidget(self.line_edit_vsintegracao)
-        
-        self.line_edit_version_mycommerce_release = self.create_line_edit(
-            placeholder="versão do MyCommerce",
-            set_text=self.latest_version_handler.latest_release_version_text()
-        )
-        self.horizontal_layout_release.addWidget(self.line_edit_version_mycommerce_release)
-
-        self.line_edit_mycomanda = self.create_line_edit(placeholder="Versão Mycomanda")
-        self.horizontal_layout_mycomanda.addWidget(self.line_edit_mycomanda)
-        
-        self.process_input(self.line_edit_version_mycommerce_release)
-        self.process_input(self.line_edit_mycommerce_pdv_version)
-        self.process_input(self.line_edit_mylocacao_version)
-        self.process_input(self.line_edit_mypet)
-        self.process_input(self.line_edit_myzap)
-        self.process_input(self.line_edit_vsintegracao)
-        self.process_input(self.line_edit_mycomanda)
-        
         self.line_edit_messages_fixes = self.create_text_edit(
             placeholder="Mensagens ajustes",
         )
@@ -215,18 +106,6 @@ class VersionReleaseInterface(BaseWindow):
         self.line_edit_messages_fixes.textChanged.connect(lambda:self.resize_text_edit(self.line_edit_messages_fixes))
         self.horizontal_layout_messages.addWidget(self.line_edit_messages_fixes)
         
-        # passa para o proximo line_edit quando o usuario pressionar enter
-        self.line_edit_return_pressed(self.line_edit_mycommerce_pdv_version, self.line_edit_mylocacao_version)
-        self.line_edit_return_pressed(self.line_edit_mylocacao_version, self.line_edit_mypet)
-        self.line_edit_return_pressed(self.line_edit_mypet, self.line_edit_myzap)
-        self.line_edit_return_pressed(self.line_edit_myzap, self.line_edit_vsintegracao)
-        self.line_edit_return_pressed(self.line_edit_vsintegracao, self.line_edit_version_mycommerce_release)
-        self.line_edit_return_pressed(self.line_edit_version_mycommerce_release, self.line_edit_mycomanda)
-        self.line_edit_return_pressed(self.line_edit_mycomanda, self.line_edit_mycommerce_pdv_version)
-
-    def line_edit_return_pressed(self, line_edit, next_focus):
-        line_edit.returnPressed.connect(lambda: self.process_input(line_edit))
-        line_edit.returnPressed.connect(lambda:next_focus.setFocus())
         
     def release_version(self):
         pass
@@ -236,7 +115,11 @@ class VersionReleaseInterface(BaseWindow):
     
     def create_post(self):
         is_final_version = self.checkbox_final_version.isChecked()
-        version_mycommerce_release = self.line_edit_version_mycommerce_release.text()
+        
+        if self.name_of_program == 'Mycommerce':
+            version_software_release = self.widget_mycommerce.line_edit_version_mycommerce_release.text()
+        elif self.name_of_program == 'MyFrota':
+            version_software_release = self.widget_myfrota.line_edit_version_myfrota_release.text()
         self.get_configs_forums()
         list_credentials = [
             self.bitrix_username,
@@ -257,7 +140,7 @@ class VersionReleaseInterface(BaseWindow):
                     if is_final_version:
                         topic_name = self.dialog_input('Coloque a mensagem de tópico do fórum, exemplo: 9.12.x'
                                     )
-                    self.file_handler.add_new_logs(f'Criando posts da versão: {version_mycommerce_release}')
+                    self.file_handler.add_new_logs(f'Criando posts da versão: {version_software_release}')
                     self.start_automation_create_post(topic_name, is_final_version, message)
             else:
                 self.file_handler.add_new_logs('Não há mensagem para publicar')
@@ -307,31 +190,41 @@ class VersionReleaseInterface(BaseWindow):
         self.file_handler.add_new_logs('Posts criados com sucesso')
         
     def copy_post_compatibilities(self, show_dialog = True):
-        mycommerce_pdv = self.line_edit_mycommerce_pdv_version.text()
-        mylocacao = self.line_edit_mylocacao_version.text()
-        mypet = self.line_edit_mypet.text()
-        myzap = self.line_edit_myzap.text()
-        vsintegracao = self.line_edit_vsintegracao.text()
-        mycomanda = self.line_edit_mycomanda.text()
-        list_of_compatibilities = ['MyCommerce PDV', 'MyLocação', 'MyPet', 'MyZap', 'VsIntegrações', 'MyComanda']
-        list_of_versions = [mycommerce_pdv, mylocacao, mypet, myzap, vsintegracao, mycomanda]
-        list_of_is_compatible = [
-            self.checkbox_compativel_mycommerce_pdv.isChecked(),
-            self.checkbox_compativel_mylocacao.isChecked(),
-            self.checkbox_compativel_mypet.isChecked(),
-            self.checkbox_compativel_myzap.isChecked(),
-            self.checkbox_compativel_vsintegracao.isChecked(),
-            self.checkbox_compativel_mycomanda.isChecked()
-            ]
-        list_messages = []   
-        message_mylocacao = ''
-        message_mypet = ''
-        message_myzap = ''
-        message_vsintegracao = ''
-        message_mycommerce_pdv = ''
-        message_mycomanda = ''
-        list_messages_raw = [message_mycommerce_pdv, message_mylocacao, message_mypet,message_myzap, message_vsintegracao, message_mycomanda  ]
-
+        if self.name_of_program == 'Mycommerce':
+            mycommerce_pdv = self.widget_mycommerce.line_edit_mycommerce_pdv_version.text()
+            mylocacao = self.widget_mycommerce.line_edit_mylocacao_version.text()
+            mypet = self.widget_mycommerce.line_edit_mypet.text()
+            myzap = self.widget_mycommerce.line_edit_myzap.text()
+            vsintegracao = self.widget_mycommerce.line_edit_vsintegracao.text()
+            mycomanda = self.widget_mycommerce.line_edit_mycomanda.text()
+            list_of_compatibilities = ['MyCommerce PDV', 'MyLocação', 'MyPet', 'MyZap', 'VsIntegrações', 'MyComanda']
+            list_of_versions = [mycommerce_pdv, mylocacao, mypet, myzap, vsintegracao, mycomanda]
+            list_of_is_compatible = [
+                self.widget_mycommerce.checkbox_compativel_mycommerce_pdv.isChecked(),
+                self.widget_mycommerce.checkbox_compativel_mylocacao.isChecked(),
+                self.widget_mycommerce.checkbox_compativel_mypet.isChecked(),
+                self.widget_mycommerce.checkbox_compativel_myzap.isChecked(),
+                self.widget_mycommerce.checkbox_compativel_vsintegracao.isChecked(),
+                self.widget_mycommerce.checkbox_compativel_mycomanda.isChecked()
+                ]
+            message_mylocacao = ''
+            message_mypet = ''
+            message_myzap = ''
+            message_vsintegracao = ''
+            message_mycommerce_pdv = ''
+            message_mycomanda = ''
+            list_messages_raw = [message_mycommerce_pdv, message_mylocacao, message_mypet,message_myzap, message_vsintegracao, message_mycomanda  ]
+        elif self.name_of_program == 'MyFrota':
+            mycommerce_version = self.widget_myfrota.line_edit_mycommerce_version.text()
+            list_of_compatibilities = ['Mycommerce']
+            list_of_versions = [mycommerce_version]
+            list_of_is_compatible = [
+                self.widget_myfrota.checkbox_compativel_mycommerce.isChecked()
+                ]
+            message_myfrota = ''
+            list_messages_raw = [message_myfrota]
+            
+        list_messages = []
         for index, version in enumerate(list_of_versions):
             name_of_program = list_of_compatibilities[index]
             is_compatible = list_of_is_compatible[index]
@@ -376,7 +269,10 @@ class VersionReleaseInterface(BaseWindow):
         pass
 
     def copy_all_text_to_clipboard(self, notcopy = False):
-        mycommerce_version = self.line_edit_version_mycommerce_release.text()
+        if self.name_of_program == 'Mycommerce':
+            mycommerce_version = self.widget_mycommerce.line_edit_version_mycommerce_release.text()
+        elif self.name_of_program == 'MyFrota':
+            mycommerce_version = self.widget_myfrota.line_edit_version_myfrota_release.text()
         initial_message = self.line_edit_messages_fixes.toPlainText()
         is_final_version = self.checkbox_final_version.isChecked()
         
@@ -401,19 +297,20 @@ class VersionReleaseInterface(BaseWindow):
             else:
                 return self.cook_message(is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy)
     
-    def cook_message(self, is_final_version, initial_message, mycommerce_version, message_compatibilities, notcopy):
+    def cook_message(self, is_final_version, initial_message, software_version, message_compatibilities, notcopy):
         if message_compatibilities:   
             message_forum = self.make_text_for_forum(initial_message)
             self.get_configs_forums()
             user_releaser = self.user_releaser
             user_releaser = str(user_releaser)
+            name_of_program = self.name_of_program
             if user_releaser != 'default':
                 user_releaser = user_releaser.capitalize()
                 text_obs = f'\n\nAtenciosamente, {user_releaser}.'
             else:
                 text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
             if not is_final_version:
-                text_greetings = f'Olá! Versão [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
+                text_greetings = f'Olá! Versão [b]{software_version}[/b] do [b]{name_of_program}[/b] disponível para atualizações.\n\n'
                 final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
                 if notcopy:
                     return final_message
@@ -421,7 +318,7 @@ class VersionReleaseInterface(BaseWindow):
                     self.copy_to_clipboard(final_message)
                     self.show_dialog('Mensagem copiada para a área de transferência')
             else: 
-                text_greetings = f'Olá! Versão final [b]{mycommerce_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
+                text_greetings = f'Olá! Versão final [b]{software_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
                 if message_forum:
                     final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
                 else:
@@ -476,7 +373,10 @@ class VersionReleaseInterface(BaseWindow):
         self.destroy()
         self.parent().interface_version_releaser_is_open = False
         del self
-                                
+
+    def open_credentials_window(self):
+        self.credentials_window = DialogCredentialsPosts(self)
+                               
 if __name__ == "__main__":
     from sys import argv
     app = QApplication(argv)
