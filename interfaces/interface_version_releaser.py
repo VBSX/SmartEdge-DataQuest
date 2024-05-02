@@ -43,7 +43,9 @@ class VersionReleaseInterface(BaseWindow):
             height = 650
             self.widget_mypet = WidgetReleaseMypet()
             final_list = [self.widget_mypet]
-            
+        elif self.name_of_program == 'default' or self.name_of_program == 'Mycommerce PDV':
+            height = 650
+            final_list = []   
         self.setFixedSize(width, height)
         
         self.horizontal_layout_manual_release = QHBoxLayout()
