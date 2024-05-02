@@ -28,6 +28,7 @@ from interfaces.sovis_window import SovisWindow
 class MainWindow(BaseWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
+        self.keyPressEvent = self.handle_events
         self.config_window = None
         self.interface_version_releaser_is_open = False
         self.interface_query_window_is_open = False
@@ -446,6 +447,17 @@ class MainWindow(BaseWindow):
     def update_database_label(self):
         self.file_handler.set_database(self.get_clipboard())
         self.reset_layout()
+
+    def handle_events(self, event):
+        text_latest_build_version = self.latest_version_handler.latest_build_version_text()
+        text_latest_release_version = self.latest_version_handler.latest_release_version_text()
+        # Verifica se as teclas Shift, Alt e S estão pressionadas simultaneamente
+        if event.modifiers() == (Qt.ShiftModifier | Qt.AltModifier) and event.key() == Qt.Key_S:
+            # Chama a função para copiar para o clipboard
+            self.copy_to_clipboard(text_latest_build_version)
+        elif event.modifiers() == (Qt.ShiftModifier | Qt.AltModifier) and event.key() == Qt.Key_D:
+            self.copy_to_clipboard(text_latest_release_version)
+
     
 if __name__ == '__main__': 
     from sys import argv

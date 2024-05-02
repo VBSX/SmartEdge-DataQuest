@@ -318,11 +318,11 @@ if __name__ == '__main__':
         """,
         bitrix_username='',
         bitrix_passwd='',
-        forum_username='vitorhugo',
-        forum_passwd='n4m8MN4J',
+        forum_username='',
+        forum_passwd='',
         test_mode=True,
-        test_forum=True,
-        name_of_program='MyPet'
+        test_bitrix=True,
+        name_of_program='Mycommerce'
         # final_version=True,
         # topic_name_of_final_version= '9.12.x'
         )
