@@ -8,7 +8,6 @@ from interfaces.credentials_window import DialogCredentialsPosts
 from components.last_version_finder import LatestVersion
 from interfaces.thread_pyside import DownloadThread
 from interfaces.widget_release_myfrota import WidgetReleaseMyfrota
-from interfaces.credentials_window import DialogCredentialsPosts
 from interfaces.widget_release_mycommerce import WidgetReleaseMycommerce
 from interfaces.widget_release_mypet import WidgetReleaseMypet
 
@@ -143,7 +142,7 @@ class VersionReleaseInterface(BaseWindow):
             message = self.copy_all_text_to_clipboard(notcopy=True)
             # confirma antes de executar o script
             if message:
-                if self.show_confirmation_dialog():
+                if self.show_confirmation_dialog('Você tem certeza que deseja continuar?'):
                     topic_name = None
                     if is_final_version:
                         topic_name = self.dialog_input('Coloque a mensagem de tópico do fórum, exemplo: 9.12.x'
@@ -405,7 +404,20 @@ class VersionReleaseInterface(BaseWindow):
 
     def open_credentials_window(self):
         self.credentials_window = DialogCredentialsPosts(self)
-                               
+    
+    def reset_layout(self):
+        self.centralWidget().deleteLater() 
+        self.clearLayout(self.layout_principal)
+        
+        self.setup_ui()
+        
+    def changed_program(self):
+        texto_confirmacao = 'Verificado que o programa a ser liberado foi alterado\nDeseja continuar? (as alterações feitas serão perdidas!)'
+        if self.show_confirmation_dialog(texto_confirmacao):
+            self.reset_layout()
+    
+    
+                          
 if __name__ == "__main__":
     from sys import argv
     app = QApplication(argv)

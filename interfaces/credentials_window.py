@@ -186,10 +186,21 @@ class DialogCredentialsPosts(BaseWindow):
                     self.file_handler.set_user_releaser('default')
                 if not self.verify_if_is_default(name_of_program):
                     self.file_handler.set_name_of_program(name_of_program)
+                
                 return_file = self.file_handler.write_json()
+                config_name_of_program = self.name_of_program
+                
+                self.get_configs_forums()
+                self.file_handler.add_new_logs(f'{self.bitrix_username} || {self.bitrix_password} || {self.forum_username} || {self.forum_password} || {self.user_releaser} || {self.name_of_program}')
                 if return_file == 'sucess':
-                    self.close()
-                    self.parent().show_dialog("Credenciais salvas com sucesso!")
+                    
+                    # verifica se houve mudança no nome do programa
+                    if name_of_program != config_name_of_program:
+                        self.close()
+                        self.parent().changed_program()
+                    else:
+                        self.close()
+                        self.parent().show_dialog("Credenciais salvas com sucesso!")
                    
     def verify_if_is_empty(self, list_user_input):
         for item in list_user_input:

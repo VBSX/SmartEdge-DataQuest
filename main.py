@@ -451,6 +451,9 @@ class MainWindow(BaseWindow):
     def handle_events(self, event):
         text_latest_build_version = self.latest_version_handler.latest_build_version_text()
         text_latest_release_version = self.latest_version_handler.latest_release_version_text()
+        text_latest_build_version = self.process_input(text_latest_build_version, raw_text=True)
+        text_latest_release_version = self.process_input(text_latest_release_version, raw_text=True)
+        
         # Verifica se as teclas Shift, Alt e S estão pressionadas simultaneamente
         if event.modifiers() == (Qt.ShiftModifier | Qt.AltModifier) and event.key() == Qt.Key_S:
             # Chama a função para copiar para o clipboard

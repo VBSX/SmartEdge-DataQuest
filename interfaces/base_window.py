@@ -31,6 +31,7 @@ from webbrowser import open_new_tab
 class BaseWindow(QMainWindow):
     def __init__(self, parent=None):
         super(BaseWindow, self).__init__(parent)
+        
         self.db = Database()
         self.file_handler = File()
         self.cripter = Cripter()
@@ -172,14 +173,21 @@ class BaseWindow(QMainWindow):
                 
         self.central_widget.setLayout(self.layout_principal)     
     
-    def show_confirmation_dialog(self):
+    def show_confirmation_dialog(self, texto):
         # Cria uma caixa de diálogo de confirmação
-        reply = QMessageBox.question(None, 'Confirmação', 'Você tem certeza que deseja continuar?',
-                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        confirmation_box = QMessageBox()
+        confirmation_box.setWindowTitle('Confirmação')
+        confirmation_box.setText(texto)
 
-        # Verifica a resposta do usuário
+        # Definindo os textos dos botões em português
+        confirmation_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        confirmation_box.setButtonText(QMessageBox.Yes, "Sim")
+        confirmation_box.setButtonText(QMessageBox.No, "Não")
+        
+        # Exibe a caixa de diálogo e verifica a resposta do usuário
+        reply = confirmation_box.exec_()
         return reply == QMessageBox.Yes
-
+       
     def dialog_input(self, text):
         window_input = WindowInput(self,text)
         if window_input.exec() == QDialog.Accepted:
