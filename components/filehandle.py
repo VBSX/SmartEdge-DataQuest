@@ -57,7 +57,10 @@ class File():
                 return True
           
     def create_log_txt(self):
+            has_connection = self.os_handler.verify_if_has_connection(log_path=True)
             if self.verify_if_path_exists(self.path_log) and self.verify_if_path_exists(self.remote_path_log):
+                return True
+            elif not has_connection and self.verify_if_path_exists(self.path_log):
                 return True
             elif not self.verify_if_path_components_exist():
                 self.create_components_path()

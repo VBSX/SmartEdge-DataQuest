@@ -140,6 +140,7 @@ class OsHandler():
         return getenv('COMPUTERNAME')
     
     def init_data_user(self):
+        print('buscou pelos dados do pc')
         os_used = platform_system()
         os_version = platform_release()
 
