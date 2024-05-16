@@ -49,9 +49,9 @@ class ConfigWindow(BaseWindow):
         self.line_edit_username.returnPressed.connect(self.button_save.click)
         self.line_edit_username.setMaxLength(20)
         
-        if self.test_mode == 1:
+        if self.test_mode == 1 or self.test_mode == 'None' or self.test_mode == '1':
             check_marked = True
-        elif self.test_mode == 0:
+        elif self.test_mode == 0 or self.test_mode == '0':
             check_marked = False
         elif self.test_mode == 'None':
             check_marked = True

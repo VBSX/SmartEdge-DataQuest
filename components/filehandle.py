@@ -164,6 +164,7 @@ class File():
                         content.pop('forum_password')
                         content.pop('user_releaser')
                         content.pop('name_of_program')
+                        content.pop('test_mode')
                     except:
                         print('erro ao retirar os campos referente as credenciais do bitrix e forum')
                     return content
@@ -182,126 +183,54 @@ class File():
             self.set_database(database)
             self.set_host(host)
             self.set_port(port)
-            
-               
+            self.set_test_mode(test_mode)
+                  
     def get_username(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['user']:
-                return self.json_file['user']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('user')
     
     def get_password(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['password']:
-                return self.json_file['password']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('password')
             
     def get_host(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['host']:
-                return self.json_file['host']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('host')
             
     def get_port(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['port']:
-                return self.json_file['port']
-            else:
-                return 'None'
-        else:
-            self.create_json()
-            
-    def get_port(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['port']:
-                return self.json_file['port']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('port')
             
     def get_database(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['database']:
-                return self.json_file['database']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('database')
     
     def get_bitrix_user(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['bitrix_user']:
-                return self.json_file['bitrix_user']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('bitrix_user')
     
     def get_bitrix_password(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['bitrix_password']:
-                return self.json_file['bitrix_password']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('bitrix_password')
     
     def get_forum_user(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['forum_user']:
-                return self.json_file['forum_user']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('forum_user')
     
     def get_forum_password(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['forum_password']:
-                return self.json_file['forum_password']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('forum_password')
     
     def get_user_releaser(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['user_releaser']:
-                return self.json_file['user_releaser']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('user_releaser')
     
     def get_program_name(self):
-        if self.verify_if_path_exists(self.path_json):
-            if self.json_file['name_of_program']:
-                return self.json_file['name_of_program']
-            else:
-                return 'None'
-        else:
-            self.create_json()
+        return self.get_info_json('name_of_program')
 
     def get_test_mode(self):
+        return self.get_info_json('test_mode')
+    
+    def get_info_json(self, field):
         if self.verify_if_path_exists(self.path_json):
-            if self.json_file['test_mode'] or self.json_file['test_mode'] >=0:
-                return self.json_file['test_mode']
+            if self.json_file[field] or self.json_file[field] >=0:
+                return self.json_file[field]
             else:
                 return 'None'
         else:
             self.create_json()
-            self.get_test_mode()
-
+            self.get_info_json(field)
+    
     def set_test_mode(self, test_mode):
         self.json_setter('test_mode', test_mode)
     
