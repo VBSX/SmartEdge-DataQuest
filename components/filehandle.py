@@ -178,9 +178,11 @@ class File():
             host = self.ini_config.host_ini
             database = self.ini_config.database_ini
             port = self.ini_config.port_ini
+            test_mode = self.ini_config.test_mode
             self.set_database(database)
             self.set_host(host)
             self.set_port(port)
+            
                
     def get_username(self):
         if self.verify_if_path_exists(self.path_json):
@@ -289,6 +291,19 @@ class File():
                 return 'None'
         else:
             self.create_json()
+
+    def get_test_mode(self):
+        if self.verify_if_path_exists(self.path_json):
+            if self.json_file['test_mode'] or self.json_file['test_mode'] >=0:
+                return self.json_file['test_mode']
+            else:
+                return 'None'
+        else:
+            self.create_json()
+            self.get_test_mode()
+
+    def set_test_mode(self, test_mode):
+        self.json_setter('test_mode', test_mode)
     
     def set_username(self, username):
         self.json_setter('user', username)
@@ -333,6 +348,8 @@ class File():
             key = 'IPServidor'
         elif key == 'port':
             key = 'PortaServidor'
+        elif key == 'test_mode':
+            self.ini_config.set_test_mode(f"{value}")
         if key != 'user' and key != 'password':
             self.ini_config.config_att_value(key, value)
         return 'sucess'
@@ -367,7 +384,8 @@ class File():
                     "forum_user":"default",
                     "forum_password":"default",
                     "user_releaser":"default",
-                    "name_of_program":"default"
+                    "name_of_program":"default",
+                    "test_mode":1
                     }""")
         return 'sucess'
     
@@ -380,10 +398,6 @@ class File():
 if __name__ == '__main__':
     f = File()
     # print(f.create_log_txt())
-    f.add_new_logs('teste')
+    print(f.get_test_mode())
+    # f.set_test_mode(0)
     
-    # print(f.verify_if_path_exists(f.remote_path_log))
-    # print(f.read_json(database=True))
-    # f.set_host('10.1.1.220')
-    # print(f.username, f.password, f.host, f.port, f.database, f.json_file)
-    # f.set_username('root')

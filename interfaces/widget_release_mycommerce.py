@@ -93,7 +93,7 @@ class WidgetReleaseMycommerce(BaseWindow):
         self.horizontal_layout_myzap.addWidget(self.label_myzap)
         
         self.label_vsintegracao = self.create_label(
-            text="VsIntegracao: "
+            text="VsIntegrações: "
         )
         self.horizontal_layout_vsintegracao.addWidget(self.label_vsintegracao)
         

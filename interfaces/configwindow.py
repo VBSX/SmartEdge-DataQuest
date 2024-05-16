@@ -23,6 +23,7 @@ class ConfigWindow(BaseWindow):
         self.host = self.file_handler.host
         self.port = self.file_handler.port
         self.database = self.file_handler.database
+        self.get_configs()
         self.setup_ui()
         
     def setup_ui(self):
@@ -41,16 +42,25 @@ class ConfigWindow(BaseWindow):
         # Field username config
         self.label_username = QLabel('Usuário: ')
         self.line_edit_username = QLineEdit()
-        if not self.user:
-            self.line_edit_username.setText('root')
-        else:
+        if self.user and self.user != 'default':
             self.line_edit_username.setText(self.user)
+
         self.line_edit_username.setPlaceholderText('root')
         self.line_edit_username.returnPressed.connect(self.button_save.click)
         self.line_edit_username.setMaxLength(20)
         
+        if self.test_mode == 1:
+            check_marked = True
+        elif self.test_mode == 0:
+            check_marked = False
+        elif self.test_mode == 'None':
+            check_marked = True
+        
+        self.test_mode_checkbox = self.create_checkbox(
+            text='CQP=1 (Homologação)',
+            marked= check_marked)
         ## Set the layout of the label and the line edit in the same line
-        self.horizontal_layout_set(self.label_username, self.line_edit_username, None, None)
+        self.horizontal_layout_set(self.label_username, self.line_edit_username, self.test_mode_checkbox, None)
         
         # field password config
         self.label_password = QLabel('Senha: ')
@@ -58,10 +68,15 @@ class ConfigWindow(BaseWindow):
  
         self.line_edit_password.returnPressed.connect(self.button_save.click)
         self.line_edit_password.setPlaceholderText('****')
-        self.line_edit_password.setText(self.password)
+        if self.password and self.password != "default":
+            self.line_edit_password.setText(self.password)
         self.line_edit_password.setEchoMode(QLineEdit.Password)
         self.line_edit_password.setMaxLength(35)
-        self.horizontal_layout_set(self.label_password, self.line_edit_password, None, None)
+        
+        self.dropbox_password = self.create_button(
+            text='Mostrar',
+            function=self.show_password)
+        self.horizontal_layout_set(self.label_password, self.line_edit_password, self.dropbox_password, None)
         
         #field host config
         self.label_host = QLabel('Host: ')
@@ -134,30 +149,43 @@ class ConfigWindow(BaseWindow):
         host_input = self.combobox_host.currentText()
         port_input = self.line_edit_port.text()
         database_input = self.line_edit_database.text()
-        
+        test_mode_input = self.test_mode_checkbox.isChecked()
+        if test_mode_input:
+            test_mode_input = 1
+        else:
+            test_mode_input = 0
         if (username_input == self.user and
             password_input == self.password and
             host_input == self.host and
             port_input == self.port and
-            database_input == self.database):
-            
+            database_input == self.database and
+            test_mode_input == self.test_mode
+            ):
             del self.file_handler
             self.close()
             self.parent().reset_layout()
+        elif not password_input or not username_input:
+            self.show_dialog("Preencha todos os campos")
         else:
             self.file_handler.set_username(username_input)
             self.file_handler.set_password(password_input)
             self.file_handler.set_host(host_input)
             self.file_handler.set_port(port_input)
             self.file_handler.set_database(database_input)
-            
+            self.file_handler.set_test_mode(test_mode_input)
             return_file = self.file_handler.write_json()
             
             if return_file == 'sucess':
                 self.close()
                 self.parent().reset_layout()
                 self.parent().show_dialog("Configuração realizada com sucesso")
-                       
+    
+    def show_password(self):
+        if self.line_edit_password.echoMode() == QLineEdit.Password:
+            self.line_edit_password.setEchoMode(QLineEdit.Normal)
+        else:
+            self.line_edit_password.setEchoMode(QLineEdit.Password)
+                        
 if __name__ == "__main__":
     from PySide6.QtWidgets import QApplication
     from sys import argv, exit

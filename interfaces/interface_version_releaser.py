@@ -31,7 +31,7 @@ class VersionReleaseInterface(BaseWindow):
         
         self.get_configs_forums()
         if self.name_of_program =='Mycommerce':
-            height = 850
+            height = 860
             self.widget_mycommerce = WidgetReleaseMycommerce()
             final_list = [self.widget_mycommerce]
             self.create_layouts(final_list)

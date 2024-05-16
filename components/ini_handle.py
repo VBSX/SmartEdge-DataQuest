@@ -9,7 +9,8 @@ class IniConfig:
         self.host_ini = self.read_config('IPServidor')
         self.database_ini = self.read_config('database')
         self.port_ini = self.read_config('PortaServidor')
-
+        self.test_mode = self.read_config('cqp')
+        
     def read_config(self, key_of_field):
         return self.config.get('Servidor', key_of_field, fallback=None)
 
@@ -22,6 +23,9 @@ class IniConfig:
     def set_port(self, port):
         self.config_att_value('PortaServidor', port)
 
+    def set_test_mode(self, test_mode):
+        self.config_att_value('cqp', test_mode)
+    
     def config_att_value(self, key, new_value):
         self.config.set('Servidor', key, str(new_value))
         with open(self.config_path, 'w') as arquivo:
