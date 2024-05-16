@@ -348,11 +348,11 @@ class VersionReleaseInterface(BaseWindow):
                     self.copy_to_clipboard(final_message)
                     self.show_dialog('Mensagem copiada para a área de transferência')
             else: 
-                text_greetings = f'Olá! Versão final [b]{software_version}[/b] do [b]MyCommerce[/b] disponível para atualizações.\n\n'
-                if message_forum:
-                    final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
-                else:
-                    final_message = text_greetings + message_compatibilities + text_obs
+                text_greetings = f'Olá! Versão final [b]{software_version}[/b] do [b]{name_of_program}[/b] disponível para atualizações.\n\n'
+                # if message_forum:
+                #     final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
+                # else:
+                final_message = text_greetings + message_compatibilities + text_obs
                 if notcopy:
                     return final_message
                 else:
