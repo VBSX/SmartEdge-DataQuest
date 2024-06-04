@@ -197,7 +197,7 @@ class DialogCredentialsPosts(BaseWindow):
                     # verifica se houve mudança no nome do programa
                     if name_of_program != config_name_of_program:
                         self.close()
-                        self.parent().changed_program()
+                        self.parent().reset_layout()
                     else:
                         self.close()
                         self.parent().show_dialog("Credenciais salvas com sucesso!")

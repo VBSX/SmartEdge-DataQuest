@@ -223,8 +223,9 @@ class File():
     
     def get_info_json(self, field):
         if self.verify_if_path_exists(self.path_json):
-            if self.json_file[field] or self.json_file[field] >=0:
-                return self.json_file[field]
+            campo = self.json_file[field]  
+            if campo or campo == '' or campo >=0:
+                return campo
             else:
                 return 'None'
         else:

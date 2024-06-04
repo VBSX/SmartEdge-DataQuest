@@ -151,9 +151,9 @@ class ConfigWindow(BaseWindow):
         database_input = self.line_edit_database.text()
         test_mode_input = self.test_mode_checkbox.isChecked()
         if test_mode_input:
-            test_mode_input = 1
+            test_mode_input = '1'
         else:
-            test_mode_input = 0
+            test_mode_input = '0'
         if (username_input == self.user and
             password_input == self.password and
             host_input == self.host and
