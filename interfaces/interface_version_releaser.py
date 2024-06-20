@@ -31,7 +31,7 @@ class VersionReleaseInterface(BaseWindow):
         
         self.get_configs_forums()
         if self.name_of_program =='Mycommerce':
-            height = 860
+            height = 920
             self.widget_mycommerce = WidgetReleaseMycommerce()
             final_list = [self.widget_mycommerce]
             self.create_layouts(final_list)
@@ -208,15 +208,17 @@ class VersionReleaseInterface(BaseWindow):
             myzap = self.widget_mycommerce.line_edit_myzap.text()
             vsintegracao = self.widget_mycommerce.line_edit_vsintegracao.text()
             mycomanda = self.widget_mycommerce.line_edit_mycomanda.text()
-            list_of_compatibilities = ['MyCommerce PDV', 'MyLocação', 'MyPet', 'MyZap', 'VsIntegrações', 'MyComanda']
-            list_of_versions = [mycommerce_pdv, mylocacao, mypet, myzap, vsintegracao, mycomanda]
+            vs_services_myzap = self.widget_mycommerce.line_edit_vs_services_myzap.text()
+            list_of_compatibilities = ['MyCommerce PDV', 'MyLocação', 'MyPet', 'MyZap', 'VsIntegrações', 'MyComanda', 'vs.Services MyZap']
+            list_of_versions = [mycommerce_pdv, mylocacao, mypet, myzap, vsintegracao, mycomanda, vs_services_myzap]
             list_of_is_compatible = [
                 self.widget_mycommerce.checkbox_compativel_mycommerce_pdv.isChecked(),
                 self.widget_mycommerce.checkbox_compativel_mylocacao.isChecked(),
                 self.widget_mycommerce.checkbox_compativel_mypet.isChecked(),
                 self.widget_mycommerce.checkbox_compativel_myzap.isChecked(),
                 self.widget_mycommerce.checkbox_compativel_vsintegracao.isChecked(),
-                self.widget_mycommerce.checkbox_compativel_mycomanda.isChecked()
+                self.widget_mycommerce.checkbox_compativel_mycomanda.isChecked(),
+                self.widget_mycommerce.checkbox_compativel_services_myzap.isChecked()
                 ]
             message_mylocacao = ''
             message_mypet = ''
@@ -224,7 +226,8 @@ class VersionReleaseInterface(BaseWindow):
             message_vsintegracao = ''
             message_mycommerce_pdv = ''
             message_mycomanda = ''
-            list_messages_raw = [message_mycommerce_pdv, message_mylocacao, message_mypet,message_myzap, message_vsintegracao, message_mycomanda  ]
+            message_vs_services_myzap = ''
+            list_messages_raw = [message_mycommerce_pdv, message_mylocacao, message_mypet,message_myzap, message_vsintegracao, message_mycomanda,  message_vs_services_myzap ]
         
         elif self.name_of_program == 'MyFrota':
             mycommerce_version = self.widget_myfrota.line_edit_mycommerce_version.text()
@@ -349,10 +352,10 @@ class VersionReleaseInterface(BaseWindow):
                     self.show_dialog('Mensagem copiada para a área de transferência')
             else: 
                 text_greetings = f'Olá! Versão final [b]{software_version}[/b] do [b]{name_of_program}[/b] disponível para atualizações.\n\n'
-                # if message_forum:
-                #     final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
-                # else:
-                final_message = text_greetings + message_compatibilities + text_obs
+                if initial_message:
+                    final_message = text_greetings + message_forum + '\n'+ message_compatibilities + text_obs
+                else:
+                    final_message = text_greetings + message_compatibilities + text_obs
                 if notcopy:
                     return final_message
                 else:

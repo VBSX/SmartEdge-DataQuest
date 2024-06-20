@@ -296,10 +296,10 @@ class BrowserController():
                 # JA ABERTO O CHAT AGORA IRÁ ESCREVER A MENSAGEM
                 sleep(1)
                 actions = ActionChains(self.navegador)
-                actions.key_down(Keys.CONTROL).perform()
-                actions.send_keys("v").perform()
-                actions.key_up(Keys.CONTROL).perform()
-                
+                # actions.key_down(Keys.CONTROL).perform()
+                # actions.send_keys("v").perform()
+                # actions.key_up(Keys.CONTROL).perform()
+                actions.send_keys((self.message_version)).perform()
                 if not self.test_mode:
                     actions.key_down(Keys.ENTER).perform()
                     actions.key_up(Keys.ENTER).perform()
