@@ -2,7 +2,7 @@ from os import (
     startfile,
     remove,
     getenv,
-    cpu_count
+    cpu_count,
     )
 from os.path import (
     abspath as path_os,
@@ -123,15 +123,20 @@ class OsHandler():
                 print('arquivo de atalho deletado')
             sleep(1)
             
+    def ping(self, host, timeout=1):
+        param = '-n' 
+        command = ['ping', param, '1', '-w', str(timeout), host]
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NO_WINDOW)
+        return result.returncode == 0    
+    
     def verify_if_has_connection(self, log_path = False):
-        # caminho da rede a ser verificado
         if not log_path:
-            path = r'\\10.1.1.110\Arquivos'
+            ip = r'10.1.1.110'
         else:
-            path = r'\\192.168.2.244\shared'
+            # path = r'\\192.168.2.244\shared'
+            ip = r'192.168.2.244'
                 
-        # verifica se o caminho é acessível
-        if exists(path):
+        if self.ping(ip):
             return True
         else:
             return False

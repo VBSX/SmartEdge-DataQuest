@@ -358,8 +358,16 @@ class MainWindow(BaseWindow):
         
         text_latest_build_version = self.latest_version_handler.latest_build_version_text()
         text_latest_release_version = self.latest_version_handler.latest_release_version_text()
-        text_latest_build_version = self.process_input(text_latest_build_version, raw_text=True)
-        text_latest_release_version = self.process_input(text_latest_release_version, raw_text=True)
+
+        if text_latest_build_version == 'SemBuild':
+            text_latest_build_version = 'SemBuild'
+        else:
+            text_latest_build_version = self.process_input(text_latest_build_version, raw_text=True)
+            text_latest_build_version = f'{text_latest_build_version}'
+        if text_latest_release_version == None:
+            text_latest_release_version = 'SemRelease'
+        else:
+            text_latest_release_version = self.process_input(text_latest_release_version, raw_text=True)
         
         self.label_last_build_version = self.create_label(f'Última Build: {text_latest_build_version}')
         self.label_last_build_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(text_latest_build_version)
@@ -398,19 +406,26 @@ class MainWindow(BaseWindow):
         self.reset_layout()
         
         self.download_thread = DownloadThread(is_build)
-        self.download_thread.download_finished.connect(self.download_finished)
+        self.download_thread.download_finished.connect(lambda:self.download_finished(is_build))
         self.download_thread.start()
         
         self.download_last_release_version_button.setEnabled(False)
     
         self.download_last_build_version_button.setEnabled(False)  
             
-    def download_finished(self):
+    def download_finished(self, is_build):
         self.progress_dialog.cancel()
-        if self.latest_version_handler.latest_build_version_text() != 'SemBuild':
-            self.show_dialog('Arquivo enviado para a pasta de downloads')
-        else:   
-            self.show_dialog('Não há arquivo para baixar')
+        if is_build: 
+            if self.latest_version_handler.latest_build_version_text() != 'SemBuild':
+                self.show_dialog('Arquivo enviado para a pasta de downloads')
+            else:   
+                self.show_dialog('Não há arquivo para baixar')
+        else:
+            if self.latest_version_handler.latest_release_version_text() != None:
+                self.show_dialog('Arquivo enviado para a pasta de downloads')
+            else:
+                self.show_dialog('Não há arquivo para baixar')
+                
         self.download_last_release_version_button.setEnabled(True)
     
         self.download_last_build_version_button.setEnabled(True)  

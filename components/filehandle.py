@@ -39,12 +39,16 @@ class File():
             'username': 'administrador',
             'password': 'senha@123'
         }
+        self.lost_connection = False
         self.local_machine = False
-        try:
-            NetUseAdd(None, 2, data)
-        except:
-            self.local_machine = True
-            print('maquinaLocal')
+        if self.os_handler.verify_if_has_connection(log_path=True) == True:
+            try:
+                NetUseAdd(None, 2, data)
+            except:
+                self.local_machine = True
+                print('maquinaLocal')
+        else:
+            self.lost_connection = True
         
     
     def init_txt(self):
@@ -97,14 +101,15 @@ class File():
                 return False
     
     def add_new_logs(self, text):
-        if self.verify_if_path_exists(self.path_log) and self.verify_if_path_exists(self.remote_path_log):
-            self.log_write(text)
-            if self.local_machine:
-                self.log_write(text, remote=True)
+        if not self.lost_connection:
+            if self.verify_if_path_exists(self.path_log) and self.verify_if_path_exists(self.remote_path_log):
+                self.log_write(text)
+                if self.local_machine:
+                    self.log_write(text, remote=True)
+                else:
+                    self.write_to_file(self.remote_path_log, text) 
             else:
-                self.write_to_file(self.remote_path_log, text) 
-        else:
-            self.create_log_txt()
+                self.create_log_txt()
    
     def write_to_file(self, filename, text):
         actual_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -329,5 +334,6 @@ if __name__ == '__main__':
     f = File()
     # print(f.create_log_txt())
     print(f.get_test_mode())
+    print(f.add_new_logs('asdas'))
     # f.set_test_mode(0)
     
