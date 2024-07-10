@@ -131,7 +131,24 @@ class LatestVersion():
     
     def cancel_download(self):
         self.os_handler.download_process_stop()
+        
+    def download_by_version(self, version):
+        # o usuario pode colocar a versão da seguinte forma 10.07.02.0000
+        
+        # remove 0 a esquerda
+        version = version.lstrip('0')
+        
+        
+        self.find_if_version_exists(version)
     
+    def find_if_version_exists(self, version):
+        # lista todos os arquivos do diretorio
+        all_archives = listdir(self.path_mycommerce_att)
+        archives = []
+        # sera buscado a pasta com o texto 'Versão {10.7.0}'
+
+    
+        
 if __name__ == '__main__':
     # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())
     print('mypet',LatestVersion().latest_release_version_text_mypet())

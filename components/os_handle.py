@@ -124,10 +124,10 @@ class OsHandler():
             sleep(1)
             
     def ping(self, host, timeout=1):
-        param = '-n' 
+        param = '-n' if platform_system().lower()=='windows' else '-c'
         command = ['ping', param, '1', '-w', str(timeout), host]
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NO_WINDOW)
-        return result.returncode == 0    
+        result = subprocess.call(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NO_WINDOW)
+        return result == 0
     
     def verify_if_has_connection(self, log_path = False):
         if not log_path:
@@ -137,8 +137,10 @@ class OsHandler():
             ip = r'192.168.2.244'
                 
         if self.ping(ip):
+            print(f'tem conexão: ip: {ip}')
             return True
         else:
+            print(f'não tem conexão: ip: {ip}')
             return False
     
     def get_machine_name(self):
@@ -212,8 +214,7 @@ class OsHandler():
         if path_default_browser:
             brs = basename(path_default_browser)
             brs = brs.split('.')[0]
-            return brs
-      
+            return brs  
 if __name__ == "__main__":
     # freeze_support()
     os_handler = OsHandler() 
@@ -222,9 +223,9 @@ if __name__ == "__main__":
     #     r'\\10.1.1.110\Arquivos\Atualizacoes\MyCommerce', 'MyCommerce_Atu 9.13.10.0.exe')
     # print('mudar status')
     # os_handler.download_process_stop()
-    # os_handler.verify_if_has_connection(log_path=True),
+    # print(os_handler.verify_if_has_connection(log_path=True))
     # os_handler.get_machine_name()
     # os_handler.init_data_user()
 
-    print(os_handler.get_name_of_default_browser())
+    # print(os_handler.get_name_of_default_browser())
 
