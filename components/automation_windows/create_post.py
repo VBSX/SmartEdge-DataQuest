@@ -18,6 +18,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver import Chrome
 from selenium.webdriver.firefox import options as FirefoxOptions
 from components.os_handle import OsHandler
+import pyperclip
 
 class BrowserController():
     def __init__(
@@ -162,20 +163,22 @@ class BrowserController():
             self.click_base(path_topic_name_label).send_keys(self.topic_name_of_final_version)
         else:    
             self.click_base(path)
-        self.click_base(path_body_message).send_keys(self.message_version)
-            
+        # self.click_base(path_body_message).send_keys(self.message_version)
+        pyperclip.copy(self.message_version)
+        self.click_base(path_body_message).send_keys(Keys.CONTROL, 'v') 
         active_element = self.navegador.execute_script(f"""return document.querySelector("{path_js_body}")""")
         active_element.send_keys(Keys.CONTROL + "a")
         active_element.send_keys(Keys.CONTROL + "c")
         active_element.send_keys(Keys.CONTROL + "v")
         active_element.send_keys(Keys.CONTROL + "a")
         active_element.send_keys(Keys.CONTROL + "c")
-            
+        
         if not self.test_mode:    
             # clica no botão de inserir mensagem do post
             self.click_base(insert_message_button)
         else:
             print('modo de teste')
+            sleep(10)
     
     def insert_new_topic_for_final_version(self):
         click_new_topic_path = '/html/body/div/div[2]/div/div[3]/a/span'
@@ -235,7 +238,6 @@ class BrowserController():
             path_passwd = '/html/body/div/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[2]/div/div[1]/div/input'
             path_next_login = '/html/body/div/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[5]/button[1]'
             path_next_login2 = '/html/body/div/div[2]/div/div[1]/div/div/div[3]/div/form/div/div[3]/button[1]'
-            
             self.send_keys_base(path_email, self.bitrix_username)
             sleep(2)
             self.click_base(path_next_login)
@@ -299,7 +301,8 @@ class BrowserController():
                 # actions.key_down(Keys.CONTROL).perform()
                 # actions.send_keys("v").perform()
                 # actions.key_up(Keys.CONTROL).perform()
-                actions.send_keys((self.message_version)).perform()
+                pyperclip.copy(self.message_version)
+                actions.send_keys((Keys.CONTROL, 'v')).perform()
                 if not self.test_mode:
                     actions.key_down(Keys.ENTER).perform()
                     actions.key_up(Keys.ENTER).perform()
@@ -314,14 +317,29 @@ class BrowserController():
 if __name__ == '__main__':
     navegador = BrowserController(
         message_version="""
-            Olá! Versão [b]9.13.15.0000[/b] do [b]MyCommerce[/b] disponível para atualizações. 
+        Ei, pessoal! Temos novidades! A versão [b]10.07.22.0000[/b] do [b]Mycommerce[/b] já está no ar e pronta para ser atualizada! 🚀
+
+        [b]🔍INCONSISTÊNCIAS RELATADAS POR CLIENTES:[/b]
+        - Transferências de estoque sem complicações! Ajustamos a inconsistência ao gerar nota de transferências de estoque.
+        - Relatórios de comissão em sintonia! Corrigimos a inconsistência onde os relatórios de comissão detalhado e resumido apresentavam valores diferentes.
+
+        🌟 E não para por aí! Esta versão é 100% compatível com: 
+        [b]03.67.02.0000[/b] do [b]MyCommerce PDV 🛒[/b]
+        [b]10.07.03.0000[/b] do [b]MyLocação 🚗[/b]
+        [b]10.05.00.0000[/b] do [b]MyPet 🐾[/b]
+        [b]03.06.00.0000[/b] do [b]MyZap 📱[/b]
+        [b]07.08.00.0000[/b] do [b]VsIntegrações 🔗[/b]
+
+        ✨ Não espere mais, atualize e veja as novidades! 💡
+
         """,
         bitrix_username='',
         bitrix_passwd='',
         forum_username='',
         forum_passwd='',
         test_mode=True,
-        test_bitrix=True,
+        # test_bitrix=True,
+        test_forum=True,
         name_of_program='Mycommerce'
         # final_version=True,
         # topic_name_of_final_version= '9.12.x'
