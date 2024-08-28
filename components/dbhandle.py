@@ -17,7 +17,10 @@ class Database():
     def start_connection(self):
         self.connection_error = False
         self.get_file_config()
+        self.config['charset'] = 'utf8mb4'
+        self.config['collation'] = 'utf8mb4_general_ci'
         try:
+            
             self.conexao = connect(**self.config)
             self.connected = True
             self.cursor = self.conexao.cursor()
