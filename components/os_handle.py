@@ -134,7 +134,7 @@ class OsHandler():
             ip = r'10.1.1.110'
         else:
             # path = r'\\192.168.2.244\shared'
-            ip = r'192.168.2.244'
+            ip = r'192.168.2.231'
                 
         if self.ping(ip):
             print(f'tem conexão: ip: {ip}')

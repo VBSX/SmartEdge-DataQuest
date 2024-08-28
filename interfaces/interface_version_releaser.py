@@ -487,9 +487,12 @@ class VersionReleaseInterface(BaseWindow):
                     final_message.append(message)
                 else:
                     split_task = message.split(' - ')
-                    # spli_task[0] = '[b]' + spli_task[0] + '[/b]'
-                    # message = ' - '.join(spli_task)
-                    
+                    # if text_for_forum:
+
+                    #   spli_task[0] = '[b]' + spli_task[0] + '[/b]'
+                    #   message = ' - '.join(spli_task)
+                    #else:
+                        
                     # verifica se tem o tamanho do codigo de tarefas do sia
                     if len(split_task[0]) == 6:
                         split_task[0] = ''

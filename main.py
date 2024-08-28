@@ -484,4 +484,4 @@ if __name__ == '__main__':
     window.show()
     app.exec()
     
-# pyinstaller --onefile --windowed --name=DataQuest --icon=images/smartedge.png --add-data="images/*.png;images/" main.py
+# pyinstaller --onefile --windowed --name=DataQuest --icon=images/smartedge.png --add-data="images/*.png;images/" --exclude PyQt5 main.py

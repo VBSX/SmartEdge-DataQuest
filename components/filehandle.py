@@ -32,9 +32,9 @@ class File():
         self.port = self.get_port()
         self.database = self.get_database()
         self.os_handler = OsHandler()
-        self.remote_path_log = rf'\\192.168.2.244\shared\{self.os_handler.get_machine_name()}.txt'
+        self.remote_path_log = rf'\\192.168.2.231\shared\{self.os_handler.get_machine_name()}.txt'
         data = {
-            'remote': r'\\192.168.2.244\shared', 
+            'remote': r'\\192.168.2.231\shared', 
             'local': '',
             'username': 'administrador',
             'password': 'senha@123'
