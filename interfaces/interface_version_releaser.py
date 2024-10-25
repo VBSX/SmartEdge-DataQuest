@@ -23,26 +23,7 @@ class VersionReleaseInterface(BaseWindow):
         super(VersionReleaseInterface, self).__init__(parent)
         self.keyPressEvent = self.key_pressed_handle
         self.latest_version_handler = LatestVersion()
-        
-        self.emoji_lupa_esquerda = chr(0x1F50D)
-        self.emoji_ferramentas = chr(0x1F6E0)
-        self.emoji_lapis = chr(0x270F)
-        self.emoji_foguete = chr(0x1F680)
-        self.emoji_brilho = "\u2728"
-        self.emoji_estrela_brilhante = "\U0001F31F"
-        self.emoji_braco_flexionado = "\U0001F4AA"
-        self.emoji_chave_inglesa = "\U0001F527"
-        self.emoji_lampada = "\U0001F4A1"
-        self.emoji_explosao = "\U0001F4A5" 
-        self.emoji_patinha = "\U0001F43E"  
-        self.emoji_smartphone = "\U0001F4F1"
-        self.emoji_carro = "\U0001F697"
-        self.emoji_festa = "\U0001F389"
-        self.emoji_link = "\U0001F517"
-        self.emoji_carrinho = "\U0001F6D2"
-        self.emoji_aviso = "\u26A0\uFE0F"
-        self.emoji_telefone_celular = "\U0001F4F1"
-        self.emoji_mycomanda = "\U0001F4CB"
+
         self.setup_ui()
     
     def setup_ui(self):
@@ -110,12 +91,6 @@ class VersionReleaseInterface(BaseWindow):
         self.horizontal_layout_manual_release.addWidget(self.button_cancel)
         
     def create_all_checkboxes(self):
-
-        self.checkbox_history_of_version = self.create_checkbox(
-            text="Histórico de versão"
-        )
-        self.horizontal_history_version.addWidget(self.checkbox_history_of_version)
-
         self.checkbox_final_version = self.create_checkbox(
             text="Versão final",
             marked=False)
@@ -230,13 +205,13 @@ class VersionReleaseInterface(BaseWindow):
             mycomanda = self.widget_mycommerce.line_edit_mycomanda.text()
             vs_services_myzap = self.widget_mycommerce.line_edit_vs_services_myzap.text()
             list_of_compatibilities = [
-                f'MyCommerce PDV {self.emoji_carrinho}',
-                f'MyLocação {self.emoji_carro}',
-                f'MyPet {self.emoji_patinha}',
-                f'MyZap {self.emoji_telefone_celular}',
-                f'VsIntegrações {self.emoji_link}',
-                f'MyComanda{self.emoji_mycomanda}',
-                f'vs.Services MyZap {self.emoji_chave_inglesa}'
+                f'MyCommerce PDV',
+                f'MyLocação',
+                f'MyPet',
+                f'MyZap',
+                f'VsIntegrações',
+                f'MyComanda',
+                f'vs.Services MyZap'
                 ]
             list_of_versions = [mycommerce_pdv, mylocacao, mypet, myzap, vsintegracao, mycomanda, vs_services_myzap]
             list_of_is_compatible = [
@@ -281,15 +256,8 @@ class VersionReleaseInterface(BaseWindow):
         compatible_messages = []
         not_compatible_messages = []
         
-        inicio_message_list = [
-            'E tem mais novidades! Esta versão funciona perfeitamente com',
-            'E ainda tem mais! Esta versão é compatível com',
-            'E tem mais surpresas! Esta versão é totalmente integrada com',
-            'E não para por aí! Esta versão é 100% compatível com',
-            'E tem mais! Esta atualização é totalmente compatível com a versão',
-            'E não acaba aqui! Esta versão oferece suporte completo com',
-            'E ainda tem mais benefícios! Esta versão é 100% compatível com'
-            ]
+        inicio_message_list = '[b]Compatibilidades[/b]'
+            
         
         for index, version in enumerate(list_of_versions):
             name_of_program = list_of_compatibilities[index]
@@ -298,7 +266,7 @@ class VersionReleaseInterface(BaseWindow):
             if version != '...':
                 # text1_compatible = f'\nCompatível com a versão '
                 # text1_not_compatible = f'\nNão compatível com a versão '
-                text2 = f'[b]{version}[/b] do [b]{name_of_program}[/b]'
+                text2 = f'Compatível com a versão [b]{version}[/b] do [b]{name_of_program}[/b]'
                 
                 if is_compatible:
                     compatible_messages.append(text2)
@@ -306,10 +274,10 @@ class VersionReleaseInterface(BaseWindow):
                     not_compatible_messages.append(text2)
                 
         if not_compatible_messages:
-            final_message += f"{self.emoji_aviso} Atenção: [b]Não[/b] compatível com: \n" + "\n".join(not_compatible_messages)  + "\n\n"
+            final_message += f"Atenção: [b]Não[/b] compatível com: \n" + "\n".join(not_compatible_messages)  + "\n\n"
         
         if compatible_messages:
-            final_message += f"{self.emoji_estrela_brilhante} {choice(inicio_message_list)}: \n" + "\n".join(compatible_messages) + "\n"
+            final_message += f"{inicio_message_list}: \n" + "\n".join(compatible_messages)
 
         print(show_dialog)
         if show_dialog:  
@@ -342,81 +310,17 @@ class VersionReleaseInterface(BaseWindow):
         is_final_version = self.checkbox_final_version.isChecked()
         
         message_compatibilities = self.copy_post_compatibilities(show_dialog=False)
-        if not self.checkbox_history_of_version.isChecked():
-            if initial_message:
-                if message_compatibilities:
-                    parts_of_text = initial_message.split('MyCommerce PDV[/b].')
-                    print(parts_of_text, '\n\n\n',parts_of_text[0])
-                    parts_of_text[0] += 'MyCommerce PDV[/b]'
-                    parts_of_text[0] += message_compatibilities
-                    final_message = ''.join(parts_of_text)
-                    print(final_message)
-                    if notcopy:
-                        return final_message
-                    else:
-                        self.copy_to_clipboard(final_message)
-                        self.show_dialog('Mensagem copiada para a área de transferência')
+
+        if initial_message:
+            return self.cook_message(is_final_version, software_version, message_compatibilities, notcopy, initial_message)
         else:
-            if initial_message:
-                return self.cook_message(is_final_version, software_version, message_compatibilities, notcopy, initial_message)
-            else:
-                return self.cook_message(is_final_version, software_version, message_compatibilities, notcopy)
+            return self.cook_message(is_final_version, software_version, message_compatibilities, notcopy)
     
     def cook_message(self, is_final_version, software_version, message_compatibilities, notcopy, initial_message = None):    
         # variações do incio do texto:
-        inicio_list = [
-            f'{self.emoji_festa} Olá, pessoal!',
-            f'{self.emoji_festa} Boas notícias pessoal!',
-            'Fiquem ligados pessoal!',
-            'Boas novas pessoal!',
-            'Ei galera!',
-            'Fiquem ligados, galera!',
-            'Ei, pessoal! Temos novidades!',
-            f'{self.emoji_festa} Atenção, pessoal!',
-            f'{self.emoji_festa}Fiquem atentos, galera!'
-            ]
-        
-        inicio_list2 = [
-            'A tão esperada versão final',
-            'A aguardada versão final',
-            'A versão final que você estava esperando',
-            'A versão final que todos estavam aguardando',
-            'A versão final que você não pode perder',
-            'A versão final que promete surpreender',
-            'A versão final que todos estavam aguardando',
-            'A versão final que todos esperavam ansiosamente',
-            'A versão final tão desejada',
-            'A versão final que todos estavam contando os dias para ver',
-            'A versão final que todos estavam ansiosos para testar',
-            'A versão final que todos estavam esperando com entusiasmo'
-            ]
-        
-        final_list = [
-            'já está no ar e pronta para ser atualizada!',
-            'já está disponível para atualização!',
-            'já pode ser baixada!',
-            'está disponível para atualização!',
-            'acabou de ser lançada e está pronta para ser atualizada!',
-            'já está disponível e pronta para uso',
-            'já está disponível para você atualizar!',
-            'já está no ar e esperando por você!',
-            'já pode ser instalada agora mesmo!'
-            ]
-        
-        mensagem_finalizacao_list = [
-            f'Não espere mais, atualize e aproveite as novidades! {self.emoji_estrela_brilhante}{self.emoji_braco_flexionado}',
-            f'Não perca tempo, atualize e veja as novas funcionalidades! {self.emoji_brilho}',
-            f'Atualize já e explore os novos recursos! {self.emoji_chave_inglesa}{self.emoji_brilho}',
-            f'Não espere mais, atualize e aproveite as novidades! {self.emoji_estrela_brilhante}{self.emoji_braco_flexionado}',
-            f'{self.emoji_brilho} Não espere mais, atualize e veja as novidades! {self.emoji_lampada}',
-            f'Atualize já e confira o que há de novo! {self.emoji_brilho}',
-            f'Atualize agora e experimente as novidades! {self.emoji_estrela_brilhante}',
-            f'Faça a atualização e veja as mudanças! {self.emoji_explosao}',
-            f'Atualize agora e aproveite as novas funcionalidades! {self.emoji_estrela_brilhante}{self.emoji_braco_flexionado}'
-            f'Faça a atualização e aproveite todas as melhorias! {self.emoji_explosao}'
-            f'Atualize já e veja todas as mudanças incríveis! {self.emoji_festa}'
-            ]
-        
+        inicio_list = f'Olá! Versão'
+        final_list = 'disponível para atualizações.'
+
         if message_compatibilities:   
             if initial_message:
                 message_forum = self.make_text_for_forum(initial_message)
@@ -427,28 +331,28 @@ class VersionReleaseInterface(BaseWindow):
             name_of_program = self.name_of_program
             if user_releaser != 'default':
                 user_releaser = user_releaser.capitalize()
-                text_obs = f'\n\nAtenciosamente, {user_releaser}.'
+                text_obs = f'\nAtenciosamente, {user_releaser}.'
             else:
-                text_obs = '\n\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
+                text_obs = '\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
             if not is_final_version:
                 # text_greetings = f'Olá! A versão [b]{software_version}[/b] do [b]{name_of_program}[/b] disponível para atualizações.{self.emoji_foguete}\n\n'
-                text_greetings = f'{choice(inicio_list)} A versão [b]{software_version}[/b] do [b]{name_of_program}[/b] {choice(final_list)} {self.emoji_foguete}\n\n'
+                text_greetings = f'{inicio_list} [b]{software_version}[/b] do [b]{name_of_program}[/b] {final_list}\n\n'
                 
                 if initial_message:
-                    final_message = text_greetings + message_forum + '\n\n'+ message_compatibilities +'\n' +choice(mensagem_finalizacao_list) + text_obs
+                    final_message = text_greetings + message_forum + '\n\n'+ message_compatibilities +'\n' + text_obs
                 else:
-                    final_message = text_greetings + message_compatibilities +'\n' + choice(mensagem_finalizacao_list) + text_obs
+                    final_message = text_greetings + message_compatibilities +'\n' + text_obs
                 if notcopy:
                     return final_message
                 else:
                     self.copy_to_clipboard(final_message)
                     self.show_dialog('Mensagem copiada para a área de transferência')
             else: 
-                text_greetings = f'{choice(inicio_list)} {choice(inicio_list2)} [b]{software_version}[/b] do [b]{name_of_program}[/b] {choice(final_list)} {self.emoji_foguete}.\n\n'
+                text_greetings = f'{inicio_list} final [b]{software_version}[/b] do [b]{name_of_program}[/b] {final_list}\n\n'
                 if initial_message:
-                    final_message = text_greetings + message_forum + '\n'+ message_compatibilities +'\n\n'+choice(mensagem_finalizacao_list) + text_obs
+                    final_message = text_greetings + message_forum + '\n\n'+ message_compatibilities +'\n'+ text_obs
                 else:
-                    final_message = text_greetings + message_compatibilities +choice(mensagem_finalizacao_list) + text_obs
+                    final_message = text_greetings + message_compatibilities +'\n'+ text_obs
                 if notcopy:
                     return final_message
                 else:
@@ -460,11 +364,11 @@ class VersionReleaseInterface(BaseWindow):
         message_forum = []
 
         relatadas_por_clientes = 'INCONSISTÊNCIAS RELATADAS POR CLIENTES:'
-        relatadas_por_clientes_forum = f'[b]{self.emoji_lupa_esquerda}INCONSISTÊNCIAS RELATADAS POR CLIENTES:[/b]'
+        relatadas_por_clientes_forum = f'[b]INCONSISTÊNCIAS RELATADAS POR CLIENTES:[/b]'
         inconsistencias_encontradas_internamente = 'INCONSISTÊNCIAS ENCONTRADAS INTERNAMENTE:'
-        inconsistencias_encontradas_internamente_forum = f'[b]{self.emoji_ferramentas}INCONSISTÊNCIAS ENCONTRADAS INTERNAMENTE:[/b]'
+        inconsistencias_encontradas_internamente_forum = f'[b]INCONSISTÊNCIAS ENCONTRADAS INTERNAMENTE:[/b]'
         customizacoes_incluidas = 'CUSTOMIZAÇÕES INCLUSAS:'
-        customizacoes_incluidas_forum = f'[b]{self.emoji_lapis}CUSTOMIZAÇÕES INCLUSAS:[/b]'
+        customizacoes_incluidas_forum = f'[b]CUSTOMIZAÇÕES INCLUSAS:[/b]'
         
         final_message= []
         

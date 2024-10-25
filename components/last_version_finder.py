@@ -12,7 +12,7 @@ class LatestVersion():
         self.path_mycommerce_pdv = base_path+'MyCommercePDV'
         self.path_mylocacao = base_path+'MyLocacao'
         self.path_mypet = base_path+'PetShop'
-        self.path_myzap = base_path+'MyZap - Configurador'
+        self.path_myzap = base_path+'MyZap - Configurador'+ r'\\Versoes liberadas\\Última liberada'
         self.path_vsintegracoes = base_path+'vsIntegracoes'
         self.path_myfrota = base_path+'MyFrota'
         self.os_handler = OsHandler()
@@ -61,7 +61,7 @@ class LatestVersion():
         if self.has_connection:
             all_archives = listdir(self.path_mycommerce_att)
             # find by .exe files
-            archives = [archive for archive in all_archives if archive.endswith('.exe') if not archive.endswith('MyCommerce_Full.exe') if not archive.endswith('0.exe')]
+            archives = [archive for archive in all_archives if archive.endswith('.exe') if not archive.endswith('MyCommerce_Full.exe') if not archive.endswith('MyCommerce_Full_Em_Teste.exe') if not archive.endswith('0.exe')]
             if archives:
                 return archives[-1]
             else:

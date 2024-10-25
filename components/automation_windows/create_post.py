@@ -5,9 +5,9 @@ path = path_os('./')
 syspath.append(path)
 
 from time import sleep
-
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 from selenium.webdriver.common.keys import Keys 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -69,9 +69,18 @@ class BrowserController():
       
     def browser(self):
         self.default_browser_name = self.os_handler.get_name_of_default_browser()
-        # if self.default_browser_name == 'brave' or self.default_browser_name == 'chrome':
-        service = Service(executable_path=ChromeDriverManager().install())
-        driver = Chrome(service=service, options=self.set_chrome_options())
+        if self.default_browser_name == 'brave':
+            service = Service(executable_path=ChromeDriverManager(driver_version=self.os_handler.get_version_of_browser(self.default_browser_name)).install())
+            driver = Chrome(service=service, options=self.set_chrome_options())
+            
+            # service = Service(executable_path=ChromeDriverManager(chrome_type=ChromeType.BRAVE).install())
+            # driver = Chrome(service=service, options=self.set_chrome_options())
+            
+            
+        if self.default_browser_name == 'chrome':
+            service = Service(executable_path=ChromeDriverManager().install())
+            driver = Chrome(service=service, options=self.set_chrome_options())
+            
         # elif self.default_browser_name == 'firefox':
         #     driver_used = 'firefox'
         #     return driver_used

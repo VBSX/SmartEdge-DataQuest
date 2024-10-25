@@ -125,7 +125,7 @@ class OsHandler():
             
     def ping(self, host, timeout=1):
         param = '-n' if platform_system().lower()=='windows' else '-c'
-        command = ['ping', param, '1', '-w', str(timeout), host]
+        command = ['ping', param, '1,5', '-w', str(timeout), host]
         result = subprocess.call(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NO_WINDOW)
         return result == 0
     
@@ -215,10 +215,29 @@ class OsHandler():
             brs = basename(path_default_browser)
             brs = brs.split('.')[0]
             return brs  
+        
+        
+    def get_version_of_browser(self,browser_name):
+        # Verifica se o Chrome está instalado
+        if browser_name == 'chrome':
+            if exists("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"):
+                # Executa o Chrome e obtém a versão
+                chrome_version = subprocess.check_output(["C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "--version"]).decode("utf-8").strip()
+                return chrome_version
+            else:
+                return "Chrome não está instalado."
+        elif browser_name == 'brave':
+            if exists("C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"):
+                # Executa o Brave e obtém a versão
+                brave_version = subprocess.check_output(["C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe", "--version"]).decode("utf-8").strip()
+                return brave_version
 if __name__ == "__main__":
     # freeze_support()
     os_handler = OsHandler() 
+    while True:
 
+        print(os_handler.ping('10.1.1.110'))
+        sleep(0.5)
     # os_handler.download_version(
     #     r'\\10.1.1.110\Arquivos\Atualizacoes\MyCommerce', 'MyCommerce_Atu 9.13.10.0.exe')
     # print('mudar status')

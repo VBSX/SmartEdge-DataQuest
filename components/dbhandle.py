@@ -34,19 +34,23 @@ class Database():
   
     def db_default_config(self):
             query_return = self.update_users_password_to_default()
-            query_return2 = self.update_password_supervisor()
-            query_return3 = self.update_nfce_config_env_to_hml()
-            query_return4 = self.update_phone_customer()
-            query_return5 = self.update_emails_accountant()
-            query_return6 = self.update_emails_customer()
-            query_return7 =self.update_email_org()
-            query_return8 = self.update_nfe_config_env_to_hml()
-            
-            list_query = [query_return, query_return2, query_return3, query_return4, query_return5, query_return6, query_return7, query_return8]
-            for query in list_query:
-                if query != 'sucess':
-                    return query
-            return 'sucess'  
+            if query_return != 'sucess':
+                return query_return
+            else:
+                query_return2 = self.update_password_supervisor()
+                query_return3 = self.update_nfce_config_env_to_hml()
+                query_return4 = self.update_phone_customer()
+                query_return5 = self.update_emails_accountant()
+                query_return6 = self.update_emails_customer()
+                query_return7 =self.update_email_org()
+                query_return8 = self.update_nfe_config_env_to_hml()
+                
+                list_query = [query_return, query_return2, query_return3, query_return4, query_return5, query_return6, query_return7, query_return8]
+                for query in list_query:
+                    if query != 'sucess':
+                        return query
+                    
+                return 'sucess'  
     
     def update_users_password_to_default(self):
         query = """
@@ -111,13 +115,16 @@ class Database():
     
     def reset_users_password(self):
             query_return = self.update_users_password_to_default()
-            query_return_supervisor = self.update_password_supervisor() 
-            query_return2 = self.update_permission_supervisor()
-            list_of_query = [query_return, query_return_supervisor, query_return2]
-            for query in list_of_query:
-                if query != 'sucess':
-                    return query
-            return 'sucess'
+            if query_return != 'sucess':
+                return query_return
+            else:
+                query_return_supervisor = self.update_password_supervisor() 
+                query_return2 = self.update_permission_supervisor()
+                list_of_query = [query_return, query_return_supervisor, query_return2]
+                for query in list_of_query:
+                    if query != 'sucess':
+                        return query
+                return 'sucess'
 
     def update_permission_supervisor(self):
         query = """

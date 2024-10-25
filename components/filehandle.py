@@ -33,22 +33,23 @@ class File():
         self.database = self.get_database()
         self.os_handler = OsHandler()
         self.remote_path_log = rf'\\192.168.2.231\shared\{self.os_handler.get_machine_name()}.txt'
-        data = {
-            'remote': r'\\192.168.2.231\shared', 
-            'local': '',
-            'username': 'administrador',
-            'password': 'senha@123'
-        }
+        # data = {
+        #     'remote': r'\\192.168.2.231\shared', 
+        #     'local': '',
+        #     'username': 'administrador',
+        #     'password': 'senha@123'
+        # }
         self.lost_connection = False
         self.local_machine = False
-        if self.os_handler.verify_if_has_connection(log_path=True) == True:
-            try:
-                NetUseAdd(None, 2, data)
-            except:
-                self.local_machine = True
-                print('maquinaLocal')
-        else:
-            self.lost_connection = True
+        # if self.os_handler.verify_if_has_connection(log_path=True) == True:
+        #     try:
+        #         NetUseAdd(None, 2, data)
+        #     except:
+        #         self.local_machine = True
+        #         print('maquinaLocal')
+        # else:
+            # self.lost_connection = True
+        self.local_machine = True
         
     
     def init_txt(self):
@@ -61,11 +62,11 @@ class File():
                 return True
           
     def create_log_txt(self):
-            has_connection = self.os_handler.verify_if_has_connection(log_path=True)
-            if self.verify_if_path_exists(self.path_log) and self.verify_if_path_exists(self.remote_path_log):
+            # has_connection = self.os_handler.verify_if_has_connection(log_path=True)
+            if self.verify_if_path_exists(self.path_log): #and self.verify_if_path_exists(self.remote_path_log):
                 return True
-            elif not has_connection and self.verify_if_path_exists(self.path_log):
-                return True
+            #elif not has_connection and self.verify_if_path_exists(self.path_log):
+               # return True
             elif not self.verify_if_path_components_exist():
                 self.create_components_path()
                 return True
@@ -74,11 +75,11 @@ class File():
                 for item in data_list:
                     value = data_list.get(item)
                     self.log_write(item+ ': '+ str(value))
-                    if self.os_handler.verify_if_has_connection(log_path = True):
-                        if not self.local_machine:
-                            self.write_to_file(self.remote_path_log, item+': '+str(value))
-                        else:
-                            self.log_write(item+ ': '+ str(value), remote=True)         
+                    # if self.os_handler.verify_if_has_connection(log_path = True):
+                        # if not self.local_machine:
+                        #     self.write_to_file(self.remote_path_log, item+': '+str(value))
+                        # else:
+                    self.log_write(item+ ': '+ str(value)) #remote=True)         
                 return True
         
     def log_write(self, text, remote = False):

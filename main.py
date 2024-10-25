@@ -185,7 +185,7 @@ class MainWindow(BaseWindow):
 
         self.centralWidget().deleteLater() 
         self.clearLayout(self.layout_principal)
-        self.clearLayout(self.layout_horizontal_database_info)
+        # self.clearLayout(self.layout_horizontal_database_info)
         
         self.setup_ui(reset_layout=True)
             
@@ -293,24 +293,26 @@ class MainWindow(BaseWindow):
         )
            
     def update_db(self):
-        self.get_configs()
+        self.reset_layout()
         if self.file_handler.verify_if_path_exists(path=self.file_handler.path_json):
             query_return = self.db.db_default_config()
             if query_return == 'sucess':
                 self.show_dialog('Configuração realizada com sucesso')
             else:
+                self.file_handler.add_new_logs(str(query_return)+' ao rodar as sqls padrões para o banco')
                 self.show_dialog(str(query_return))
         else:
             self.show_dialog('Configuração ainda não realizada')
-        self.reset_layout()
     
     def reset_users_password(self):
+
+        self.reset_layout()
         query_return = self.db.reset_users_password()
         if query_return == 'sucess':
             self.show_dialog('Senhas resetadas com sucesso')
         else:
+            self.file_handler.add_new_logs(str(query_return)+' ao resetar as senhas')
             self.show_dialog(str(query_return))
-        self.reset_layout()
     
     def mycommerce_close(self):
         process = self.os_handler.kill_mycommerce_process()
@@ -331,10 +333,12 @@ class MainWindow(BaseWindow):
             if has_connection:
                 self.query_window = QueryWindow(self)
                 self.query_window.show()
+                self.interface_query_window_is_open = True
             else:
                 self.show_dialog(str(self.db.message_connection_error))
-            self.reset_layout()
-            self.interface_query_window_is_open = True
+                self.reset_layout()
+                self.interface_query_window_is_open = False       
+                self.file_handler.add_new_logs(str(self.db.message_connection_error)+' ao abrir a tela de query')
         else:  
             self.query_window.show()
   

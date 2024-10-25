@@ -15,7 +15,6 @@ from PySide6.QtWidgets import (
 class WidgetReleaseMycommerce(BaseWindow):
     def __init__(self, parent=None):
         super(WidgetReleaseMycommerce, self).__init__(parent)
-        self.keyPressEvent = self.key_pressed_handle
         self.latest_version_handler = LatestVersion()
         self.setup_ui()
     
