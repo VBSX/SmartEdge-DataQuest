@@ -34,17 +34,17 @@ class LatestVersion():
             elif software_name == 'MyZap':
                 startwith = 'MyZap - Configurador_Full'
             elif software_name == 'vsIntegracoes':
-                startwith = 'vsIntegracoes_Full'
+                startwith = 'vsIntegracoes_Atu_'
             elif software_name == 'MyFrota':
                 startwith = 'MyFrota__Full_'
 
             for archive in all_archives:
                 if archive.endswith('0.exe') and not archive.startswith(startwith):
                     archives.append(archive)
-            
+        
                  
             if len(archives) > 1:
-                if software_name == 'MyPet': 
+                if software_name == 'MyPet' or 'vsIntegracoes': 
                     # Ordena a lista usando uma função de chave personalizada para classificar as versões mais recentes
                     archives.sort(key=lambda x: tuple(map(int, x.split('_')[1].split('.')[:-1])), reverse=True)
                     return archives[0]  # Retorna o primeiro item (o mais recente) da lista ordenada
@@ -80,6 +80,7 @@ class LatestVersion():
                         'MyCommerce_Atu',
                         'PetShopAtu_',
                         'vsIntegracoes_Atu_',
+                        'vsIntegracoes_Full_',
                         'MyLocacao_', 'Robô MyZap - Atu_', 'MyFrota__Atu_'
                         ]
         if text:
@@ -151,9 +152,9 @@ class LatestVersion():
         
 if __name__ == '__main__':
     # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())
-    print('mypet',LatestVersion().latest_release_version_text_mypet())
+    # print('mypet',LatestVersion().latest_release_version_text_mypet())
     # print('myzap',LatestVersion().latest_release_version_text_myzap())
-    # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
+    print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
     # print(LatestVersion().latest_release_version_text_mypet())
 
     # print(LatestVersion().latest_release_version_text())

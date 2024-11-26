@@ -216,35 +216,31 @@ class OsHandler():
             brs = brs.split('.')[0]
             return brs  
         
+            
+    def get_version_of_browser(self, browser_name):
+        path_chrome = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        path_brave = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
         
-    def get_version_of_browser(self,browser_name):
-        # Verifica se o Chrome está instalado
         if browser_name == 'chrome':
-            if exists("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"):
-                # Executa o Chrome e obtém a versão
-                chrome_version = subprocess.check_output(["C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "--version"]).decode("utf-8").strip()
-                return chrome_version
-            else:
-                return "Chrome não está instalado."
+            if exists(path_chrome):
+                path_browser = path_chrome
         elif browser_name == 'brave':
-            if exists("C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"):
-                # Executa o Brave e obtém a versão
-                brave_version = subprocess.check_output(["C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe", "--version"]).decode("utf-8").strip()
-                return brave_version
+            if exists(path_brave):
+                path_browser = path_brave
+
+        command = f'wmic datafile where "name=\'{path_browser.replace("\\", "\\\\")}\'" get Version'
+        result = subprocess.run(command, capture_output=True, text=True, shell=True)
+
+        version = result.stdout.strip().split("\n")[-1]
+        return version
+
+            
 if __name__ == "__main__":
     # freeze_support()
     os_handler = OsHandler() 
-    while True:
+    # while True:
 
-        print(os_handler.ping('10.1.1.110'))
-        sleep(0.5)
-    # os_handler.download_version(
-    #     r'\\10.1.1.110\Arquivos\Atualizacoes\MyCommerce', 'MyCommerce_Atu 9.13.10.0.exe')
-    # print('mudar status')
-    # os_handler.download_process_stop()
-    # print(os_handler.verify_if_has_connection(log_path=True))
-    # os_handler.get_machine_name()
-    # os_handler.init_data_user()
-
-    # print(os_handler.get_name_of_default_browser())
-
+    #     print(os_handler.ping('10.1.1.110'))
+        
+    #     sleep(0.5)
+    print(os_handler.get_version_of_browser("brave"))

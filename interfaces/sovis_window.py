@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     )
 
 from interfaces.base_window import BaseWindow
+from PySide6.QtCore import Qt
 
 class SovisWindow(BaseWindow):
     def __init__(self, parent=None):
@@ -37,6 +38,7 @@ class SovisWindow(BaseWindow):
         self.create_all_combobox()
         self.create_all_buttons()
         
+        self.setWindowModality(Qt.WindowModal)
         self.create_layouts(self.list_of_layouts)
         
     def create_all_line_edits(self):

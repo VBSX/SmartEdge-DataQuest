@@ -391,19 +391,18 @@ class VersionReleaseInterface(BaseWindow):
                     final_message.append(message)
                 else:
                     split_task = message.split(' - ')
-                    # if text_for_forum:
-
-                    #   spli_task[0] = '[b]' + spli_task[0] + '[/b]'
-                    #   message = ' - '.join(spli_task)
+                    split_task[0] = '[b]' + split_task[0] + '[/b]'
+                    message = ' - '.join(split_task)
+                    final_message.append(message)
                     #else:
                         
-                    # verifica se tem o tamanho do codigo de tarefas do sia
-                    if len(split_task[0]) == 6:
-                        split_task[0] = ''
-                        split_task = ' - '.join(split_task)
-                        final_message.append(split_task)
-                    else:
-                        final_message.append(f'[b]' + message + '[/b]')
+                    # # verifica se tem o tamanho do codigo de tarefas do sia
+                    # if len(split_task[0]) == 6:
+                    #     split_task[0] = ''
+                    #     split_task = ' - '.join(split_task)
+                    #     final_message.append(split_task)
+                    # else:
+                    #     final_message.append(f'[b]' + message + '[/b]')
             else:
                 final_message.append(message)
         return '\n'.join(final_message)
