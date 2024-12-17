@@ -264,14 +264,12 @@ class VersionReleaseInterface(BaseWindow):
             is_compatible = list_of_is_compatible[index]
             
             if version != '...':
-                # text1_compatible = f'\nCompatível com a versão '
-                # text1_not_compatible = f'\nNão compatível com a versão '
-                text2 = f'Compatível com a versão [b]{version}[/b] do [b]{name_of_program}[/b]'
-                
+                compativel = f'Compatível com a versão [b]{version}[/b] do [b]{name_of_program}[/b]'
+                nao_compativel = f'A versão [b]{version}[/b] do [b]{name_of_program}[/b]'
                 if is_compatible:
-                    compatible_messages.append(text2)
+                    compatible_messages.append(compativel)
                 else:
-                    not_compatible_messages.append(text2)
+                    not_compatible_messages.append(nao_compativel)
                 
         if not_compatible_messages:
             final_message += f"Atenção: [b]Não[/b] compatível com: \n" + "\n".join(not_compatible_messages)  + "\n\n"
