@@ -6,15 +6,15 @@ syspath.append(path)
 from json import (load as read_json, dump as write_json)
 from components.ini_handle import IniConfig
 from components.os_handle import OsHandler
-from win32net import NetUseAdd
-from win32file import (
-    CreateFile,
-    WriteFile,
-    CloseHandle,
-    GENERIC_WRITE,
-    FILE_END,
-    SetFilePointer,
-    OPEN_ALWAYS)
+# from win32net import NetUseAdd
+# from win32file import (
+#     CreateFile,
+#     WriteFile,
+#     CloseHandle,
+#     GENERIC_WRITE,
+#     FILE_END,
+#     SetFilePointer,
+#     OPEN_ALWAYS)
 
 # from multiprocessing import freeze_support
 from datetime import datetime
@@ -32,7 +32,8 @@ class File():
         self.port = self.get_port()
         self.database = self.get_database()
         self.os_handler = OsHandler()
-        self.remote_path_log = rf'\\192.168.2.231\shared\{self.os_handler.get_machine_name()}.txt'
+        # self.remote_path_log = rf'\\192.168.2.231\shared\{self.os_handler.get_machine_name()}.txt'
+        self.remote_path_log = 'localhost'
         # data = {
         #     'remote': r'\\192.168.2.231\shared', 
         #     'local': '',
@@ -40,7 +41,7 @@ class File():
         #     'password': 'senha@123'
         # }
         self.lost_connection = False
-        self.local_machine = False
+        # self.local_machine = False
         # if self.os_handler.verify_if_has_connection(log_path=True) == True:
         #     try:
         #         NetUseAdd(None, 2, data)
@@ -113,30 +114,31 @@ class File():
                 self.create_log_txt()
    
     def write_to_file(self, filename, text):
-        actual_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        # Open the file or create it if it doesn't exist
-        handle = CreateFile(
-            filename,  # File name
-            GENERIC_WRITE,  # Access type
-            0,  # Share mode
-            None,  # Security
-            OPEN_ALWAYS,  # Disposition (create if it doesn't exist, open otherwise)
-            0,  # File attributes
-            None  # Template file
-        )
+        pass
+        # actual_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # # Open the file or create it if it doesn't exist
+        # handle = CreateFile(
+        #     filename,  # File name
+        #     GENERIC_WRITE,  # Access type
+        #     0,  # Share mode
+        #     None,  # Security
+        #     OPEN_ALWAYS,  # Disposition (create if it doesn't exist, open otherwise)
+        #     0,  # File attributes
+        #     None  # Template file
+        # )
 
-        # Encode the string into bytes
-        text = text+f'    || {actual_datetime}\n'
-        text = text.encode()
+        # # Encode the string into bytes
+        # text = text+f'    || {actual_datetime}\n'
+        # text = text.encode()
 
-        # Set the file pointer to the end of the file to append content
-        SetFilePointer(handle, 0, FILE_END)
+        # # Set the file pointer to the end of the file to append content
+        # SetFilePointer(handle, 0, FILE_END)
 
-        # Write to the file
-        WriteFile(handle, text)
+        # # Write to the file
+        # WriteFile(handle, text)
 
-        # Close the file
-        CloseHandle(handle)
+        # # Close the file
+        # CloseHandle(handle)
     
     def create_json(self):
         if self.verify_if_path_exists(self.path_json):

@@ -34,7 +34,7 @@ class LatestVersion():
             elif software_name == 'MyZap':
                 startwith = 'MyZap - Configurador_Full'
             elif software_name == 'vsIntegracoes':
-                startwith = 'vsIntegracoes_Atu_'
+                startwith = 'vsIntegracoes_Full_'
             elif software_name == 'MyFrota':
                 startwith = 'MyFrota__Full_'
 
@@ -44,7 +44,7 @@ class LatestVersion():
         
                  
             if len(archives) > 1:
-                if software_name == 'MyPet' or 'vsIntegracoes': 
+                if software_name == 'MyPet': 
                     # Ordena a lista usando uma função de chave personalizada para classificar as versões mais recentes
                     archives.sort(key=lambda x: tuple(map(int, x.split('_')[1].split('.')[:-1])), reverse=True)
                     return archives[0]  # Retorna o primeiro item (o mais recente) da lista ordenada
