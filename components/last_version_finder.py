@@ -12,7 +12,7 @@ class LatestVersion():
         self.path_mycommerce_pdv = base_path+'MyCommercePDV'
         self.path_mylocacao = base_path+'MyLocacao'
         self.path_mypet = base_path+'PetShop'
-        self.path_myzap = base_path+'MyZap - Configurador'+ r'\\Versoes liberadas\\Última liberada'
+        self.path_myzap = base_path+'MyZap - Configurador'#+ r'\\Versoes liberadas\\Última liberada'
         self.path_vsintegracoes = base_path+'vsIntegracoes'
         self.path_myfrota = base_path+'MyFrota'
         self.os_handler = OsHandler()
@@ -90,8 +90,11 @@ class LatestVersion():
 
         return text
 
-    def download_file(self, file_name):
-        return self.os_handler.download_version(self.path_mycommerce_att, file_name)
+    def download_file(self, file_name, is_other_version_than_build_and_release=False, path=None):
+        if is_other_version_than_build_and_release and path:
+            return self.os_handler.download_version(path, file_name)
+        else:
+            return self.os_handler.download_version(self.path_mycommerce_att, file_name)
 
     def download_latest_build(self):
         if self.has_connection:
@@ -137,16 +140,50 @@ class LatestVersion():
         # o usuario pode colocar a versão da seguinte forma 10.07.02.0000
         
         # remove 0 a esquerda
-        version = version.lstrip('0')
+        version_parts = version.split('.')
+        version_parts = [str(int(part)) for part in version_parts]
+        version = '.'.join(version_parts)
+        
+        version_finded_path = self.find_if_version_exists(version)
+        version_full_name = f'MyCommerce_Atu {version}.exe'
+        if version_finded_path != None:
+            self.download_file(path=version_finded_path, is_other_version_than_build_and_release=True, file_name=version_full_name)
+            return True
+        else:
+            return False
         
         
-        self.find_if_version_exists(version)
-    
     def find_if_version_exists(self, version):
         # lista todos os arquivos do diretorio
         all_archives = listdir(self.path_mycommerce_att)
         archives = []
-        # sera buscado a pasta com o texto 'Versão {10.7.0}'
+        version_folder = version.split('.')
+        
+        for part in version_folder:
+            # ele vai tirar as duas ultimas partes para sair de "10.7.2.0" para "10.7.0" que é a forma 
+            # usada na pasta da versão
+
+            if len(version_folder) > 2:
+                version_folder.pop()    
+                
+        version_folder = '.'.join(version_folder)+'.0'
+            
+            
+            
+        # sera buscado a pasta com o texto 'Versão {10.7.0}' e depois acessada a pasta "Versão Final" e logo em seguida 
+        # será verificado se existe o arquivo com o texto '10.7.2.0.exe'
+        version_text = f'Versão {version_folder}'
+        for archive in all_archives:
+            if version_text in archive:
+                version_path = f"{self.path_mycommerce_att}\\{archive}\\Versão Final"
+                if listdir(version_path):
+                    for file in listdir(version_path):
+                        # aqui vai ser verificado se existe o arquivo 
+                        # com o texto 'MyCommerce_Atu 10.7.2.0.exe'
+                        version_full_name = f'MyCommerce_Atu {version}.exe'
+                        if version_full_name in file:
+                            return version_path
+        return None
 
     
         
@@ -154,10 +191,11 @@ if __name__ == '__main__':
     # print('mylocacao',LatestVersion().latest_release_version_text_mylocacao())
     # print('mypet',LatestVersion().latest_release_version_text_mypet())
     # print('myzap',LatestVersion().latest_release_version_text_myzap())
-    print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
+    # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
     # print(LatestVersion().latest_release_version_text_mypet())
-
-    # print(LatestVersion().latest_release_version_text())
+    print(LatestVersion().download_by_version('10.07.02.0000'))
+    # print(LatestVersion().download_latest_release())
+    
     
     
 

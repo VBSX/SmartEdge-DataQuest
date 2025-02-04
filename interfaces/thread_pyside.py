@@ -18,6 +18,7 @@ class DownloadThread(QThread):
         final_version = None,
         topic_name_of_final_version = None,
         name_of_program = None,
+        specific_version = None,
         **argumentos_nomeados
         ):
         super().__init__()
@@ -34,9 +35,12 @@ class DownloadThread(QThread):
         self.download = LatestVersion()
         self.canceled = False
         self.msg_error = None
+        self.specific_version = specific_version
 
     def run(self):
-        if self.is_build:
+        if self.is_build == None:
+            self.specific_version_finished = self.download.download_by_version(self.specific_version)
+        elif self.is_build:
             self.download.download_latest_build()
         elif self.thread_create_post:
             browser_return = BrowserController(

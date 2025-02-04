@@ -69,6 +69,9 @@ class MainWindow(BaseWindow):
         self.get_configs()
         self.create_all_buttons_of_the_window()
         self.create_all_labels_of_the_window()
+        self.create_all_line_edit_of_the_window()
+        
+        self.spacer = QSpacerItem(20,50)
         
         self.layout_horizontal_buttons_sql = QHBoxLayout()
         self.layout_horizontal_buttons_sql.addWidget(self.button_db_default_config)
@@ -78,6 +81,9 @@ class MainWindow(BaseWindow):
         
         self.layout_horizontal_buttons_sql2 = QHBoxLayout()
         self.layout_horizontal_buttons_sql2.addWidget(self.button_open_sovis_window)
+        self.layout_horizontal_buttons_sql2.addWidget(self.label_manual_version_download)
+        self.layout_horizontal_buttons_sql2.addWidget(self.line_edit_version_download)
+        self.layout_horizontal_buttons_sql2.addWidget(self.baixar_versao_especifica)
         
         self.layout_horizontal_top_tools = QHBoxLayout()
         
@@ -97,7 +103,7 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_close_programs.addWidget(self.button_close_mymonitorfat)
         self.layout_horizontal_close_programs.addWidget(self.button_close_att_db)
         
-        self.spacer = QSpacerItem(20,50)
+        
     
         self.layout_database_info = QHBoxLayout()
         self.layout_database_info.addWidget(self.database_label) 
@@ -144,6 +150,7 @@ class MainWindow(BaseWindow):
         self.list_of_widgets = [
             self.layout_horizontal_top_tools,
             self.layout_horizontal_buttons_sql,
+            self.spacer,
             self.layout_horizontal_buttons_sql2,
             self.layout_horizontal_close_programs,
             self.spacer,
@@ -291,6 +298,12 @@ class MainWindow(BaseWindow):
             icon=self.icon_close,
             icon_size = 32
         )
+        
+        
+        self.baixar_versao_especifica = self.create_button(
+            text='Download',
+            function=lambda: self.download_version(text="Baixando a versão", is_build=None, is_specific_version=True)
+        )
            
     def update_db(self):
         self.reset_layout()
@@ -351,6 +364,8 @@ class MainWindow(BaseWindow):
         self.about_window.show()
 
     def create_all_labels_of_the_window(self):
+        self.label_manual_version_download = self.create_label('Baixar versão específica')
+        
         self.host_label = self.create_label(f'Host: {self.host}')
         
         self.port_label = self.create_label(f'Porta: {self.port}')
@@ -380,6 +395,13 @@ class MainWindow(BaseWindow):
         
         self.label_last_release_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(text_latest_release_version)
     
+    def create_all_line_edit_of_the_window(self):
+        self.line_edit_version_download = self.create_line_edit(
+            placeholder="11.01.17.0000",
+            mask=True
+            )
+        self.line_edit_return_pressed(self.line_edit_version_download, self.line_edit_version_download)
+    
     def att_db_open(self):
         self.open_programs('C:\Visual Software\MyCommerce\AtualizarDB.exe')
 
@@ -399,7 +421,13 @@ class MainWindow(BaseWindow):
         self.download_version(
             'Baixando a última Release...', is_build=False)
 
-    def download_version(self, text, is_build):
+    def download_version(self, text, is_build, is_specific_version=False):
+        specific_version_text = self.line_edit_version_download.text()
+        print(specific_version_text)
+        if specific_version_text == '...' or specific_version_text != '' and len(specific_version_text) != 13 :
+            self.show_dialog('Digite a versão que deseja baixar')
+            return
+
         self.progress_dialog = QProgressDialog(self)
         self.progress_dialog.setWindowTitle('Download')
         self.progress_dialog.setLabelText(text)
@@ -409,7 +437,10 @@ class MainWindow(BaseWindow):
         self.progress_dialog.setWindowModality(Qt.WindowModal)
         self.reset_layout()
         
-        self.download_thread = DownloadThread(is_build)
+        if is_specific_version:
+            self.download_thread = DownloadThread(is_build, specific_version=self.line_edit_version_download.text())
+        else:
+            self.download_thread = DownloadThread(is_build)
         self.download_thread.download_finished.connect(lambda:self.download_finished(is_build))
         self.download_thread.start()
         
@@ -419,7 +450,12 @@ class MainWindow(BaseWindow):
             
     def download_finished(self, is_build):
         self.progress_dialog.cancel()
-        if is_build: 
+        if is_build == None:
+            if self.download_thread.specific_version_finished:
+                self.show_dialog('Arquivo enviado para a pasta de downloads')
+            else:   
+                self.show_dialog('Não há arquivo para baixar')
+        elif is_build: 
             if self.latest_version_handler.latest_build_version_text() != 'SemBuild':
                 self.show_dialog('Arquivo enviado para a pasta de downloads')
             else:   

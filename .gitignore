@@ -15,3 +15,4 @@ components/automation_windows/release.robot
 components/automation_windows/automated_tests/faturar_nota.robot
 components/paramsold.json
 *.spec
+interactive_console_output.xml
