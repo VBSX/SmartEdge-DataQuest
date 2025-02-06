@@ -438,7 +438,7 @@ class MainWindow(BaseWindow):
         self.reset_layout()
         
         if is_specific_version:
-            self.download_thread = DownloadThread(is_build, specific_version=self.line_edit_version_download.text())
+            self.download_thread = DownloadThread(is_build, specific_version=specific_version_text)
         else:
             self.download_thread = DownloadThread(is_build)
         self.download_thread.download_finished.connect(lambda:self.download_finished(is_build))

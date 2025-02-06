@@ -39,7 +39,7 @@ class DownloadThread(QThread):
 
     def run(self):
         if self.is_build == None:
-            self.specific_version_finished = self.download.download_by_version(self.specific_version)
+            self.specific_version_finished = self.download.download_by_version(str(self.specific_version))
         elif self.is_build:
             self.download.download_latest_build()
         elif self.thread_create_post:
