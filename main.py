@@ -423,11 +423,11 @@ class MainWindow(BaseWindow):
 
     def download_version(self, text, is_build, is_specific_version=False):
         specific_version_text = self.line_edit_version_download.text()
-        print(specific_version_text)
-        if specific_version_text == '...' or specific_version_text != '' and len(specific_version_text) != 13 :
+        
+        if is_specific_version== True and specific_version_text == '...'  or is_specific_version== True and specific_version_text != '' and len(specific_version_text) != 13 :
             self.show_dialog('Digite a versão que deseja baixar')
             return
-
+    
         self.progress_dialog = QProgressDialog(self)
         self.progress_dialog.setWindowTitle('Download')
         self.progress_dialog.setLabelText(text)

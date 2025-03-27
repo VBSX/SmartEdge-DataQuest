@@ -204,6 +204,7 @@ class VersionReleaseInterface(BaseWindow):
             vsintegracao = self.widget_mycommerce.line_edit_vsintegracao.text()
             mycomanda = self.widget_mycommerce.line_edit_mycomanda.text()
             vs_services_myzap = self.widget_mycommerce.line_edit_vs_services_myzap.text()
+            optclinic = self.widget_mycommerce.line_edit_optoclinic.text()
             list_of_compatibilities = [
                 f'MyCommerce PDV',
                 f'MyLocação',
@@ -211,9 +212,10 @@ class VersionReleaseInterface(BaseWindow):
                 f'MyZap',
                 f'VsIntegrações',
                 f'MyComanda',
-                f'vs.Services MyZap'
+                f'vs.Services MyZap',
+                f'Optoclinic'
                 ]
-            list_of_versions = [mycommerce_pdv, mylocacao, mypet, myzap, vsintegracao, mycomanda, vs_services_myzap]
+            list_of_versions = [mycommerce_pdv, mylocacao, mypet, myzap, vsintegracao, mycomanda, vs_services_myzap, optclinic]
             list_of_is_compatible = [
                 self.widget_mycommerce.checkbox_compativel_mycommerce_pdv.isChecked(),
                 self.widget_mycommerce.checkbox_compativel_mylocacao.isChecked(),
@@ -221,7 +223,8 @@ class VersionReleaseInterface(BaseWindow):
                 self.widget_mycommerce.checkbox_compativel_myzap.isChecked(),
                 self.widget_mycommerce.checkbox_compativel_vsintegracao.isChecked(),
                 self.widget_mycommerce.checkbox_compativel_mycomanda.isChecked(),
-                self.widget_mycommerce.checkbox_compativel_services_myzap.isChecked()
+                self.widget_mycommerce.checkbox_compativel_services_myzap.isChecked(),
+                self.widget_mycommerce.checkbox_compativel_optoclinic.isChecked()
                 ]
             message_mylocacao = ''
             message_mypet = ''

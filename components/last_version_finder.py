@@ -192,8 +192,8 @@ if __name__ == '__main__':
     # print('mypet',LatestVersion().latest_release_version_text_mypet())
     # print('myzap',LatestVersion().latest_release_version_text_myzap())
     # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
-    # print(LatestVersion().latest_release_version_text_mypet())
-    print(LatestVersion().download_by_version('10.07.02.0000'))
+    print(LatestVersion().latest_release_version_text_mypet())
+    # print(LatestVersion().download_by_version('10.07.02.0000'))
     # print(LatestVersion().download_latest_release())
     
     

@@ -30,11 +30,13 @@ class WidgetReleaseMycommerce(BaseWindow):
         self.horizontal_history_version = QHBoxLayout()
         self.horizontal_layout_mycomanda = QHBoxLayout()
         self.horizontal_layout_vs_services_myzap = QHBoxLayout()
+        self.horizontal_layout_optoclinic = QHBoxLayout()
+        
         final_list =[
             self.horizontal_layout_release,self.horizontal_layout_mycommerce_pdv,
             self.horizontal_layout_mylocacao, 
             self.horizontal_layout_mypet, self.horizontal_layout_myzap, self.horizontal_layout_vsintegracao,
-            self.horizontal_layout_mycomanda,self.horizontal_layout_vs_services_myzap
+            self.horizontal_layout_mycomanda,self.horizontal_layout_vs_services_myzap, self.horizontal_layout_optoclinic
             ]
         
         self.create_all_checkboxes()
@@ -78,6 +80,9 @@ class WidgetReleaseMycommerce(BaseWindow):
         self.checkbox_compativel_mycomanda = self.create_checkbox(text= "Compatível")
         self.horizontal_layout_mycomanda.addWidget(self.checkbox_compativel_mycomanda)
         
+        self.checkbox_compativel_optoclinic = self.create_checkbox(text= "Compatível")
+        self.horizontal_layout_optoclinic.addWidget(self.checkbox_compativel_optoclinic)
+        
     def create_all_labels(self):
         self.label_mycommerce_pdv = self.create_label(
             text="MyCommerce PDV: ")
@@ -116,6 +121,11 @@ class WidgetReleaseMycommerce(BaseWindow):
             text="VsServices MyZap: "
         )
         self.horizontal_layout_vs_services_myzap.addWidget(self.label_vs_services_myzap)
+        
+        self.label_optoclinic = self.create_label(
+            text="Optoclinic: "
+        )
+        self.horizontal_layout_optoclinic.addWidget(self.label_optoclinic)
         
     def create_all_line_edits(self):
         self.line_edit_mycommerce_pdv_version = self.create_line_edit(
@@ -159,9 +169,14 @@ class WidgetReleaseMycommerce(BaseWindow):
         
         self.line_edit_vs_services_myzap = self.create_line_edit(
             placeholder="versão do vs.Services MyZap",
-            # set_text=self.latest_version_handler.latest_release_version_text_vd_services_myzap()
+            set_text=self.latest_version_handler.latest_release_version_text_myzap()
         )
         self.horizontal_layout_vs_services_myzap.addWidget(self.line_edit_vs_services_myzap)
+        
+        self.line_edit_optoclinic = self.create_line_edit(
+            placeholder="versão do Optoclinic"
+        )
+        self.horizontal_layout_optoclinic.addWidget(self.line_edit_optoclinic)
         
         self.process_input(self.line_edit_version_mycommerce_release)
         self.process_input(self.line_edit_mycommerce_pdv_version)
@@ -171,16 +186,18 @@ class WidgetReleaseMycommerce(BaseWindow):
         self.process_input(self.line_edit_vsintegracao)
         self.process_input(self.line_edit_mycomanda)
         self.process_input(self.line_edit_vs_services_myzap)
+        self.process_input(self.line_edit_optoclinic)
 
         # passa para o proximo line_edit quando o usuario pressionar enter
         self.line_edit_return_pressed(self.line_edit_mycommerce_pdv_version, self.line_edit_mylocacao_version)
         self.line_edit_return_pressed(self.line_edit_mylocacao_version, self.line_edit_mypet)
         self.line_edit_return_pressed(self.line_edit_mypet, self.line_edit_myzap)
         self.line_edit_return_pressed(self.line_edit_myzap, self.line_edit_vsintegracao)
-        self.line_edit_return_pressed(self.line_edit_vsintegracao, self.line_edit_version_mycommerce_release)
-        self.line_edit_return_pressed(self.line_edit_version_mycommerce_release, self.line_edit_mycomanda)
+        self.line_edit_return_pressed(self.line_edit_vsintegracao, self.line_edit_mycomanda)
+        self.line_edit_return_pressed( self.line_edit_mycomanda, self.line_edit_vs_services_myzap)
         self.line_edit_return_pressed(self.line_edit_mycomanda, self.line_edit_vs_services_myzap)
-        self.line_edit_return_pressed(self.line_edit_vs_services_myzap, self.checkbox_compativel_mycommerce_pdv)
+        self.line_edit_return_pressed(self.line_edit_vs_services_myzap, self.line_edit_optoclinic)
+        self.line_edit_return_pressed(self.line_edit_optoclinic, self.line_edit_version_mycommerce_release)
 
 if __name__ == "__main__":
     import sys
