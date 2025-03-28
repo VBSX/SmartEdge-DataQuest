@@ -9,7 +9,10 @@ from components.last_version_finder import LatestVersion
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QSpacerItem,
-    QSizePolicy
+    QSizePolicy,
+    QVBoxLayout,
+    QWidget,
+    QFrame
 )
 
 class WidgetReleaseMycommerce(BaseWindow):
@@ -17,8 +20,18 @@ class WidgetReleaseMycommerce(BaseWindow):
         super(WidgetReleaseMycommerce, self).__init__(parent)
         self.latest_version_handler = LatestVersion()
         self.setup_ui()
-    
+        
+        
     def setup_ui(self):
+        self.main_container = QWidget()
+        self.main_layout = QHBoxLayout(self.main_container)
+        
+        self.container_secao1 = QWidget()
+        self.container_secao2 = QWidget()
+        
+        self.secao_vertical1 = QVBoxLayout(self.container_secao1)
+        self.secao_vertical2 = QVBoxLayout(self.container_secao2)
+        
         self.horizontal_layout_mycommerce_pdv = QHBoxLayout()
         self.horizontal_layout_mylocacao = QHBoxLayout()
         self.horizontal_layout_mypet = QHBoxLayout()
@@ -32,20 +45,48 @@ class WidgetReleaseMycommerce(BaseWindow):
         self.horizontal_layout_vs_services_myzap = QHBoxLayout()
         self.horizontal_layout_optoclinic = QHBoxLayout()
         
-        final_list =[
-            self.horizontal_layout_release,self.horizontal_layout_mycommerce_pdv,
-            self.horizontal_layout_mylocacao, 
-            self.horizontal_layout_mypet, self.horizontal_layout_myzap, self.horizontal_layout_vsintegracao,
-            self.horizontal_layout_mycomanda,self.horizontal_layout_vs_services_myzap, self.horizontal_layout_optoclinic
-            ]
+        self.secao_vertical1.addLayout(self.horizontal_layout_mycommerce_pdv)
+        self.secao_vertical1.addLayout(self.horizontal_layout_mylocacao)
+        self.secao_vertical1.addLayout(self.horizontal_layout_mypet)
+        self.secao_vertical1.addLayout(self.horizontal_layout_myzap)
+        
+        self.secao_vertical2.addLayout(self.horizontal_layout_vsintegracao)
+        self.secao_vertical2.addLayout(self.horizontal_layout_mycomanda)
+        self.secao_vertical2.addLayout(self.horizontal_layout_vs_services_myzap)
+        self.secao_vertical2.addLayout(self.horizontal_layout_optoclinic)
+        
+        # ADICIONA LINHA DIVISÓRIA 
+        self.divider = QFrame()
+        self.divider.setFrameShape(QFrame.VLine)  # Linha vertical
+        self.divider.setFrameShadow(QFrame.Sunken)
+        self.divider.setLineWidth(3)  # Espessura da linha
+        self.divider.setStyleSheet("""
+            QFrame {
+                margin: 0px 1px;
+                background-color: white;
+                min-height: 100%;
+            }
+        """)
+
+        self.main_layout.addWidget(self.container_secao1)
+        self.main_layout.addWidget(self.divider)  # Adiciona a linha divisória
+        self.main_layout.addWidget(self.container_secao2)
+        
+        self.main_layout.setStretch(0, 1)  # container_secao1 ocupa 1 parte
+        self.main_layout.setStretch(1, 0)  # linha divisória não estica
+        self.main_layout.setStretch(2, 1)  # container_secao2 ocupa 1 parte
         
         self.create_all_checkboxes()
         self.create_all_labels()
         self.create_all_line_edits()
-        self.spacer_horizontal = QSpacerItem(100,10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.horizontal_layout_release.addItem(self.spacer_horizontal)
-        self.create_layouts(final_list)
         
+        # Adiciona espaçador
+        self.spacer_horizontal = QSpacerItem(100, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontal_layout_release.addItem(self.spacer_horizontal)
+        
+        self.setCentralWidget(self.main_container)
+        
+    
     def create_all_checkboxes(self):
         self.checkbox_compativel_mycommerce_pdv = self.create_checkbox(
             text="Compatível"

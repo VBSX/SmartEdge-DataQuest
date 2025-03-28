@@ -15,6 +15,7 @@ class LatestVersion():
         self.path_myzap = base_path+'MyZap - Configurador'#+ r'\\Versoes liberadas\\Última liberada'
         self.path_vsintegracoes = base_path+'vsIntegracoes'
         self.path_myfrota = base_path+'MyFrota'
+        self.path_mycomanda = base_path+'MyComanda'
         self.os_handler = OsHandler()
         self.has_connection = self.os_handler.verify_if_has_connection()
         
@@ -37,6 +38,8 @@ class LatestVersion():
                 startwith = 'vsIntegracoes_Full_'
             elif software_name == 'MyFrota':
                 startwith = 'MyFrota__Full_'
+            elif software_name == 'MyComanda':
+                startwith = 'MyComanda_Full_'
 
             for archive in all_archives:
                 if archive.endswith('0.exe') and not archive.startswith(startwith):
@@ -81,7 +84,8 @@ class LatestVersion():
                         'PetShopAtu_',
                         'vsIntegracoes_Atu_',
                         'vsIntegracoes_Full_',
-                        'MyLocacao_', 'Robô MyZap - Atu_', 'MyFrota__Atu_'
+                        'MyLocacao_', 'Robô MyZap - Atu_', 'MyFrota__Atu_',
+                        "MyComanda_"
                         ]
         if text:
             for item in list_of_text:
@@ -129,6 +133,9 @@ class LatestVersion():
     
     def latest_release_version_text_myfrota(self):
         return self.text_strip(self.latest_release_version(self.path_myfrota, 'MyFrota'))
+    
+    def latest_release_version_text_mycomanda(self):
+        return self.text_strip(self.latest_release_version(self.path_mycomanda, 'MyComanda'))
     
     def close(self):
         self.os_handler.stop_loop_delete_atalho()
@@ -192,7 +199,7 @@ if __name__ == '__main__':
     # print('mypet',LatestVersion().latest_release_version_text_mypet())
     # print('myzap',LatestVersion().latest_release_version_text_myzap())
     # print('vsintegracoes',LatestVersion().latest_release_version_text_vsintegracoes())
-    print(LatestVersion().latest_release_version_text_mypet())
+    print(LatestVersion().latest_release_version_text_mycomanda())
     # print(LatestVersion().download_by_version('10.07.02.0000'))
     # print(LatestVersion().download_latest_release())
     

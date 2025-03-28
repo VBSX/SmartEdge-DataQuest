@@ -19,7 +19,7 @@ class DialogCredentialsPosts(BaseWindow):
             'bitrix_username',
             'forum_username',
         ]
-        self.list_of_program_names = ['Mycommerce', 'MyPet', 'MyFrota']
+        self.list_of_program_names = ['Mycommerce', 'MyPet', 'MyFrota', 'MyComanda']
         
         self.key = b'nPwQhXeEkt3A7DC4ZqtdVl2xzYQe6IHoq3kmztTIx1M='
 

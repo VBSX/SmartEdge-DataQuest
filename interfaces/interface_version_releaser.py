@@ -10,13 +10,15 @@ from interfaces.thread_pyside import DownloadThread
 from interfaces.widget_release_myfrota import WidgetReleaseMyfrota
 from interfaces.widget_release_mycommerce import WidgetReleaseMycommerce
 from interfaces.widget_release_mypet import WidgetReleaseMypet
-
+from interfaces.widget_release_mycomanda import WidgetReleaseMyComanda
 from PySide6.QtCore import Qt 
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
-    QProgressDialog
+    QProgressDialog,
 )
+from PySide6.QtGui import QGuiApplication
+
 from random import choice
 class VersionReleaseInterface(BaseWindow):
     def __init__(self, parent=None):
@@ -32,7 +34,8 @@ class VersionReleaseInterface(BaseWindow):
         
         self.get_configs_forums()
         if self.name_of_program =='Mycommerce':
-            height = 920
+            height = 900
+            width = 1025
             self.widget_mycommerce = WidgetReleaseMycommerce()
             final_list = [self.widget_mycommerce]
             self.create_layouts(final_list)
@@ -46,8 +49,23 @@ class VersionReleaseInterface(BaseWindow):
             final_list = [self.widget_mypet]
         elif self.name_of_program == 'default' or self.name_of_program == 'Mycommerce PDV':
             height = 650
-            final_list = []   
+            final_list = []  
+        elif self.name_of_program == 'MyComanda':
+            height = 650
+            self.widget_mycomanda = WidgetReleaseMyComanda()
+            final_list = [self.widget_mycomanda] 
+            
+            
         self.setFixedSize(width, height)
+        
+        # Centraliza a janela
+        screen = QGuiApplication.primaryScreen().geometry()
+        window_geometry = self.frameGeometry()
+        self.move(
+            (screen.width() - window_geometry.width()) // 2,
+            (screen.height() - window_geometry.height()) // 2
+        )
+        
         
         self.horizontal_layout_manual_release = QHBoxLayout()
         self.horizontal_layout_messages = QHBoxLayout()
@@ -254,7 +272,18 @@ class VersionReleaseInterface(BaseWindow):
                 ]
             message_mypet = ''
             # list_messages_raw = [message_mypet]
-  
+            
+        elif self.name_of_program == 'MyComanda':
+            mycommerce_version = self.widget_mycomanda.line_edit_mycommerce_version.text()
+            list_of_compatibilities = ['Mycommerce']
+            list_of_versions = [mycommerce_version]
+            list_of_is_compatible = [
+                self.widget_mycomanda.checkbox_compativel_mycommerce.isChecked()
+                ]
+            message_mycomanda = ''
+            # list_messages_raw = [message_mycomanda]
+        
+        
         final_message = ''
         compatible_messages = []
         not_compatible_messages = []
@@ -306,7 +335,9 @@ class VersionReleaseInterface(BaseWindow):
             software_version = self.widget_myfrota.line_edit_version_myfrota_release.text()
         elif self.name_of_program == 'MyPet':
             software_version = self.widget_mypet.line_edit_version_mypet_release.text()
-            
+        elif self.name_of_program == 'MyComanda':
+            software_version = self.widget_mycomanda.line_edit_version_mycomanda_release.text()
+        
         initial_message = self.line_edit_messages_fixes.toPlainText()
         is_final_version = self.checkbox_final_version.isChecked()
         
