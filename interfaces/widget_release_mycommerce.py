@@ -23,21 +23,34 @@ class WidgetReleaseMycommerce(BaseWindow):
         
         
     def setup_ui(self):
+        # Layout principal (agora vertical)
         self.main_container = QWidget()
-        self.main_layout = QHBoxLayout(self.main_container)
+        self.main_layout = QVBoxLayout(self.main_container)  # Mudado para QVBoxLayout
         
+        # Layout superior (horizontal_layout_release)
+        self.top_layout = QHBoxLayout()
+        self.horizontal_layout_release = QHBoxLayout()
+        self.top_layout.addLayout(self.horizontal_layout_release)
+
+
+        # Container para as seções laterais
+        self.sections_container = QWidget()
+        self.sections_layout = QHBoxLayout(self.sections_container)
+        
+        # Containers das seções esquerda e direita
         self.container_secao1 = QWidget()
         self.container_secao2 = QWidget()
         
+        # Layouts verticais para cada seção
         self.secao_vertical1 = QVBoxLayout(self.container_secao1)
         self.secao_vertical2 = QVBoxLayout(self.container_secao2)
         
+        # Adiciona os layouts horizontais às seções verticais
         self.horizontal_layout_mycommerce_pdv = QHBoxLayout()
         self.horizontal_layout_mylocacao = QHBoxLayout()
         self.horizontal_layout_mypet = QHBoxLayout()
         self.horizontal_layout_myzap = QHBoxLayout()
         self.horizontal_layout_vsintegracao = QHBoxLayout()
-        self.horizontal_layout_release = QHBoxLayout()
         self.horizontal_layout_manual_release = QHBoxLayout()
         self.horizontal_layout_messages = QHBoxLayout()
         self.horizontal_history_version = QHBoxLayout()
@@ -55,37 +68,41 @@ class WidgetReleaseMycommerce(BaseWindow):
         self.secao_vertical2.addLayout(self.horizontal_layout_vs_services_myzap)
         self.secao_vertical2.addLayout(self.horizontal_layout_optoclinic)
         
-        # ADICIONA LINHA DIVISÓRIA 
+        # Linha divisória entre as seções
         self.divider = QFrame()
-        self.divider.setFrameShape(QFrame.VLine)  # Linha vertical
-        self.divider.setFrameShadow(QFrame.Sunken)
-        self.divider.setLineWidth(3)  # Espessura da linha
+        self.divider.setFrameShape(QFrame.VLine)
         self.divider.setStyleSheet("""
             QFrame {
-                margin: 0px 1px;
+                border-left: 2px solid #CCCCCC;
+                margin: 0px 10px;
                 background-color: white;
-                min-height: 100%;
             }
         """)
-
-        self.main_layout.addWidget(self.container_secao1)
-        self.main_layout.addWidget(self.divider)  # Adiciona a linha divisória
-        self.main_layout.addWidget(self.container_secao2)
         
-        self.main_layout.setStretch(0, 1)  # container_secao1 ocupa 1 parte
-        self.main_layout.setStretch(1, 0)  # linha divisória não estica
-        self.main_layout.setStretch(2, 1)  # container_secao2 ocupa 1 parte
+        # Adiciona as seções ao layout horizontal
+        self.sections_layout.addWidget(self.container_secao1)
+        self.sections_layout.addWidget(self.divider)
+        self.sections_layout.addWidget(self.container_secao2)
         
+        # Configura proporções
+        self.sections_layout.setStretch(0, 1)
+        self.sections_layout.setStretch(1, 0)
+        self.sections_layout.setStretch(2, 1)
+        
+        # Adiciona tudo ao layout principal
+        self.main_layout.addLayout(self.top_layout)  # horizontal_layout_release fica no topo
+        self.main_layout.addWidget(self.sections_container)  # Seções ficam abaixo
+        
+        # Espaçador no layout de release
+        self.spacer_horizontal = QSpacerItem(100, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontal_layout_release.addItem(self.spacer_horizontal)
+        
+        # Cria os componentes
         self.create_all_checkboxes()
         self.create_all_labels()
         self.create_all_line_edits()
         
-        # Adiciona espaçador
-        self.spacer_horizontal = QSpacerItem(100, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.horizontal_layout_release.addItem(self.spacer_horizontal)
-        
         self.setCentralWidget(self.main_container)
-        
     
     def create_all_checkboxes(self):
         self.checkbox_compativel_mycommerce_pdv = self.create_checkbox(

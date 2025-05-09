@@ -114,6 +114,7 @@ class Database():
     
     
     def reset_users_password(self):
+            self.get_file_config()
             query_return = self.update_users_password_to_default()
             if query_return != 'sucess':
                 return query_return
@@ -149,6 +150,9 @@ class Database():
                 self.connected = False
                 return 'sucess'
             except Error as er:
+                self.cursor.close()
+                self.conexao.close()
+                self.connected = False
                 return er
         else:
             self.connected = False

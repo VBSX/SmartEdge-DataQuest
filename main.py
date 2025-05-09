@@ -318,8 +318,7 @@ class MainWindow(BaseWindow):
             self.show_dialog('Configuração ainda não realizada')
     
     def reset_users_password(self):
-
-        self.reset_layout()
+        # self.reset_layout()
         query_return = self.db.reset_users_password()
         if query_return == 'sucess':
             self.show_dialog('Senhas resetadas com sucesso')

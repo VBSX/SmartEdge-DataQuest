@@ -27,9 +27,12 @@ class IniConfig:
         self.config_att_value('cqp', test_mode)
     
     def config_att_value(self, key, new_value):
-        self.config.set('Servidor', key, str(new_value))
-        with open(self.config_path, 'w') as arquivo:
-            self.config.write(arquivo)
+        try:
+            self.config.set('Servidor', key, str(new_value))
+            with open(self.config_path, 'w') as arquivo:
+                self.config.write(arquivo)
+        except Exception as e:
+            return e
 
 if __name__ == '__main__':
     config = IniConfig()

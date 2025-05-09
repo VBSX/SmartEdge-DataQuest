@@ -289,7 +289,12 @@ class File():
         elif key == 'test_mode':
             self.ini_config.set_test_mode(f"{value}")
         if key != 'user' and key != 'password':
-            self.ini_config.config_att_value(key, value)
+        
+            return_config_att_value = self.ini_config.config_att_value(key, value)
+            if return_config_att_value != None:
+                return_config_att_value = str(return_config_att_value)
+                self.log_write(return_config_att_value)
+                
         return 'sucess'
 
     def write_json(self):

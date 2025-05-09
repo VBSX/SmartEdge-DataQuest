@@ -27,6 +27,11 @@ class SovisWindow(BaseWindow):
         self.horizontal_layout_import_order = QHBoxLayout()
         self.list_of_layouts.append(self.horizontal_layout_import_order)
         #
+        
+        self.horizontal_layout_details_order = QHBoxLayout()
+        self.list_of_layouts.append(self.horizontal_layout_details_order)
+        
+        #
         self.horizontal_layout_change_id_order = QHBoxLayout()
         self.list_of_layouts.append(self.horizontal_layout_change_id_order)
         
@@ -52,6 +57,7 @@ class SovisWindow(BaseWindow):
         self.line_edit_order_number.textChanged.connect(self.update_type_id_combo)
         self.horizontal_layout_import_order.addWidget(self.line_edit_order_number)
         
+   
     def create_all_labels(self):
         self.label_import_order_number = self.create_label(
             text='Coloque o número do pedido'
@@ -84,8 +90,11 @@ class SovisWindow(BaseWindow):
         
     def create_all_combobox(self):
         self.combobox_ids_order = QComboBox()
-        for item in range(1,10):
-            self.combobox_ids_order.addItems(str(item))
+        for item in range(1, 13):
+            if item == 10:
+                pass
+            else:
+                self.combobox_ids_order.addItem(str(item))
         
         self.update_type_id_combo()
         self.combobox_ids_order.currentIndexChanged.connect(self.combobox_id_order_set_description)
@@ -101,10 +110,13 @@ class SovisWindow(BaseWindow):
             'BONIFICAÇÃO MONITOR ' ,
             'PERDA ',
             'NFCe ',
+            'Comodato',
+            # 'Id 10 nao existe',
+            'Devolução sem gerar financeiro',
             'PRÉ-VENDA (Monitor Faturamento) '
             ]
-        # usa o range para preencher a lista de ids com os números de 1 a 9
-        list_of_ids = list(range(0,9))
+        # usa o range para preencher a lista de ids com os números de 1 a 12
+        list_of_ids = list(range(0,12))
 
         for index in list_of_ids:
             if self.combobox_ids_order.currentIndex() == index:
@@ -131,7 +143,7 @@ class SovisWindow(BaseWindow):
             db_return, order_return = self.db.get_sovis_order(order_number)
             if db_return == 'sucess' and order_return:
                 self.db.update_type_id_order_sovis(order_number, id_type_order)
-                for index in range(1,10):
+                for index in range(1,12):
                     if id_type_order == index:
                         self.db.update_type_id_itens_order_sovis(order_number, index)
                         self.show_dialog('IDTIPOPEDIDO alterado com sucesso')

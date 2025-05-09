@@ -130,11 +130,11 @@ class OsHandler():
         return result == 0
     
     def verify_if_has_connection(self, log_path = False):
-        if not log_path:
-            ip = r'10.1.1.110'
-        else:
-            # path = r'\\192.168.2.244\shared'
-            ip = r'192.168.2.231'
+        # if not log_path:
+        ip = r'10.1.1.110'
+        # else:
+        #     # path = r'\\192.168.2.244\shared'
+        #     ip = r'192.168.2.231'
                 
         if self.ping(ip):
             print(f'tem conexão: ip: {ip}')
