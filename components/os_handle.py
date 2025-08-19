@@ -14,7 +14,7 @@ from os.path import (
 from sys import path as syspath
 path = path_os('./')
 syspath.append(path)
-
+import psutil
 # import threading
 from shutil import which
 import subprocess
@@ -38,6 +38,9 @@ class OsHandler():
     def kill_mycommerce_process(self):
         process_name = "mycommerce.exe"
         result = self.process_killer(process_name)
+        if "ERRO" in result:
+            # Se não encontrou o processo, tenta com psutil
+            result = self.process_killer_by_psutil(process_name)
         return result
 
     def kill_mymonitorfat_process(self):
@@ -49,7 +52,7 @@ class OsHandler():
         process_name = "AtualizarDB.exe"
         result = self.process_killer(process_name)
         return result
-   
+    
     def process_killer(self, nome_processo):
         command = f"taskkill /F /IM {nome_processo}"
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -64,8 +67,34 @@ class OsHandler():
             return "Processo encerrado com sucesso."
         else:
             # Retornar a saída de erro padrão se houver outros erros
-            return f"Erro ao tentar encerrar o processo:\n{stderr_str}"
+            return f"ERRO: ao tentar encerrar o processo:\n{stderr_str}"  
+    
+    def process_killer_by_psutil(self, nome_processo: str):
+        nome_processo = nome_processo.lower()
+        encontrados = []
 
+        for proc in psutil.process_iter(['pid', 'name']):
+            try:
+                if proc.info['name'] and proc.info['name'].lower() == nome_processo:
+                    encontrados.append(proc)
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+
+        if not encontrados:
+            return f"ERRO: processo '{nome_processo}' não encontrado."
+
+        erros = []
+        for proc in encontrados:
+            try:
+                proc.kill()
+            except Exception as e:
+                erros.append(f"PID {proc.pid}: {e}")
+
+        if erros:
+            return "Ocorreram erros ao tentar encerrar:\n" + "\n".join(erros)
+        else:
+            return f"Processo '{nome_processo}' encerrado com sucesso."
+    
     def download_version(self, path, file_name ):
         self.canceled = False
         # copy file to downloads folder
@@ -243,4 +272,4 @@ if __name__ == "__main__":
     #     print(os_handler.ping('10.1.1.110'))
         
     #     sleep(0.5)
-    print(os_handler.get_version_of_browser("brave"))
+    print(os_handler.kill_mycommerce_process())

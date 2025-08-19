@@ -3,6 +3,7 @@ from configparser import ConfigParser
 class IniConfig:
     def __init__(self, config_path=None):
         self.config_path = config_path or r'C:\Visual Software\MyCommerce\Config.ini'
+        self.config_path_mycomanda = r"C:\Visual Software\MyComanda\Config.ini"
         self.config = ConfigParser()
         self.config.read(self.config_path)
 
@@ -29,8 +30,10 @@ class IniConfig:
     def config_att_value(self, key, new_value):
         try:
             self.config.set('Servidor', key, str(new_value))
-            with open(self.config_path, 'w') as arquivo:
-                self.config.write(arquivo)
+            for file in [self.config_path, self.config_path_mycomanda]:
+                with open(file, 'w') as arquivo:
+                    self.config.write(arquivo)
+
         except Exception as e:
             return e
 
