@@ -16,3 +16,4 @@ components/automation_windows/automated_tests/faturar_nota.robot
 components/paramsold.json
 *.spec
 interactive_console_output.xml
+components/automation_windows/test_post.ini
