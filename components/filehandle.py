@@ -20,8 +20,11 @@ from components.os_handle import OsHandler
 from datetime import datetime
 
 class File():
-    def __init__(self):
-        self.ini_config = IniConfig()
+    def __init__(self, config_path = None):
+        if config_path:
+            self.ini_config = IniConfig(config_path=config_path)
+        else:
+            self.ini_config = IniConfig()
         self.path_json = r'components/params.json'
         self.path_log = r'components/log.txt'
         self.json_file = self.read_json()
@@ -173,6 +176,7 @@ class File():
                         content.pop('user_releaser')
                         content.pop('name_of_program')
                         content.pop('test_mode')
+                        content.pop('config_path')
                     except:
                         print('erro ao retirar os campos referente as credenciais do bitrix e forum')
                     return content
@@ -229,6 +233,8 @@ class File():
     def get_test_mode(self):
         return self.get_info_json('test_mode')
     
+    
+    
     def get_info_json(self, field):
         if self.verify_if_path_exists(self.path_json):
             campo = self.json_file[field]  
@@ -239,7 +245,13 @@ class File():
         else:
             self.create_json()
             self.get_info_json(field)
-    
+            
+    def get_config_path(self):
+        return self.get_info_json('config_path')
+
+    def set_config_path(self, config_path):
+        self.json_setter('config_path', config_path)
+
     def set_test_mode(self, test_mode):
         self.json_setter('test_mode', test_mode)
     
@@ -317,7 +329,8 @@ class File():
         if not self.verify_if_path_exists(self.path_json):
             with open(self.path_json, 'w') as f:
                 f.write(
-                    """{"user": "default",
+                    """{
+                    "user": "default",
                     "password": "default",
                     "host": "localhost",
                     "port": "3306",
@@ -328,9 +341,11 @@ class File():
                     "forum_password":"default",
                     "user_releaser":"default",
                     "name_of_program":"default",
-                    "test_mode":1
+                    "test_mode":1,
+                    "config_path":"C:\\\\Visual Software\\\\MyCommerce\\\\Config.ini"
                     }""")
         return 'sucess'
+
     
     def verify_if_images_path_exists(self):
         if exists(r'images'):

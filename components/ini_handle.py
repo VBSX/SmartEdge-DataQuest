@@ -3,6 +3,7 @@ from configparser import ConfigParser
 class IniConfig:
     def __init__(self, config_path=None, post_creator_ini=False):
         self.post_creator_ini = post_creator_ini
+        
         if not self.post_creator_ini:
             self.config_path = config_path or r'C:\Visual Software\MyCommerce\Config.ini'
             self.config_path_mycomanda = r"C:\Visual Software\MyComanda\Config.ini"

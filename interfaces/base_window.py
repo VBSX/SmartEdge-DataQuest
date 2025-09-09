@@ -195,6 +195,8 @@ class BaseWindow(QMainWindow):
         else: return None
         
     def get_configs(self):
+        self.file_handler = File(config_path=self.file_handler.get_config_path())
+
         json_file = self.file_handler.read_json()
         self.host = json_file['host']
         self.port = json_file['port']

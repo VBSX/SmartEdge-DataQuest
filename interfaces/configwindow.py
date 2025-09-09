@@ -12,8 +12,10 @@ from PySide6.QtWidgets import (
     QLineEdit
     )
 from PySide6.QtCore import Qt
-from interfaces.base_window import BaseWindow
-
+from interfaces.base_window import BaseWindow, File, QPushButton
+from PySide6.QtWidgets import (
+    QFileDialog
+)
 class ConfigWindow(BaseWindow):
     def __init__(self, parent=None):
         super(ConfigWindow,self).__init__(parent)
@@ -28,7 +30,7 @@ class ConfigWindow(BaseWindow):
         
     def setup_ui(self):
         self.setWindowTitle("Config")
-        self.setFixedSize(430, 410)
+        self.setFixedSize(480, 410)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -117,7 +119,26 @@ class ConfigWindow(BaseWindow):
         self.line_edit_database.setMaxLength(20)
         
         self.horizontal_layout_set(self.label_database, self.line_edit_database, None, None)
-        
+        # field config_path
+        self.label_config_path = QLabel('Caminho do Config.ini:')
+        self.line_edit_config_path = QLineEdit()
+
+        if self.file_handler.ini_config.config_path:
+            self.line_edit_config_path.setText(self.file_handler.get_config_path())
+
+        else:
+            self.line_edit_config_path.setText(r'C:\Visual Software\MyCommerce\Config.ini')
+
+
+        self.line_edit_config_path.setPlaceholderText(r'C:\Visual Software\MyCommerce\Config.ini')
+
+        # Botão para abrir o explorador
+        self.button_browse = QPushButton("📂")
+        self.button_browse.setFixedWidth(40)
+        self.button_browse.clicked.connect(self.browse_config_file)
+
+        # Layout na mesma linha
+        self.horizontal_layout_set(self.label_config_path, self.line_edit_config_path, self.button_browse, None)        
         self.layout_vertical.addWidget(self.button_save)   
         
         central_widget.setLayout(self.layout_vertical)
@@ -154,6 +175,17 @@ class ConfigWindow(BaseWindow):
             test_mode_input = '1'
         else:
             test_mode_input = '0'
+
+        config_path_input = self.line_edit_config_path.text().strip()
+        if not config_path_input:
+            self.show_dialog("O caminho do Config.ini não pode estar vazio")
+            return
+
+        self.file_handler.set_config_path(config_path_input)
+
+        self.file_handler = File(config_path=config_path_input)
+
+
         if (username_input == self.user and
             password_input == self.password and
             host_input == self.host and
@@ -161,7 +193,6 @@ class ConfigWindow(BaseWindow):
             database_input == self.database and
             test_mode_input == self.test_mode
             ):
-            del self.file_handler
             self.close()
             self.parent().reset_layout()
         elif not password_input or not username_input:
@@ -173,19 +204,34 @@ class ConfigWindow(BaseWindow):
             self.file_handler.set_port(port_input)
             self.file_handler.set_database(database_input)
             self.file_handler.set_test_mode(test_mode_input)
+
             return_file = self.file_handler.write_json()
-            
+
             if return_file == 'sucess':
+                self.line_edit_config_path.setText(self.file_handler.ini_config.config_path)
+
                 self.close()
                 self.parent().reset_layout()
                 self.parent().show_dialog("Configuração realizada com sucesso")
+
     
     def show_password(self):
         if self.line_edit_password.echoMode() == QLineEdit.Password:
             self.line_edit_password.setEchoMode(QLineEdit.Normal)
         else:
             self.line_edit_password.setEchoMode(QLineEdit.Password)
-                        
+
+    def browse_config_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Selecione o arquivo de configuração",
+            "",
+            "Arquivos INI (*.ini);;Todos os arquivos (*)"
+        )
+        if file_path:
+            self.line_edit_config_path.setText(file_path)
+
+                       
 if __name__ == "__main__":
     from PySide6.QtWidgets import QApplication
     from sys import argv, exit

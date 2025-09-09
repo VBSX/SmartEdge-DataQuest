@@ -400,9 +400,17 @@ class MainWindow(BaseWindow):
             mask=True
             )
         self.line_edit_return_pressed(self.line_edit_version_download, self.line_edit_version_download)
-    
     def att_db_open(self):
-        self.open_programs('C:\Visual Software\MyCommerce\AtualizarDB.exe')
+        self.get_configs()
+        config_path = self.file_handler.get_config_path()
+        print(config_path)
+        if not config_path or not self.file_handler.verify_if_path_exists(config_path):
+            self.show_dialog("Caminho do Config.ini não encontrado.")
+            return
+        
+        exe_path = config_path.replace("Config.ini", r"AtualizarDB.exe")
+        print(exe_path)
+        self.open_programs(exe_path)
 
     def mymonitor_faturamento_open(self):
         self.open_programs('C:\Visual Software\MyCommerce\MyMonitorFaturamento.exe')
