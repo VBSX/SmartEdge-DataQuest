@@ -451,7 +451,13 @@ class MainWindow(BaseWindow):
         self.open_programs(exe_path)
 
     def mymonitor_faturamento_open(self):
-        self.open_programs('C:\Visual Software\MyCommerce\MyMonitorFaturamento.exe')
+        self.get_configs()
+        configpath = self.file_handler.get_config_path()
+        if not configpath or not self.file_handler.verify_if_path_exists(configpath):
+            self.show_dialog("Caminho do Config.ini não encontrado.")
+            return
+        exe_path = configpath.replace("Config.ini", r"MyMonitorFaturamento.exe")
+        self.open_programs(exe_path)
  
     def open_programs(self, path):
         self.get_configs()

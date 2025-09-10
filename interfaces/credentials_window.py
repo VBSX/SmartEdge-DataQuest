@@ -95,7 +95,6 @@ class DialogCredentialsPosts(BaseWindow):
         
         self.line_edit_forum_password = self.create_line_edit(
             placeholder='Password', mask=False, password_hider=True, fixed_size=False, limit_char=160)
-        self.line_edit_forum_password.setText('******')
         list_line_edits.append(self.line_edit_forum_password)
         
         self.line_edit_bitrix_username = self.create_line_edit(
@@ -104,22 +103,19 @@ class DialogCredentialsPosts(BaseWindow):
         
         self.line_edit_bitrix_password = self.create_line_edit(
             placeholder='Password', mask=False,password_hider=True, fixed_size=False, limit_char=160)
-        self.line_edit_bitrix_password.setText('******')
         list_line_edits.append(self.line_edit_bitrix_password)
         
-        list_credentials = [
-            self.bitrix_username,
-            self.forum_username,
-        ]
-        for credential in self.list_credentials:
-                for data_credential in list_credentials:
-                    if data_credential != 'default':
-                        if credential=='forum_username':
-                            fr_user = self.cripter.decrypt(self.forum_username)
-                            self.line_edit_forum_username.setText(fr_user)
-                        elif credential=='bitrix_username':
-                            bt_user = self.cripter.decrypt(self.bitrix_username)
-                            self.line_edit_bitrix_username.setText(bt_user)
+        # Preenche campos com valores salvos, se existirem
+        if self.forum_username != 'default':
+            fr_user = self.cripter.decrypt(self.forum_username)
+            self.line_edit_forum_username.setText(fr_user)
+        if self.bitrix_username != 'default':
+            bt_user = self.cripter.decrypt(self.bitrix_username)
+            self.line_edit_bitrix_username.setText(bt_user)
+        if self.forum_password != 'default':
+            self.line_edit_forum_password.setText('******')
+        if self.bitrix_password != 'default':
+            self.line_edit_bitrix_password.setText('******')
         
         for line_edit in list_line_edits:
             line_edit.returnPressed.connect(self.save)
@@ -149,58 +145,63 @@ class DialogCredentialsPosts(BaseWindow):
         name_of_program = self.combobox_name_programs.currentText()
         
         forum_username = self.line_edit_forum_username.text()
-        forum_username_encripted= self.cripter.encrypt(forum_username)
-        forum_username_json_decripted = self.cripter.decrypt(self.forum_username)
-        
-        
-        forum_password = self.line_edit_forum_password.text()
-        forum_password_encripted= self.cripter.encrypt(forum_password)
-        forum_password_json_decripted = self.cripter.decrypt(self.forum_password)
-
         bitrix_username = self.line_edit_bitrix_username.text()
-        bitrix_username_encripted= self.cripter.encrypt(bitrix_username)
-        bitrix_username_json_decripted = self.cripter.decrypt(self.bitrix_username)
-        
-        bitrix_password = self.line_edit_bitrix_password.text()
-        bitrix_password_encripted= self.cripter.encrypt(bitrix_password)
-        bitrix_password_json_decripted = self.cripter.decrypt(self.bitrix_password)
-        
-        list_user_input = [forum_username, forum_password, bitrix_username, bitrix_password]
-        list_credentials_decript = [forum_username_json_decripted, forum_password_json_decripted, bitrix_username_json_decripted, bitrix_password_json_decripted]
-        
-        if self.verify_if_is_empty(list_user_input): 
-            self.show_dialog("Preencha todos os campos")
+        forum_password_input = self.line_edit_forum_password.text()
+        bitrix_password_input = self.line_edit_bitrix_password.text()
+
+        # Verifica se é a primeira vez (senha salva == 'default')
+        primeira_vez_forum = self.forum_password == 'default'
+        primeira_vez_bitrix = self.bitrix_password == 'default'
+
+        # Se for a primeira vez, obriga a preencher as senhas
+        if (primeira_vez_forum and (forum_password_input == '' or forum_password_input == '******')) or \
+           (primeira_vez_bitrix and (bitrix_password_input == '' or bitrix_password_input == '******')):
+            self.show_dialog("Preencha todos os campos de senha")
+            return
+
+        # Se não for a primeira vez, mantém a senha antiga se o campo não foi alterado
+        if forum_password_input == '******':
+            forum_password_encripted = self.forum_password
         else:
-            if self.verify_if_is_equal(list_user_input, list_credentials_decript):
+            forum_password_encripted = self.cripter.encrypt(forum_password_input)
+
+        if bitrix_password_input == '******':
+            bitrix_password_encripted = self.bitrix_password
+        else:
+            bitrix_password_encripted = self.cripter.encrypt(bitrix_password_input)
+
+        forum_username_encripted = self.cripter.encrypt(forum_username)
+        bitrix_username_encripted = self.cripter.encrypt(bitrix_username)
+
+        list_user_input = [forum_username, bitrix_username]
+        if self.verify_if_is_empty(list_user_input):
+            self.show_dialog("Preencha todos os campos de usuário")
+            return
+
+        # Salva os dados
+        self.file_handler.set_forum_user(forum_username_encripted)
+        self.file_handler.set_forum_password(forum_password_encripted)
+        self.file_handler.set_bitrix_user(bitrix_username_encripted)
+        self.file_handler.set_bitrix_password(bitrix_password_encripted)
+        if not self.verify_if_is_default(user_releaser):
+            self.file_handler.set_user_releaser(user_releaser)
+        if user_releaser == '':
+            self.file_handler.set_user_releaser('default')
+        if not self.verify_if_is_default(name_of_program):
+            self.file_handler.set_name_of_program(name_of_program)
+        
+        return_file = self.file_handler.write_json()
+        config_name_of_program = self.name_of_program
+        
+        self.get_configs_forums()
+        self.file_handler.add_new_logs(f'{self.bitrix_username} || {self.bitrix_password} || {self.forum_username} || {self.forum_password} || {self.user_releaser} || {self.name_of_program}')
+        if return_file == 'sucess':
+            if name_of_program != config_name_of_program:
                 self.close()
+                self.parent().reset_layout()
             else:
-                self.file_handler.set_forum_user(forum_username_encripted)
-                if not self.verify_if_is_default(forum_password):
-                    self.file_handler.set_forum_password(forum_password_encripted)
-                self.file_handler.set_bitrix_user(bitrix_username_encripted)
-                if not self.verify_if_is_default(bitrix_password):
-                    self.file_handler.set_bitrix_password(bitrix_password_encripted)        
-                if not self.verify_if_is_default(user_releaser):
-                    self.file_handler.set_user_releaser(user_releaser)
-                if user_releaser == '':
-                    self.file_handler.set_user_releaser('default')
-                if not self.verify_if_is_default(name_of_program):
-                    self.file_handler.set_name_of_program(name_of_program)
-                
-                return_file = self.file_handler.write_json()
-                config_name_of_program = self.name_of_program
-                
-                self.get_configs_forums()
-                self.file_handler.add_new_logs(f'{self.bitrix_username} || {self.bitrix_password} || {self.forum_username} || {self.forum_password} || {self.user_releaser} || {self.name_of_program}')
-                if return_file == 'sucess':
-                    
-                    # verifica se houve mudança no nome do programa
-                    if name_of_program != config_name_of_program:
-                        self.close()
-                        self.parent().reset_layout()
-                    else:
-                        self.close()
-                        self.parent().show_dialog("Credenciais salvas com sucesso!")
+                self.close()
+                self.parent().show_dialog("Credenciais salvas com sucesso!")
                    
     def verify_if_is_empty(self, list_user_input):
         for item in list_user_input:

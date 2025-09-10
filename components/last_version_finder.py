@@ -12,7 +12,7 @@ class LatestVersion():
         self.path_mycommerce_pdv = base_path+'MyCommercePDV'
         self.path_mylocacao = base_path+'MyLocacao'
         self.path_mypet = base_path+'PetShop'
-        self.path_myzap = base_path+'MyZap - Configurador'#+ r'\\Versoes liberadas\\Última liberada'
+        self.path_myzap = base_path+'MyZap - Configurador'#+ r'\\Versoes liberadas\\Última liberada'
         self.path_vsintegracoes = base_path+'vsIntegracoes'
         self.path_myfrota = base_path+'MyFrota'
         self.path_mycomanda = base_path+'MyComanda'
