@@ -11,8 +11,9 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QProgressDialog
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QSizePolicy
 from interfaces.query_run_window import QueryWindow
 from interfaces.configwindow import ConfigWindow
 from interfaces.base_window import BaseWindow
@@ -22,7 +23,6 @@ from components.os_handle import OsHandler
 from interfaces.interface_version_releaser import VersionReleaseInterface
 from interfaces.thread_pyside import DownloadThread
 from interfaces.sovis_window import SovisWindow
-
 # from memory_profiler import profile
 
 class MainWindow(BaseWindow):
@@ -42,6 +42,7 @@ class MainWindow(BaseWindow):
         self.img_att_path = r'images\att_db.png'
         self.img_mymonitorfat_path = r'images\mymonitorfat.png'
         self.img_close_path = r'images\x.png'
+        self.img_stop_myzap_path = r'images\myzap_ico.png'
         self.is_the_window_fixed = False
         self.os_handler = OsHandler()
         self.setup_ui()
@@ -72,7 +73,13 @@ class MainWindow(BaseWindow):
         self.create_all_line_edit_of_the_window()
         
         self.spacer = QSpacerItem(20,50)
-        
+        # espaçador horizontal que deixa todos os itens alinhados à esquerda
+        self.spacer_horizontal = QSpacerItem(
+            40, 20,
+            QSizePolicy.Expanding,  # horizontal policy
+            QSizePolicy.Minimum     # vertical policy
+        )
+                
         self.layout_horizontal_buttons_sql = QHBoxLayout()
         self.layout_horizontal_buttons_sql.addWidget(self.button_db_default_config)
         self.layout_horizontal_buttons_sql.addWidget(self.button_reset_users_password)
@@ -94,10 +101,17 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_top_tools.addWidget(self.button_pin)
         self.layout_horizontal_top_tools.addWidget(self.button_att_db)
         self.layout_horizontal_top_tools.addWidget(self.button_open_mymonitorfat)
+        self.layout_horizontal_top_tools.addWidget(self.button_start_myzap_service)
         
         self.layout_horizontal_config_program.addWidget(self.config_button)
         self.layout_horizontal_config_program.addWidget(self.button_about_program) 
 
+        self.layout_horizontal_close_programs.addWidget(self.label_stop_services)
+        #bolinha indicando se o serviço está rodando ou nao
+        self.layout_horizontal_close_programs.addWidget(self.label_myzap_service_status)
+        self.layout_horizontal_close_programs.addWidget(self.button_stop_myzap_service)
+        self.layout_horizontal_close_programs.addItem(self.spacer_horizontal)
+        
         self.layout_horizontal_close_programs.addWidget(self.label_close_programs)
         self.layout_horizontal_close_programs.addWidget(self.button_close_mycommerce)
         self.layout_horizontal_close_programs.addWidget(self.button_close_mymonitorfat)
@@ -128,6 +142,7 @@ class MainWindow(BaseWindow):
     def config_imgs(self):
         has_image_folder = self.file_handler.verify_if_images_path_exists()
         if not has_image_folder:
+            self.icon_stop_myzap = QIcon(self.resource_path(self.img_stop_myzap_path))
             self.icon_close_mycommerce = QIcon(self.resource_path(self.img_mycommerce_path))
             self.icon_config = QIcon(self.resource_path(self.img_config_path))
             self.icon_about = QIcon(self.resource_path(self.img_about_path))
@@ -137,6 +152,7 @@ class MainWindow(BaseWindow):
             self.icon_close = QIcon(self.resource_path(self.img_close_path))
             self.setWindowIcon(QIcon(self.resource_path(self.img_smartedge_path)))
         else:
+            self.icon_stop_myzap = QIcon(self.img_stop_myzap_path)
             self.icon_close_mycommerce = QIcon(self.img_mycommerce_path)
             self.icon_config = QIcon(self.img_config_path)
             self.icon_about = QIcon(self.img_about_path)
@@ -230,6 +246,13 @@ class MainWindow(BaseWindow):
             icon_size = 32
         )
         #
+        self.button_start_myzap_service = self.create_button(
+            config_style=False,
+            function=self.start_myzap_service,
+            icon=self.icon_stop_myzap,
+            icon_size = 32
+        )
+        #
         self.button_db_default_config = self.create_button(
             text='Configuração DB padrão',
             function=self.update_db
@@ -255,6 +278,13 @@ class MainWindow(BaseWindow):
         self.button_open_sovis_window = self.create_button(
             text='Sovis',
             function=self.open_sovis_window
+        )
+        #
+        self.button_stop_myzap_service = self.create_button(
+            config_style=False,
+            function=self.stop_myzap_service,
+            icon=self.icon_stop_myzap,
+            icon_size = 32
         )
         #
         self.button_close_mycommerce = self.create_button(
@@ -373,7 +403,15 @@ class MainWindow(BaseWindow):
         self.database_label.mouseDoubleClickEvent = lambda event: self.update_database_label()
         
         self.label_close_programs = self.create_label('Fechar programas')
+        self.label_stop_services = self.create_label('Parar serviços:')
+        self.label_myzap_service_status = self.create_label(self.os_handler.myzap_service_status())
+        self.label_myzap_service_status.mouseDoubleClickEvent = lambda event: self.label_myzap_service_status.setText(self.os_handler.myzap_service_status())
         
+        # atualiza o status a cada 1 segundo
+        self.timer = self.create_timer(
+            1000,
+            lambda: self.label_myzap_service_status.setText(self.os_handler.myzap_service_status())
+        )
         text_latest_build_version = self.latest_version_handler.latest_build_version_text()
         text_latest_release_version = self.latest_version_handler.latest_release_version_text()
 
@@ -523,6 +561,20 @@ class MainWindow(BaseWindow):
         elif event.modifiers() == (Qt.ShiftModifier | Qt.AltModifier) and event.key() == Qt.Key_D:
             self.copy_to_clipboard(text_latest_release_version)
 
+
+    def stop_myzap_service(self):
+        process = self.os_handler.stop_myzap_service()
+        self.show_dialog(str(process))
+    
+    def start_myzap_service(self):
+        process = self.os_handler.start_myzap_service()
+        self.show_dialog(str(process))
+    
+    def create_timer(self, interval, function):
+        timer = QTimer(self)
+        timer.timeout.connect(function)
+        timer.start(interval)
+        return timer
     
 if __name__ == '__main__': 
     from sys import argv

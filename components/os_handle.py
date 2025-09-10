@@ -28,7 +28,6 @@ from  platform import (
 from psutil import virtual_memory
 from time import sleep
 
-
 class OsHandler():
     def __init__(self):
         self.loop = True
@@ -52,6 +51,48 @@ class OsHandler():
         process_name = "AtualizarDB.exe"
         result = self.process_killer(process_name)
         return result
+    
+    def start_myzap_service(self):
+        service_name = "svcMyZap"
+        try:
+            result = subprocess.run(["sc", "start", service_name],
+                                    capture_output=True, text=True)
+            if result.returncode == 0:
+                return f"Serviço '{service_name}' iniciado com sucesso."
+            else:
+                return f"Erro ao iniciar '{service_name}': {result.stderr or result.stdout}"
+        except Exception as e:
+            return f"Erro ao tentar iniciar o serviço '{service_name}': {e}"
+    
+    def stop_myzap_service(self):
+        # verifica se o serviço svcMyZap está em execução e tenta pará-lo
+
+        service_name = "svcMyZap"
+        try:
+            result = subprocess.run(["sc", "stop", service_name],
+                                    capture_output=True, text=True)
+            if result.returncode == 0:
+                return f"Serviço '{service_name}' parado com sucesso."
+            else:
+                return f"Erro ao parar '{service_name}': {result.stderr or result.stdout}"
+        except Exception as e:
+            return f"Erro ao tentar parar o serviço '{service_name}': {e}"
+
+    def myzap_service_status(self):
+        service_name = "svcMyZap"
+        try:
+            for service in psutil.win_service_iter():
+                if service.name().lower() == service_name.lower():
+                    if service.status() == 'running':
+                        # devolve o emoji de bolinha verde
+                        return "🟢"
+                    elif service.status() == 'stopped':
+                        # devolve o emoji de bolinha vermelha
+                        return "🔴"
+            # bolinha amarela quando nao acha ou está finalizando/iniciando   
+            return f"🟡"
+        except Exception as e:
+            return f"Erro ao verificar o status do serviço '{service_name}': {e}"
     
     def process_killer(self, nome_processo):
         command = f"taskkill /F /IM {nome_processo}"
@@ -272,4 +313,6 @@ if __name__ == "__main__":
     #     print(os_handler.ping('10.1.1.110'))
         
     #     sleep(0.5)
-    print(os_handler.kill_mycommerce_process())
+    print(os_handler.myzap_service_status())
+    print(os_handler.stop_myzap_service())
+    print(os_handler.myzap_service_status())

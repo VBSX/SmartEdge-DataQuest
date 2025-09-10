@@ -30,7 +30,7 @@ class VersionReleaseInterface(BaseWindow):
     
     def setup_ui(self):
         self.setWindowTitle("Liberar Versão")
-        width = 730
+        width = 740
         
         self.get_configs_forums()
         if self.name_of_program =='Mycommerce':
