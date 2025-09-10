@@ -17,3 +17,4 @@ components/paramsold.json
 *.spec
 interactive_console_output.xml
 components/automation_windows/test_post.ini
+/venv
