@@ -11,6 +11,7 @@ from interfaces.widget_release_myfrota import WidgetReleaseMyfrota
 from interfaces.widget_release_mycommerce import WidgetReleaseMycommerce
 from interfaces.widget_release_mypet import WidgetReleaseMypet
 from interfaces.widget_release_mycomanda import WidgetReleaseMyComanda
+from interfaces.widget_release_myzap import WidgetReleaseMyZap
 from PySide6.QtCore import Qt 
 from PySide6.QtWidgets import (
     QApplication,
@@ -54,6 +55,10 @@ class VersionReleaseInterface(BaseWindow):
             height = 650
             self.widget_mycomanda = WidgetReleaseMyComanda()
             final_list = [self.widget_mycomanda] 
+        elif self.name_of_program == 'MyZap':
+            height = 650
+            self.widget_myzap = WidgetReleaseMyZap()
+            final_list = [self.widget_myzap]
             
             
         self.setFixedSize(width, height)
@@ -282,7 +287,17 @@ class VersionReleaseInterface(BaseWindow):
                 ]
             message_mycomanda = ''
             # list_messages_raw = [message_mycomanda]
-        
+        elif self.name_of_program == 'MyZap':
+            mycommerce_version = self.widget_myzap.line_edit_version_myzap_release.text()
+            omniMulti_version = self.widget_myzap.line_edit_omniMulti_version.text()
+            mycommerce_version = self.widget_myzap.line_edit_mycommerce_version.text()
+            list_of_compatibilities = ['Mycommerce', 'OmniMulti']
+            list_of_versions = [mycommerce_version, omniMulti_version]
+            list_of_is_compatible = [
+                self.widget_myzap.checkbox_compativel_mycommerce.isChecked()
+                , self.widget_myzap.checkbox_compativel_omniMulti.isChecked()
+                ]
+            message_myzap = ''
         
         final_message = ''
         compatible_messages = []
@@ -337,6 +352,8 @@ class VersionReleaseInterface(BaseWindow):
             software_version = self.widget_mypet.line_edit_version_mypet_release.text()
         elif self.name_of_program == 'MyComanda':
             software_version = self.widget_mycomanda.line_edit_version_mycomanda_release.text()
+        elif self.name_of_program == 'MyZap':
+            software_version = self.widget_myzap.line_edit_version_myzap_release.text()
         
         initial_message = self.line_edit_messages_fixes.toPlainText()
         is_final_version = self.checkbox_final_version.isChecked()
@@ -368,7 +385,10 @@ class VersionReleaseInterface(BaseWindow):
                 text_obs = '\nAtenciosamente, Vitor Hugo Borges Dos Santos.'
             if not is_final_version:
                 # text_greetings = f'Olá! A versão [b]{software_version}[/b] do [b]{name_of_program}[/b] disponível para atualizações.{self.emoji_foguete}\n\n'
-                text_greetings = f'{inicio_list} [b]{software_version}[/b] do [b]{name_of_program}[/b] {final_list}\n\n'
+                if name_of_program == 'MyZap':
+                    text_greetings = f'{inicio_list} [b]{software_version}[/b] do [b]Robô MyZap[/b] e\nVersão [b]{software_version}[/b] do [b]vs.Services MyZap[/b] {final_list}\n\n'
+                else:   
+                    text_greetings = f'{inicio_list} [b]{software_version}[/b] do [b]{name_of_program}[/b] {final_list}\n\n'
                 
                 if initial_message:
                     final_message = text_greetings + message_forum + '\n\n'+ message_compatibilities +'\n' + text_obs
@@ -380,7 +400,10 @@ class VersionReleaseInterface(BaseWindow):
                     self.copy_to_clipboard(final_message)
                     self.show_dialog('Mensagem copiada para a área de transferência')
             else: 
-                text_greetings = f'{inicio_list} final [b]{software_version}[/b] do [b]{name_of_program}[/b] {final_list}\n\n'
+                if name_of_program == 'MyZap':
+                    text_greetings = f'{inicio_list} final [b]{software_version}[/b] do [b]Robô MyZap[/b] e\nVersão final [b]{software_version}[/b] do [b]vs.Services MyZap[/b] {final_list}\n\n'
+                else:
+                    text_greetings = f'{inicio_list} final [b]{software_version}[/b] do [b]{name_of_program}[/b] {final_list}\n\n'
                 if initial_message:
                     final_message = text_greetings + message_forum + '\n\n'+ message_compatibilities +'\n'+ text_obs
                 else:
