@@ -16,6 +16,7 @@ class IniConfig:
         self.database_ini = self.read_config('database')
         self.port_ini = self.read_config('PortaServidor')
         self.test_mode = self.read_config('cqp')
+        self.csharp_mode = self.read_config('myccsharp')
         
     def read_config(self, key_of_field):
         if self.post_creator_ini:
@@ -35,6 +36,9 @@ class IniConfig:
 
     def set_test_mode(self, test_mode):
         self.config_att_value('cqp', test_mode)
+    
+    def set_csharp_mode(self, csharp_mode):
+        self.config_att_value('myccsharp', csharp_mode)
     
     def config_att_value(self, key, new_value):
         try:

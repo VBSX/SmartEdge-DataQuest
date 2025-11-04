@@ -298,7 +298,8 @@ class OsHandler():
             if exists(path_brave):
                 path_browser = path_brave
 
-        command = f'wmic datafile where "name=\'{path_browser.replace("\\", "\\\\")}\'" get Version'
+        escaped_path = path_browser.replace("\\", "\\\\")
+        command = f'wmic datafile where "name=\'{escaped_path}\'" get Version'
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
 
         version = result.stdout.strip().split("\n")[-1]

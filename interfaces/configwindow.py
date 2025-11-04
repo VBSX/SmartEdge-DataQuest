@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QComboBox,
-    QLineEdit
+    QLineEdit, QLayout
     )
 from PySide6.QtCore import Qt
 from interfaces.base_window import BaseWindow, File, QPushButton
@@ -30,7 +30,7 @@ class ConfigWindow(BaseWindow):
         
     def setup_ui(self):
         self.setWindowTitle("Config")
-        self.setFixedSize(480, 410)
+        self.setFixedSize(500, 455)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -51,18 +51,21 @@ class ConfigWindow(BaseWindow):
         self.line_edit_username.returnPressed.connect(self.button_save.click)
         self.line_edit_username.setMaxLength(20)
         
-        if self.test_mode == 1 or self.test_mode == 'None' or self.test_mode == '1':
-            check_marked = True
-        elif self.test_mode == 0 or self.test_mode == '0':
-            check_marked = False
-        elif self.test_mode == 'None':
-            check_marked = True
+
         
+        layout_vertical_checkbox_test_mode = QVBoxLayout()
         self.test_mode_checkbox = self.create_checkbox(
             text='CQP=1 (Homologação)',
-            marked= check_marked)
+            marked= self.check_marked(self.test_mode))
+        layout_vertical_checkbox_test_mode.addWidget(self.test_mode_checkbox)
+        
+        self.csharp_mode_checkbox = self.create_checkbox(
+            text='MyCCSharp=1 (Usar telas C# \nem teste)',
+            marked= self.check_marked(self.csharp_mode))
+        layout_vertical_checkbox_test_mode.addWidget(self.csharp_mode_checkbox)
+        
         ## Set the layout of the label and the line edit in the same line
-        self.horizontal_layout_set(self.label_username, self.line_edit_username, self.test_mode_checkbox, None)
+        self.horizontal_layout_set(self.label_username, self.line_edit_username, layout_vertical_checkbox_test_mode, None)
         
         # field password config
         self.label_password = QLabel('Senha: ')
@@ -146,20 +149,41 @@ class ConfigWindow(BaseWindow):
         #absolute window, cant acess the main window ultil the window is closed
         self.setWindowModality(Qt.WindowModal)
         self.show()
-    
-    def horizontal_layout_set(self, first_item, second_item, third_item, fourth_item):
+
+    def check_marked(self, mode):
+        # organiza na lista todos os checkboxes, e depois lista qual é qual para que seja usado o mesmo algoritimo para marcar ou desmarcar
+
+        if mode == 1 or mode == 'None' or mode == '1':
+            check_marked = True
+        elif mode == 0 or mode == '0':
+            check_marked = False
+        elif mode == 'None':
+            check_marked = True
+        
+        return check_marked
+   
+    def horizontal_layout_set(self, first_item, second_item, third_item=None, fourth_item=None):
         layout_horizontal = QHBoxLayout()
         layout_horizontal.setContentsMargins(0, 0, 0, 0)
         layout_horizontal.setSpacing(0)
         layout_horizontal.setAlignment(Qt.AlignLeft)
+
         layout_horizontal.addWidget(first_item)
         layout_horizontal.addWidget(second_item)
+
         if third_item:
-            layout_horizontal.addWidget(third_item)
-            if fourth_item:
+            if isinstance(third_item, QLayout):
+                layout_horizontal.addLayout(third_item)
+            else:
+                layout_horizontal.addWidget(third_item)
+        if fourth_item:
+            if isinstance(fourth_item, QLayout):
+                layout_horizontal.addLayout(fourth_item)
+            else:
                 layout_horizontal.addWidget(fourth_item)
-        ## add the layout horizontal to the vertical layout
+
         self.layout_vertical.addLayout(layout_horizontal)
+
     
     def get_data_from_json(self):
         return self.file_handler.read_json()
@@ -171,6 +195,13 @@ class ConfigWindow(BaseWindow):
         port_input = self.line_edit_port.text()
         database_input = self.line_edit_database.text()
         test_mode_input = self.test_mode_checkbox.isChecked()
+        csharp_mode_input = self.csharp_mode_checkbox.isChecked()
+        
+        if csharp_mode_input:
+            csharp_mode_input = '1'
+        else:
+            csharp_mode_input = '0'
+        
         if test_mode_input:
             test_mode_input = '1'
         else:
@@ -191,7 +222,8 @@ class ConfigWindow(BaseWindow):
             host_input == self.host and
             port_input == self.port and
             database_input == self.database and
-            test_mode_input == self.test_mode
+            test_mode_input == self.test_mode and
+            csharp_mode_input == self.csharp_mode
             ):
             self.close()
             self.parent().reset_layout()
@@ -204,6 +236,7 @@ class ConfigWindow(BaseWindow):
             self.file_handler.set_port(port_input)
             self.file_handler.set_database(database_input)
             self.file_handler.set_test_mode(test_mode_input)
+            self.file_handler.set_csharp_mode(csharp_mode_input)
 
             return_file = self.file_handler.write_json()
 

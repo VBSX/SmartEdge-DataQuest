@@ -177,6 +177,7 @@ class File():
                         content.pop('name_of_program')
                         content.pop('test_mode')
                         content.pop('config_path')
+                        content.pop('csharp_mode')
                     except:
                         print('erro ao retirar os campos referente as credenciais do bitrix e forum')
                     return content
@@ -192,6 +193,8 @@ class File():
             database = self.ini_config.database_ini
             port = self.ini_config.port_ini
             test_mode = self.ini_config.test_mode
+            csharp_mode = self.ini_config.csharp_mode
+            self.set_csharp_mode(csharp_mode)
             self.set_database(database)
             self.set_host(host)
             self.set_port(port)
@@ -249,11 +252,17 @@ class File():
     def get_config_path(self):
         return self.get_info_json('config_path')
 
+    def get_csharp_mode(self):
+        return self.get_info_json('csharp_mode')
+    
     def set_config_path(self, config_path):
         self.json_setter('config_path', config_path)
 
     def set_test_mode(self, test_mode):
         self.json_setter('test_mode', test_mode)
+    
+    def set_csharp_mode(self, csharp_mode):
+        self.json_setter('csharp_mode', csharp_mode)
     
     def set_username(self, username):
         self.json_setter('user', username)
@@ -300,6 +309,8 @@ class File():
             key = 'PortaServidor'
         elif key == 'test_mode':
             self.ini_config.set_test_mode(f"{value}")
+        elif key == 'csharp_mode':
+            self.ini_config.set_csharp_mode(f"{value}")
         if key != 'user' and key != 'password':
         
             return_config_att_value = self.ini_config.config_att_value(key, value)

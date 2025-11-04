@@ -202,6 +202,7 @@ class BaseWindow(QMainWindow):
         self.port = json_file['port']
         self.database = json_file['database']
         self.test_mode = json_file['test_mode']
+        self.csharp_mode = json_file['csharp_mode']
         
     def get_clipboard(self):
         return paste()
