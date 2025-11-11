@@ -33,7 +33,7 @@ class MainWindow(BaseWindow):
         self.interface_version_releaser_is_open = False
         self.interface_query_window_is_open = False
         self.interface_sovis_is_open = False
-        self.latest_version_handler = LatestVersion()
+        self.latest_version_handler = None
         self.img_mycommerce_path = r'images\mycommerce.png'
         self.img_config_path = r'images\config.png'
         self.img_about_path = r'images\about.png'
@@ -137,13 +137,10 @@ class MainWindow(BaseWindow):
         self.layout_horizontal_downloads.addWidget(
             self.download_last_release_version_button)
         self.layout_config()
-        self.file_handler.init_txt()
         self.apply_modern_style()
+        QTimer.singleShot(0, self.load_deferred_data)
         
     def apply_modern_style(self):
-        """
-        Aplica um tema moderno escuro e adiciona animação suave (fade-in) na abertura.
-        """
         modern_style = """
         QWidget {
             background-color: #1e1e1e;
@@ -174,7 +171,7 @@ class MainWindow(BaseWindow):
             background-color: #144a91;
         }
 
-        /* Botões apenas com ícone (config_style=False) — aparência flat e elegante */
+        /* Botões apenas com ícone (config_style="false") — aparência flat e elegante */
         QPushButton[config_style="false"] {
             background: transparent;
             border: none;
@@ -196,6 +193,16 @@ class MainWindow(BaseWindow):
             margin: 2px;
         }
 
+        /* NOVO: Estilo para o botão de Perigo (vermelho) */
+        #DangerButton {
+            background: transparent;
+        }
+        #DangerButton:hover {
+            background-color: #aa2222; 
+        }
+        #DangerButton:pressed {
+            background-color: #881111; 
+        }
 
         QLineEdit {
             background-color: #2b2b2b;
@@ -231,26 +238,65 @@ class MainWindow(BaseWindow):
             background: #888;
         }
         """
-
-        # Aplica o estilo moderno
         self.setStyleSheet(modern_style)
-        for button in self.list_of_buttons:
-            # remove o "config_style=False"
+        for button in self.list_of_buttons: 
             button.setProperty("config_style", False)
-        # Define margens e espaçamento mais agradáveis no layout principal
+
         if hasattr(self, "layout_principal"):
             self.layout_principal.setContentsMargins(30, 20, 30, 20)
             self.layout_principal.setSpacing(15)
 
-        # === EFEITO DE FADE-IN ===
         opacity_effect = QGraphicsOpacityEffect(self)
         self.setGraphicsEffect(opacity_effect)
 
         self.fade_animation = QPropertyAnimation(opacity_effect, b"opacity")
-        self.fade_animation.setDuration(600)  # duração em milissegundos
+        self.fade_animation.setDuration(600)
         self.fade_animation.setStartValue(0.0)
         self.fade_animation.setEndValue(1.0)
         self.fade_animation.start()
+
+    def load_deferred_data(self):
+        """
+        Esta função é chamada via QTimer APÓS a janela principal ser exibida.
+        Ela executa todas as operações lentas de I/O (Rede, Disco, Serviços)
+        para não travar a inicialização.
+        """
+        # 1. Inicializa o log (que pode ser lento)
+        self.file_handler.init_txt()
+
+        # 2. Inicializa o handler de versão (que faz PING)
+        self.latest_version_handler = LatestVersion()
+
+        # 3. Busca as versões na rede (a parte mais lenta)
+        text_latest_build_version = self.latest_version_handler.latest_build_version_text()
+        text_latest_release_version = self.latest_version_handler.latest_release_version_text()
+
+        # 4. Processa os textos (lógica que já existia)
+        if text_latest_build_version == 'SemBuild':
+            display_build_version = 'SemBuild'
+            processed_build = 'SemBuild'
+        else:
+            processed_build = self.process_input(text_latest_build_version, raw_text=True)
+            display_build_version = f'{processed_build}'
+            
+        if text_latest_release_version == None:
+            display_release_version = 'SemRelease'
+            processed_release = 'SemRelease'
+        else:
+            processed_release = self.process_input(text_latest_release_version, raw_text=True)
+            display_release_version = processed_release
+
+        # 5. Atualiza os labels com os dados reais
+        self.label_last_build_version.setText(f'Última Build: {display_build_version}')
+        self.label_last_release_version.setText(f'Última Release: {display_release_version}')
+        
+        # 6. Atualiza o status do serviço (primeira verificação)
+        self.label_myzap_service_status.setText(self.os_handler.myzap_service_status())
+        
+        # 7. Atualiza os handlers de clique para usar as variáveis locais reais
+        self.label_last_build_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(processed_build)
+        self.label_last_release_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(processed_release)
+        
      
     def config_imgs(self):
         has_image_folder = self.file_handler.verify_if_images_path_exists()
@@ -372,7 +418,7 @@ class MainWindow(BaseWindow):
             function=self.update_db
             )
         self.config_button = self.create_button(
-            config_style=False,
+            config_style=False, 
             text='Config',
             function=self.start_config,
             icon= self.icon_config
@@ -442,6 +488,7 @@ class MainWindow(BaseWindow):
             icon=self.icon_close,
             icon_size = 32
         )
+        self.button_remove_database.setObjectName("DangerButton")
         
         
         self.baixar_versao_especifica = self.create_button(
@@ -540,33 +587,23 @@ class MainWindow(BaseWindow):
         
         self.label_close_programs = self.create_label('Fechar programas')
         self.label_stop_services = self.create_label('Parar serviços:')
-        self.label_myzap_service_status = self.create_label(self.os_handler.myzap_service_status())
+
+        self.label_myzap_service_status = self.create_label('...')
         self.label_myzap_service_status.mouseDoubleClickEvent = lambda event: self.label_myzap_service_status.setText(self.os_handler.myzap_service_status())
         
-        # atualiza o status a cada 1 segundo
         self.timer = self.create_timer(
             1000,
             lambda: self.label_myzap_service_status.setText(self.os_handler.myzap_service_status())
         )
-        text_latest_build_version = self.latest_version_handler.latest_build_version_text()
-        text_latest_release_version = self.latest_version_handler.latest_release_version_text()
-
-        if text_latest_build_version == 'SemBuild':
-            text_latest_build_version = 'SemBuild'
-        else:
-            text_latest_build_version = self.process_input(text_latest_build_version, raw_text=True)
-            text_latest_build_version = f'{text_latest_build_version}'
-        if text_latest_release_version == None:
-            text_latest_release_version = 'SemRelease'
-        else:
-            text_latest_release_version = self.process_input(text_latest_release_version, raw_text=True)
+        text_latest_build_version = "Carregando..."
+        text_latest_release_version = "Carregando..."
         
         self.label_last_build_version = self.create_label(f'Última Build: {text_latest_build_version}')
-        self.label_last_build_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(text_latest_build_version)
+        self.label_last_build_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(self.label_last_build_version.text().split(': ')[1])
         
         self.label_last_release_version = self.create_label(f'Última Release: {text_latest_release_version}')
         
-        self.label_last_release_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(text_latest_release_version)
+        self.label_last_release_version.mouseDoubleClickEvent = lambda event: self.copy_to_clipboard(self.label_last_release_version.text().split(': ')[1])
     
     def create_all_line_edit_of_the_window(self):
         self.line_edit_version_download = self.create_line_edit(
@@ -637,6 +674,13 @@ class MainWindow(BaseWindow):
             
     def download_finished(self, is_build):
         self.progress_dialog.cancel()
+        # Se latest_version_handler for None, o download não foi iniciado
+        if self.latest_version_handler is None:
+            self.show_dialog('Aguarde o carregamento inicial dos dados antes de tentar o download.')
+            self.download_last_release_version_button.setEnabled(True)
+            self.download_last_build_version_button.setEnabled(True)
+            return
+
         if is_build == None:
             if self.download_thread.specific_version_finished:
                 self.show_dialog('Arquivo enviado para a pasta de downloads')
@@ -691,17 +735,21 @@ class MainWindow(BaseWindow):
         self.reset_layout()
 
     def handle_events(self, event):
+        if self.latest_version_handler is None:
+            return
+
         text_latest_build_version = self.latest_version_handler.latest_build_version_text()
         text_latest_release_version = self.latest_version_handler.latest_release_version_text()
-        text_latest_build_version = self.process_input(text_latest_build_version, raw_text=True)
-        text_latest_release_version = self.process_input(text_latest_release_version, raw_text=True)
         
+        processed_build = self.process_input(text_latest_build_version, raw_text=True)
+        processed_release = self.process_input(text_latest_release_version, raw_text=True)
+
         # Verifica se as teclas Shift, Alt e S estão pressionadas simultaneamente
         if event.modifiers() == (Qt.ShiftModifier | Qt.AltModifier) and event.key() == Qt.Key_S:
             # Chama a função para copiar para o clipboard
-            self.copy_to_clipboard(text_latest_build_version)
+            self.copy_to_clipboard(processed_build)
         elif event.modifiers() == (Qt.ShiftModifier | Qt.AltModifier) and event.key() == Qt.Key_D:
-            self.copy_to_clipboard(text_latest_release_version)
+            self.copy_to_clipboard(processed_release)
 
 
     def stop_myzap_service(self):
