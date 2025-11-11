@@ -30,7 +30,7 @@ class ConfigWindow(BaseWindow):
         
     def setup_ui(self):
         self.setWindowTitle("Config")
-        self.setFixedSize(500, 455)
+        self.setFixedSize(530, 455)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -137,7 +137,7 @@ class ConfigWindow(BaseWindow):
 
         # Botão para abrir o explorador
         self.button_browse = QPushButton("📂")
-        self.button_browse.setFixedWidth(40)
+        self.button_browse.setFixedWidth(45)
         self.button_browse.clicked.connect(self.browse_config_file)
 
         # Layout na mesma linha

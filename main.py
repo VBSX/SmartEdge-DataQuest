@@ -11,9 +11,9 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QProgressDialog
 )
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, QPropertyAnimation
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QSizePolicy
+from PySide6.QtWidgets import QSizePolicy, QGraphicsOpacityEffect
 from interfaces.query_run_window import QueryWindow
 from interfaces.configwindow import ConfigWindow
 from interfaces.base_window import BaseWindow
@@ -138,7 +138,120 @@ class MainWindow(BaseWindow):
             self.download_last_release_version_button)
         self.layout_config()
         self.file_handler.init_txt()
+        self.apply_modern_style()
         
+    def apply_modern_style(self):
+        """
+        Aplica um tema moderno escuro e adiciona animação suave (fade-in) na abertura.
+        """
+        modern_style = """
+        QWidget {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            font-family: 'Segoe UI';
+            font-size: 15px;
+        }
+
+        QLabel {
+            color: #dcdcdc;
+            font-weight: 500;
+        }
+
+        QPushButton {
+            background-color: #2d89ef;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        QPushButton:hover {
+            background-color: #1b5fc1;
+        }
+
+        QPushButton:pressed {
+            background-color: #144a91;
+        }
+
+        /* Botões apenas com ícone (config_style=False) — aparência flat e elegante */
+        QPushButton[config_style="false"] {
+            background: transparent;
+            border: none;
+            padding: 6px;
+            border-radius: 8px;
+            min-width: 32px;
+            min-height: 32px;
+        }
+
+        QPushButton[config_style="false"]:hover {
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        QPushButton[config_style="false"]:pressed {
+            background-color: rgba(255, 255, 255, 0.14);
+        }
+
+        QPushButton[config_style="false"]::icon {
+            margin: 2px;
+        }
+
+
+        QLineEdit {
+            background-color: #2b2b2b;
+            color: #ffffff;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 6px 8px;
+        }
+
+        QLineEdit:focus {
+            border: 1px solid #2d89ef;
+            background-color: #303030;
+        }
+
+        QProgressDialog {
+            background-color: #222;
+            color: #fff;
+        }
+
+        QScrollBar:vertical {
+            background: #2b2b2b;
+            width: 10px;
+            margin: 0px;
+            border-radius: 5px;
+        }
+
+        QScrollBar::handle:vertical {
+            background: #555;
+            border-radius: 5px;
+        }
+
+        QScrollBar::handle:vertical:hover {
+            background: #888;
+        }
+        """
+
+        # Aplica o estilo moderno
+        self.setStyleSheet(modern_style)
+        for button in self.list_of_buttons:
+            # remove o "config_style=False"
+            button.setProperty("config_style", False)
+        # Define margens e espaçamento mais agradáveis no layout principal
+        if hasattr(self, "layout_principal"):
+            self.layout_principal.setContentsMargins(30, 20, 30, 20)
+            self.layout_principal.setSpacing(15)
+
+        # === EFEITO DE FADE-IN ===
+        opacity_effect = QGraphicsOpacityEffect(self)
+        self.setGraphicsEffect(opacity_effect)
+
+        self.fade_animation = QPropertyAnimation(opacity_effect, b"opacity")
+        self.fade_animation.setDuration(600)  # duração em milissegundos
+        self.fade_animation.setStartValue(0.0)
+        self.fade_animation.setEndValue(1.0)
+        self.fade_animation.start()
+     
     def config_imgs(self):
         has_image_folder = self.file_handler.verify_if_images_path_exists()
         if not has_image_folder:
@@ -223,6 +336,7 @@ class MainWindow(BaseWindow):
         
      
     def create_all_buttons_of_the_window(self):
+        self.list_of_buttons = []
         #
         self.button_pin = self.create_button(
             config_style=False,
@@ -334,6 +448,27 @@ class MainWindow(BaseWindow):
             text='Download',
             function=lambda: self.download_version(text="Baixando a versão", is_build=None, is_specific_version=True)
         )
+        self.list_of_buttons.extend([
+            self.button_pin,
+            self.button_att_db,
+            self.button_open_mymonitorfat,
+            self.button_start_myzap_service,
+            self.button_db_default_config,
+            self.config_button,
+            self.button_about_program,
+            self.button_reset_users_password,
+            self.button_open_sovis_window,
+            self.button_stop_myzap_service,
+            self.button_close_mycommerce,
+            self.button_close_mymonitorfat,
+            self.button_close_att_db,
+            self.query_button,
+            self.download_last_build_version_button,
+            self.download_last_release_version_button,
+            self.button_release_the_version,
+            self.button_remove_database,
+            self.baixar_versao_especifica
+        ])
            
     def update_db(self):
         self.reset_layout()
@@ -386,6 +521,7 @@ class MainWindow(BaseWindow):
   
     def start_config(self):
         self.config_window = ConfigWindow(self)
+        self.config_window.setStyleSheet(self.styleSheet())
         self.config_window.show()
     
     def about_program_window(self):
